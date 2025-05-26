@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ariari.ariari.domain.club.passreview.mapper.PassReviewMapper">
+    <select id ="findPassReviewOfClub">
+        SELECT pr.pass_review_id,
+               pr.title,
+               pr.created_date_time,
+               (SELECT COUNT(*)
+                FROM pass_review_note prn
+                WHERE prn.pass_review_id = pr.pass_review_id
+                  AND prn.note_type = 'DOCUMENT'
+                  AND prn.deleted_date_time IS NOT NULL) AS documentNoteCount,
+                (SELECT COUNT(*)
+                 FROM pass_review_note prn2
+                 WHERE prn2.pass_review_id = pr.pass_review_id
+                 AND prn2.note_type = 'INTERVIEW'
+                 AND prn2.deleted_date_time IS NOT NULL) AS interviewNoteCount
+        FROM pass_review pr
+        WHERE pr.club_id = #{clubId}
+        ORDER BY pr.created_date_time DESC
+        LIMIT #{size} OFFSET #{offset}
+    </select>
+
+    <select id="findPassReviewOfClubCount">
+        SELECT COUNT(*)
+        FROM pass_review pr
+        WHERE pr.club_id = #{clubId}
+    </select>
+
+</mapper>
