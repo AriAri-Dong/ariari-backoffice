@@ -36,7 +36,7 @@ jobs:
           rsync -av --exclude='index.html' ./backoffice-frontend/build/ ./backoffice-backend/src/main/resources/static/
 
       - name: Give Gradle wrapper execute permissions
-        run: chmod +x ./gradlew  # gradlew에 실행 권한 부여
+        run: chmod +x ./backoffice-backend/gradlew  # gradlew에 실행 권한 부여
 
       - name: Create application.yml file
         run: |
