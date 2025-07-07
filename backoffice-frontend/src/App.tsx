@@ -1,4 +1,3 @@
-import './index.css';
 import LeftMenu from './components/layout/leftMenu';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
