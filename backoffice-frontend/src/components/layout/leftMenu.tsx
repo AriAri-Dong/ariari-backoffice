@@ -27,10 +27,9 @@ const LeftMenu = () => {
   const [showLogoutAlert, setShowLogoutAlert] = useState<boolean>(false);
 
   const handleLogout = () => {
-    // 실제 로그아웃 처리 로직
-    // 예: localStorage.clear(), navigate('/login'), etc.
-    console.log('✅ 로그아웃 처리');
+    console.log('로그아웃');
     setShowLogoutAlert(false);
+    // 경로 임시 적용
     navigate('/login');
   };
 
