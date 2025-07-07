@@ -19,11 +19,16 @@ jobs:
         with:
           node-version: "18"
 
-      - name: Build React (Vite)
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8 
+
+      - name: Install dependencies and build React (Vite)
         working-directory: ./backoffice-frontend
         run: |
-          npm ci
-          npm run build
+          pnpm install
+          pnpm run build
 
       - name: Copy React build to Spring
         run: |
