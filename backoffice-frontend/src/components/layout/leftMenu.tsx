@@ -21,48 +21,48 @@ const LeftMenu = () => {
   const location = useLocation();
 
   return (
-    <aside className='flex h-screen w-60 flex-col justify-between border-r border-gray-200 bg-white'>
+    <aside className='border-menuborder flex h-screen w-[280px] flex-col justify-between border-r bg-white p-6'>
       <div>
         <img
           src={logo}
           alt='logo'
-          className='h-[29px] w-[100px]'
+          className='mb-14 h-[29px] w-[100px]'
         />
-        <nav className='flex flex-col gap-2 px-4'>
+        <nav className='flex flex-col gap-6'>
           {menuItems.map((item) => {
             const isActive = location.pathname === item.path;
             return (
               <Link
                 key={item.path}
                 to={item.path}
-                className={`flex items-center gap-2 rounded-md px-3 py-2 transition-colors ${
-                  isActive ? 'bg-blue-50 text-blue-500' : 'text-gray-500 hover:bg-gray-100'
+                className={`hover:bg-selectedoption_default flex items-center gap-4 rounded-lg px-1 py-2 transition-colors ${
+                  isActive ? 'text-primary' : 'text-unselected'
                 }`}
               >
                 <img
                   src={isActive && item.activeIcon ? item.activeIcon : item.icon}
                   alt={item.label}
-                  className='h-5 w-5'
+                  className='h-7 w-7'
                 />
-                <span className='text-sm'>{item.label}</span>
+                <span className='text-h3'>{item.label}</span>
               </Link>
             );
           })}
         </nav>
       </div>
-      <div className='flex items-center justify-between p-4 text-sm text-gray-500'>
+      <div className='text-body1_sb text-subtext1 flex items-center justify-between'>
         <div className='flex items-center gap-2'>
           <img
             src='https://avatars.githubusercontent.com/u/1?v=4'
             alt='관리자'
-            className='h-8 w-8 rounded-full bg-gray-200'
+            className='h-12 w-12 rounded-full bg-gray-200'
           />
           <span>관리자 이름</span>
         </div>
         <img
           src={logout}
           alt='logout'
-          className='h-4 w-4 cursor-pointer'
+          className='h-6 w-6 cursor-pointer'
         />
       </div>
     </aside>
