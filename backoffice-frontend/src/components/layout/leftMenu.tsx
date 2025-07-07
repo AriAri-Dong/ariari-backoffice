@@ -7,6 +7,7 @@ import report from '../../assets/icons/layout/report.svg';
 import data from '../../assets/icons/layout/data.svg';
 import crud from '../../assets/icons/layout/crud.svg';
 import logout from '../../assets/icons/logout.svg';
+import admin from '../../assets/icons/profile_default.svg';
 import { Link, useLocation } from 'react-router-dom';
 
 const menuItems = [
@@ -53,7 +54,7 @@ const LeftMenu = () => {
       <div className='text-body1_sb text-subtext1 flex items-center justify-between'>
         <div className='flex items-center gap-2'>
           <img
-            src='https://avatars.githubusercontent.com/u/1?v=4'
+            src={admin}
             alt='관리자'
             className='h-12 w-12 rounded-full bg-gray-200'
           />
