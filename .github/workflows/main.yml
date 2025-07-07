@@ -22,7 +22,7 @@ jobs:
       - name: Set up pnpm
         uses: pnpm/action-setup@v2
         with:
-          version: 8 
+          version: 8
 
       - name: Install dependencies and build React (Vite)
         working-directory: ./backoffice-frontend
@@ -194,7 +194,8 @@ jobs:
         with:
           environment: production
           version: ariari@${{ github.sha }}
-          fetch-depth: 0
+          # 지원여부 확인 필요
+          # fetch-depth: 0
 
       - name: Deploy with SSH
         uses: appleboy/ssh-action@v0.1.6
