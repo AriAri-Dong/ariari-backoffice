@@ -8,7 +8,9 @@ import data from '../../assets/icons/layout/data.svg';
 import crud from '../../assets/icons/layout/crud.svg';
 import logout from '../../assets/icons/logout.svg';
 import admin from '../../assets/icons/profile_default.svg';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import AlertWithMessage from '../alert/alertWithMessage';
 
 const menuItems = [
   { path: '/', label: '홈', icon: home, activeIcon: homeActive },
@@ -20,15 +22,28 @@ const menuItems = [
 
 const LeftMenu = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+
+  const [showLogoutAlert, setShowLogoutAlert] = useState<boolean>(false);
+
+  const handleLogout = () => {
+    // 실제 로그아웃 처리 로직
+    // 예: localStorage.clear(), navigate('/login'), etc.
+    console.log('✅ 로그아웃 처리');
+    setShowLogoutAlert(false);
+    navigate('/login');
+  };
 
   return (
     <aside className='border-menuborder flex h-screen w-[280px] flex-col justify-between border-r bg-white p-6'>
       <div>
-        <img
-          src={logo}
-          alt='logo'
-          className='mb-14 h-[29px] w-[100px]'
-        />
+        <Link to={'/'}>
+          <img
+            src={logo}
+            alt='logo'
+            className='mb-14 h-[29px] w-[100px] cursor-pointer'
+          />
+        </Link>
         <nav className='flex flex-col gap-6'>
           {menuItems.map((item) => {
             const isActive = location.pathname === item.path;
@@ -64,8 +79,19 @@ const LeftMenu = () => {
           src={logout}
           alt='logout'
           className='h-6 w-6 cursor-pointer'
+          onClick={() => setShowLogoutAlert(true)}
         />
       </div>
+      {showLogoutAlert && (
+        <AlertWithMessage
+          text='로그아웃 하시겠습니까?'
+          description='현재 작업 내용이 저장되지 않을 수 있습니다.'
+          leftBtnText='취소'
+          rightBtnText='로그아웃'
+          onLeftBtnClick={() => setShowLogoutAlert(false)}
+          onRightBtnClick={handleLogout}
+        />
+      )}
     </aside>
   );
 };
