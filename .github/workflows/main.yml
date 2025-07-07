@@ -1,12 +1,10 @@
-name: CI/CD Pipeline
+name: Ariari Backoffice CI/CD Pipeline
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
   pull_request:
-    branches:
-      - main
+    branches: [main]
 
 jobs:
   build-and-deploy:
@@ -19,9 +17,9 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: "18"
 
-      - name: Build React
+      - name: Build React (Vite)
         working-directory: ./backoffice-frontend
         run: |
           npm ci
@@ -30,17 +28,16 @@ jobs:
       - name: Copy React build to Spring
         run: |
           rm -f ./backoffice-backend/src/main/resources/templates/index.html
-          cp ./backoffice-frontend/build/index.html ./backoffice-backend/src/main/resources/templates/
-
+          cp ./backoffice-frontend/dist/index.html ./backoffice-backend/src/main/resources/templates/
           rm -rf ./backoffice-backend/src/main/resources/static/*
-          rsync -av --exclude='index.html' ./backoffice-frontend/build/ ./backoffice-backend/src/main/resources/static/
+          rsync -av --exclude='index.html' ./backoffice-frontend/dist/ ./backoffice-backend/src/main/resources/static/
 
       - name: Give Gradle wrapper execute permissions
-        run: chmod +x ./backoffice-backend/gradlew  # gradlew에 실행 권한 부여
+        run: chmod +x ./backoffice-backend/gradlew
 
       - name: Create application.yml file
         run: |
-          cat ./backoffice-backend/src/main/resources/application.yml
+          cat <<EOF > ./backoffice-backend/src/main/resources/application.yml
           spring:
             jackson:
               time-zone: Asia/Seoul
@@ -84,13 +81,11 @@ jobs:
                 maxRequestSize: 10MB
           server:
             port: 8282
-          
           mybatis:
             mapper-locations: mapper/*.xml
             type-aliases-package: com.ariari.ariari.domain
             configuration:
               map-underscore-to-camel-case: true
-          
           jwt:
             secret-key: ${JWT_SECRET_KEY}
             access-expiration-time: 36000000
@@ -122,24 +117,21 @@ jobs:
               characters: ${EMAIL_CODE_CHARACTERS}
               code-length: ${EMAIL_CODE_LENGTH}
               expiration-time: ${EMAIL_CODE_EXPIRATION}
-
           views-manager:
             expiration-date:
               view-duplicate: ${VIEW_DUPLICATE_DUE}
               view: ${VIEW_DUE}
-
           school-auth:
             key-name: ${SCHOOL_AUTH_KEY_NAME}
             expiration-time: ${SCHOOL_AUTH_EXPRIATION_TIME}
             code-length: ${SCHOOL_AUTH_CODE_LENGTH}
-          
           server-secret:
             host: ${SERVER_ADDRESS}
             port: ${SERVER_PORT}
-
+          EOF
         env:
-          SERVER_ADDRESS: ${{secrets.SERVER_ADDRESS}}
-          SERVER_PORT: ${{secrets.SERVER_PORT}}
+          SERVER_ADDRESS: ${{ secrets.SERVER_ADDRESS }}
+          SERVER_PORT: ${{ secrets.SERVER_PORT }}
           MARIADB_URL: ${{ secrets.MARIADB_URL }}
           MARIADB_USERNAME: ${{ secrets.MARIADB_USERNAME }}
           MARIADB_PASSWORD: ${{ secrets.MARIADB_PASSWORD }}
@@ -152,7 +144,7 @@ jobs:
           AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
           AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
           AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
-          AWS_S3_CLOUDFRONTDOMAIN : ${{ secrets.AWS_S3_CLOUDFRONTDOMAIN }}
+          AWS_S3_CLOUDFRONTDOMAIN: ${{ secrets.AWS_S3_CLOUDFRONTDOMAIN }}
           EMAIL_CODE_CHARACTERS: ${{ secrets.MAIL_CODE_CHARACTERS }}
           EMAIL_CODE_LENGTH: ${{ secrets.MAIL_CODE_LENGTH }}
           EMAIL_CODE_EXPIRATION: ${{ secrets.MAIL_CODE_EXPIRATION }}
@@ -165,10 +157,11 @@ jobs:
       - name: Set up JDK 17
         uses: actions/setup-java@v2
         with:
-          distribution: 'adopt'
-          java-version: '17'
+          distribution: "adopt"
+          java-version: "17"
 
       - name: Build with Gradle
+        working-directory: ./backoffice-backend
         run: ./gradlew build -x test
 
       - name: Set up Docker Buildx
@@ -205,6 +198,6 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
-            cd /home/ubuntu/backoffic
+            cd /home/ubuntu/backoffice
             sudo docker compose pull
             sudo docker compose up -d --build
