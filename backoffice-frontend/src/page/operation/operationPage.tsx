@@ -1,5 +1,7 @@
+import { useState } from 'react';
 import BluePenBtn from '../../components/button/iconBtn/bluePenBtn';
 import PaginatedTable from '../../components/paginatedTable';
+import Tabs from '../../components/tabs';
 import { OPERATION_DATA } from '../../data/operation';
 import type { Column } from '../../types/table';
 
@@ -31,14 +33,23 @@ const columns: Column<RowType>[] = [
 ];
 
 export default function OperationPage() {
+  const [selectedTab, setSelectedTab] = useState<string>('약관수정');
+
   return (
     <div className='w-full'>
-      <PaginatedTable
-        columns={columns}
-        data={OPERATION_DATA}
-        pageSize={10}
-        rowKey='id'
+      <Tabs
+        tabs={['약관수정', '공지수정', 'FAQ수정', '알림전송']}
+        selected={selectedTab}
+        onChange={setSelectedTab}
       />
+      <div className='mt-6'>
+        <PaginatedTable
+          columns={columns}
+          data={OPERATION_DATA}
+          pageSize={10}
+          rowKey='id'
+        />
+      </div>
     </div>
   );
 }
