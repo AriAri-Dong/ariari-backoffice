@@ -8,7 +8,7 @@ import data from '../../assets/icons/layout/data.svg';
 import crud from '../../assets/icons/layout/crud.svg';
 import logout from '../../assets/icons/logout.svg';
 import admin from '../../assets/icons/profile_default.svg';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router';
 import { useState } from 'react';
 import AlertWithMessage from '../alert/alertWithMessage';
 
