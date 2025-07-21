@@ -38,10 +38,16 @@ export default function OperationPage() {
   return (
     <div className='w-full'>
       <Tabs
-        tabs={['약관수정', '공지수정', 'FAQ수정', '알림전송']}
+        tabs={[
+          { label: '약관수정' },
+          { label: '공지수정' },
+          { label: 'FAQ수정' },
+          { label: '알림전송' },
+        ]}
         selected={selectedTab}
         onChange={setSelectedTab}
       />
+
       <div className='mt-6'>
         <PaginatedTable
           columns={columns}

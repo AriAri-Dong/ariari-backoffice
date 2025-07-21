@@ -1,8 +1,13 @@
 import React from 'react';
 import clsx from 'clsx';
 
+type TabItem = {
+  label: string;
+  count?: number;
+};
+
 type TabsProps = {
-  tabs: string[];
+  tabs: TabItem[];
   selected: string;
   onChange: (tab: string) => void;
 };
@@ -10,19 +15,29 @@ type TabsProps = {
 const Tabs: React.FC<TabsProps> = ({ tabs, selected, onChange }) => {
   return (
     <div className='bg-searchbar inline-flex items-center gap-2.5 rounded-full p-1'>
-      {tabs.map((tab) => {
-        const isActive = tab === selected;
+      {tabs.map(({ label, count }) => {
+        const isActive = label === selected;
 
         return (
           <button
-            key={tab}
-            onClick={() => onChange(tab)}
+            key={label}
+            onClick={() => onChange(label)}
             className={clsx(
-              'text-h4_sb cursor-pointer rounded-full px-4 py-2 whitespace-nowrap transition-all duration-200',
+              'text-h4_sb flex cursor-pointer items-center gap-1 rounded-full px-4 py-2 whitespace-nowrap transition-all duration-200',
               isActive ? 'text-primary bg-white shadow-sm' : 'text-unselected',
             )}
           >
-            {tab}
+            <span>{label}</span>
+            {typeof count === 'number' && (
+              <span
+                className={clsx(
+                  'ml-1 flex h-6 w-6 items-center justify-center rounded-full text-xs font-medium',
+                  isActive ? 'bg-primary/10 text-primary' : 'bg-gray-200 text-gray-500',
+                )}
+              >
+                {count}
+              </span>
+            )}
           </button>
         );
       })}
