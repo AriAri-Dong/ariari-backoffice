@@ -1,60 +1,46 @@
-import { useState } from 'react';
-import BluePenBtn from '../../components/button/iconBtn/bluePenBtn';
-import PaginatedTable from '../../components/paginatedTable';
+import { useSearchParams } from 'react-router';
 import Tabs from '../../components/tabs';
-import { OPERATION_DATA } from '../../data/operation';
-import type { Column } from '../../types/table';
 
-type RowType = {
-  id: number;
-  date: string;
-  title: string;
-  author: string;
-};
+import TermsEdit from './termsEdit';
+import FaqEdit from './FaqEdit';
+import NoticeEdit from './NoticeEdit';
+import NotificationSend from './notificationSend';
 
-const columns: Column<RowType>[] = [
-  { key: 'id', title: '번호', width: '10%', align: 'center' },
-  { key: 'date', title: '수정일', width: '20%', align: 'left' },
-  { key: 'title', title: '약관명칭', width: '40%', align: 'left', className: 'text-black' },
-  { key: 'author', title: '수정자', width: '20%', align: 'right' },
-  {
-    key: 'edit',
-    title: '',
-    width: '20%',
-    align: 'center',
-    render: () => (
-      <BluePenBtn
-        onClick={() => {
-          alert('수정');
-        }}
-      />
-    ),
-  },
-];
+// 탭 목록
+const TABS = [
+  { label: '약관수정', key: 'terms' },
+  { label: '공지수정', key: 'notice' },
+  { label: 'FAQ수정', key: 'faq' },
+  { label: '알림전송', key: 'notification' },
+] as const;
 
 export default function OperationPage() {
-  const [selectedTab, setSelectedTab] = useState<string>('약관수정');
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  // 쿼리에서 탭 추출
+  const tabKey = searchParams.get('tab');
+
+  const tab = TABS.find((t) => t.key === tabKey) ?? TABS[0];
+
+  // 탭 클릭 시 쿼리 갱신
+  const handleTabChange = (label: string) => {
+    const found = TABS.find((t) => t.label === label);
+    if (found) setSearchParams({ tab: found.key });
+  };
 
   return (
     <div className='w-full'>
       <Tabs
-        tabs={[
-          { label: '약관수정' },
-          { label: '공지수정' },
-          { label: 'FAQ수정' },
-          { label: '알림전송' },
-        ]}
-        selected={selectedTab}
-        onChange={setSelectedTab}
+        tabs={TABS.map(({ label }) => ({ label }))}
+        selected={tab.label}
+        onChange={handleTabChange}
       />
 
       <div className='mt-6'>
-        <PaginatedTable
-          columns={columns}
-          data={OPERATION_DATA}
-          pageSize={10}
-          rowKey='id'
-        />
+        {tab.key === 'terms' && <TermsEdit />}
+        {tab.key === 'notice' && <NoticeEdit />}
+        {tab.key === 'faq' && <FaqEdit />}
+        {tab.key === 'notification' && <NotificationSend />}
       </div>
     </div>
   );
