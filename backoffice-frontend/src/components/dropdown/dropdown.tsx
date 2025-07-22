@@ -53,7 +53,7 @@ const Dropdown = ({
     <div className='relative inline-block'>
       {/* 드롭다운 버튼 */}
       <div
-        className={`flex cursor-pointer items-center justify-between gap-3 rounded-full border py-2.5 pr-[14px] pl-5 ${
+        className={`flex items-center justify-between gap-2 rounded-full border py-2.5 pr-[14px] pl-5 whitespace-nowrap ${
           selected
             ? `bg-selectedoption_default border-selectedoption_border hover:bg-selectedoption_hover focus:bg-selectedoption_pressed`
             : `border-menuborder hover:bg-hover focus:bg-pressed bg-white`
@@ -66,7 +66,7 @@ const Dropdown = ({
         <img
           src={VectorIcon}
           alt='화살표'
-          className='h-6 w-6'
+          className='h-6 w-6 shrink-0'
         />
       </div>
 
