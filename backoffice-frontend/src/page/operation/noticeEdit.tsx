@@ -6,7 +6,7 @@ import RefreshBtn from '../../components/button/iconBtn/refreshBtn';
 import Calendar from '../../components/calendar';
 import Dropdown from '../../components/dropdown/dropdown';
 import PaginatedTable from '../../components/paginatedTable';
-import Searchbar from '../../components/searchBar';
+import Searchbar from '../../components/searchbar';
 import type { Column } from '../../types/table';
 
 type RowType = {
