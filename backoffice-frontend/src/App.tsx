@@ -1,6 +1,7 @@
 import LeftMenu from './components/layout/leftMenu';
 import { BrowserRouter, Route, Routes } from 'react-router';
 import OperationPage from './page/operation/operationPage';
+import CrudPage from './page/crud/crudPage';
 
 function App() {
   return (
@@ -28,7 +29,7 @@ function App() {
               />
               <Route
                 path='/crud'
-                element={<div>CRUD</div>}
+                element={<CrudPage />}
               />
             </Routes>
           </div>
