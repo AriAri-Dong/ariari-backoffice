@@ -8,7 +8,7 @@ type SearchbarProps = {
 
 const Searchbar = ({ value, placeholder = '검색어를 입력하세요', onChange }: SearchbarProps) => {
   return (
-    <div className='relative inline-block'>
+    <div className='relative inline-block w-full'>
       <div className='bg-background border-menuborder flex items-center gap-3 rounded-full border py-2.5 pr-[14px] pl-5'>
         <img
           src={SearchIcon}
