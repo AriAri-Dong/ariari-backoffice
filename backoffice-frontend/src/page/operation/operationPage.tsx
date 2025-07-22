@@ -2,8 +2,8 @@ import { useSearchParams } from 'react-router';
 import Tabs from '../../components/tabs';
 
 import TermsEdit from './termsEdit';
-import FaqEdit from './FaqEdit';
-import NoticeEdit from './NoticeEdit';
+import FaqEdit from './faqEdit';
+import NoticeEdit from './noticeEdit';
 import NotificationSend from './notificationSend';
 
 // 탭 목록
