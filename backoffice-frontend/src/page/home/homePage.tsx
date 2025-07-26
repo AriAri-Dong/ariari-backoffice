@@ -5,8 +5,8 @@ import ActionCompelete from './actionCompelete';
 
 // 탭 목록
 const TABS = [
-  { label: '조치필요', key: 'required' },
-  { label: '조치완료', key: 'compelete' },
+  { label: '조치필요', key: 'required', count: 14 },
+  { label: '조치완료', key: 'compelete', count: 12 },
 ] as const;
 
 export default function HomePage() {
@@ -26,7 +26,7 @@ export default function HomePage() {
   return (
     <div className='w-full'>
       <Tabs
-        tabs={TABS.map(({ label }) => ({ label }))}
+        tabs={TABS.map(({ label, count }) => ({ label, count }))}
         selected={tab.label}
         onChange={handleTabChange}
       />
