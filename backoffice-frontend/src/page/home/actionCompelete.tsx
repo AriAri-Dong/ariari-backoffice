@@ -1,6 +1,5 @@
 const ActionCompelete = () => {
-  return;
-  <></>;
+  return <></>;
 };
 
 export default ActionCompelete;
