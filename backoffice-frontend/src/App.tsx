@@ -1,5 +1,7 @@
 import LeftMenu from './components/layout/leftMenu';
 import { BrowserRouter, Route, Routes } from 'react-router';
+import OperationPage from './page/operation/operationPage';
+import CrudPage from './page/crud/crudPage';
 
 function App() {
   return (
@@ -7,7 +9,7 @@ function App() {
       <div className='flex h-screen'>
         <LeftMenu />
         <div className='bg-sub_bg flex-1 overflow-y-auto pt-20 pb-[100px]'>
-          <div className='mx-auto max-w-[1020px]'>
+          <div className='mx-auto max-w-[1200px]'>
             <Routes>
               <Route
                 path='/'
@@ -15,7 +17,7 @@ function App() {
               />
               <Route
                 path='/operate'
-                element={<div>운영</div>}
+                element={<OperationPage />}
               />
               <Route
                 path='/report'
@@ -27,7 +29,7 @@ function App() {
               />
               <Route
                 path='/crud'
-                element={<div>CRUD</div>}
+                element={<CrudPage />}
               />
             </Routes>
           </div>
