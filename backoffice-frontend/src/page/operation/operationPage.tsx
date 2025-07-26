@@ -36,7 +36,7 @@ export default function OperationPage() {
         onChange={handleTabChange}
       />
 
-      <div className='mt-6'>
+      <div className='mt-6 min-h-[600px]'>
         {tab.key === 'terms' && <TermsEdit />}
         {tab.key === 'notice' && <NoticeEdit />}
         {tab.key === 'faq' && <FaqEdit />}

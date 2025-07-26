@@ -59,7 +59,7 @@ export default function NoticeEdit() {
     <div className='relative'>
       {/* 상단 필터 바 */}
       <div className='mb-5 flex items-center justify-between'>
-        <div className='flex gap-3'>
+        <div className='flex w-[60%] gap-3'>
           <Dropdown
             placeholder='검색 필터'
             options={[
