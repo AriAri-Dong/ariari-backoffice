@@ -32,7 +32,7 @@ const Tabs: React.FC<TabsProps> = ({ tabs, selected, onChange }) => {
               <span
                 className={clsx(
                   'ml-1 flex h-6 w-6 items-center justify-center rounded-full text-[10px] font-medium',
-                  isActive ? 'bg-selectedoption_default text-primary' : 'text-token_bg bg-gray-200',
+                  isActive ? 'bg-selectedoption_default text-primary' : 'text-subtext2 bg-token_bg',
                 )}
               >
                 {count}

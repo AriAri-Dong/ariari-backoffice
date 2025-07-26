@@ -1,20 +1,15 @@
 import { useSearchParams } from 'react-router';
 import Tabs from '../../components/tabs';
-
-import TermsEdit from './termsEdit';
-import FaqEdit from './faqEdit';
-import NoticeEdit from './noticeEdit';
-import NotificationSend from './notificationSend';
+import ActionRequired from './actionRequired';
+import ActionCompelete from './actionCompelete';
 
 // 탭 목록
 const TABS = [
-  { label: '약관수정', key: 'terms' },
-  { label: '공지수정', key: 'notice' },
-  { label: 'FAQ수정', key: 'faq' },
-  { label: '알림전송', key: 'notification' },
+  { label: '조치필요', key: 'required', count: 14 },
+  { label: '조치완료', key: 'compelete', count: 12 },
 ] as const;
 
-export default function OperationPage() {
+export default function HomePage() {
   const [searchParams, setSearchParams] = useSearchParams();
 
   // 쿼리에서 탭 추출
@@ -31,16 +26,15 @@ export default function OperationPage() {
   return (
     <div className='w-full'>
       <Tabs
-        tabs={TABS.map(({ label }) => ({ label }))}
+        tabs={TABS.map(({ label, count }) => ({ label, count }))}
         selected={tab.label}
         onChange={handleTabChange}
       />
 
-      <div className='mt-6 min-h-[600px]'>
-        {tab.key === 'terms' && <TermsEdit />}
-        {tab.key === 'notice' && <NoticeEdit />}
-        {tab.key === 'faq' && <FaqEdit />}
-        {tab.key === 'notification' && <NotificationSend />}
+      <div className='mt-6'>
+        {/* <div className='mt-6 min-h-[600px]'> */}
+        {tab.key === 'required' && <ActionRequired />}
+        {tab.key === 'compelete' && <ActionCompelete />}
       </div>
     </div>
   );

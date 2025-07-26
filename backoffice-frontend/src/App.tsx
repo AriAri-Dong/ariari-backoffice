@@ -2,6 +2,7 @@ import LeftMenu from './components/layout/leftMenu';
 import { BrowserRouter, Route, Routes } from 'react-router';
 import OperationPage from './page/operation/operationPage';
 import CrudPage from './page/crud/crudPage';
+import HomePage from './page/home/homePage';
 
 function App() {
   return (
@@ -13,7 +14,7 @@ function App() {
             <Routes>
               <Route
                 path='/'
-                element={<div>홈</div>}
+                element={<HomePage />}
               />
               <Route
                 path='/operate'
