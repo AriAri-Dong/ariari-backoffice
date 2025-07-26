@@ -43,8 +43,9 @@ export default function ActionRequired() {
         <Dropdown
           placeholder='신고 위치'
           options={[
-            { label: '활동후기', value: '' },
-            { label: '활동내역', value: '' },
+            { label: '전체', value: 'all' },
+            { label: '활동후기', value: 'review' },
+            { label: '활동내역', value: 'history' },
           ]}
           value={category}
           onChange={(option) => {

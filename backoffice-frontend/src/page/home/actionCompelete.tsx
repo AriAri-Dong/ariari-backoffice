@@ -85,7 +85,7 @@ export default function ActionCompelete() {
           <Dropdown
             placeholder='신고위치'
             options={[
-              { label: '전체', value: '' },
+              { label: '전체', value: 'all' },
               { label: '활동후기', value: 'review' },
               { label: '활동내역', value: 'history' },
             ]}
