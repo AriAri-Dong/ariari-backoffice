@@ -47,11 +47,15 @@ export default function NoticeEdit() {
   const [search, setSearch] = useState<string>('');
   const [searchFilter, setSearchFilter] = useState<string>(''); // 'title' or 'author' 나중에 수정해야함
   const [postStatus, setPostStatus] = useState<string>(''); // 'all' | 'active' | 'inactive'
+  const [startDate, setStartDate] = useState<Date | null>(null);
+  const [endDate, setEndDate] = useState<Date | null>(null);
 
   const handleRefresh = () => {
     setSearch('');
     setSearchFilter('');
     setPostStatus('');
+    setStartDate(null);
+    setEndDate(null);
     console.log('설정 초기화됨');
   };
 
@@ -82,7 +86,15 @@ export default function NoticeEdit() {
 
         <div className='flex gap-3'>
           <RefreshBtn onClick={handleRefresh} />
-          <Calendar />
+          <Calendar
+            startDate={startDate}
+            endDate={endDate}
+            onChange={([start, end]) => {
+              setStartDate(start);
+              setEndDate(end);
+              console.log('선택된 기간:', start, end);
+            }}
+          />
           <Dropdown
             placeholder='게시유무'
             options={[
@@ -107,8 +119,8 @@ export default function NoticeEdit() {
         rowKey='id'
       />
 
-      {/* 작성 버튼 (고정 위치) */}
-      <div className='fixed right-10 bottom-10 z-50'>
+      {/* 작성 버튼 */}
+      <div className='fixed right-10 bottom-10 z-40'>
         <PenBtn onClick={() => alert('작성 버튼 클릭됨')} />
       </div>
     </div>
