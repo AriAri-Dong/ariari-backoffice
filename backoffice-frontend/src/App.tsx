@@ -3,8 +3,8 @@ import { BrowserRouter, Route, Routes } from 'react-router';
 // COMPONENTS
 import LeftMenu from './components/layout/leftMenu';
 import OperationPage from './page/operation/operationPage';
+import ReportPage from './page/report/reportPage';
 import CrudPage from './page/crud/crudPage';
-import HomePage from './page/home/homePage';
 
 // CSS
 import 'react-datepicker/dist/react-datepicker.css';
@@ -19,7 +19,7 @@ function App() {
             <Routes>
               <Route
                 path='/'
-                element={<HomePage />}
+                element={<div>홈</div>}
               />
               <Route
                 path='/operate'
@@ -27,7 +27,7 @@ function App() {
               />
               <Route
                 path='/report'
-                element={<div>신고</div>}
+                element={<ReportPage />}
               />
               <Route
                 path='/data'
