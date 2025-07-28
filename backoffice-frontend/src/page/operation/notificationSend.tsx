@@ -1,6 +1,9 @@
+import { useState } from 'react';
+
 import PaginatedTable from '../../components/paginatedTable';
 import type { Column } from '../../types/table';
 import PenBtn from '../../components/button/iconBtn/penBtn';
+import AlertModal from '../../components/modal/alertModal';
 
 type RowType = {
   id: string;
@@ -27,6 +30,8 @@ const data: RowType[] = Array.from({ length: 25 }).map((_, i) => ({
 }));
 
 export default function NotificationSend() {
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+
   return (
     <div className='relative'>
       {/* 테이블 */}
@@ -39,8 +44,18 @@ export default function NotificationSend() {
 
       {/* 작성하기 버튼 */}
       <div className='fixed right-40 bottom-16 z-40 lg:right-60 lg:bottom-28'>
-        <PenBtn onClick={() => alert('작성 버튼 클릭됨')} />
+        <PenBtn
+          onClick={() => {
+            setIsModalOpen(true);
+          }}
+        />
       </div>
+      <AlertModal
+        visible={isModalOpen}
+        onClose={() => {
+          setIsModalOpen(false);
+        }}
+      />
     </div>
   );
 }
