@@ -8,6 +8,7 @@ import Dropdown from '../../components/dropdown/dropdown';
 import PaginatedTable from '../../components/paginatedTable';
 import Searchbar from '../../components/searchbar';
 import type { Column } from '../../types/table';
+import AnnouncementModal from '../../components/modal/announcementModal';
 
 type RowType = {
   id: string;
@@ -49,6 +50,7 @@ export default function NoticeEdit() {
   const [postStatus, setPostStatus] = useState<string>(''); // 'all' | 'active' | 'inactive'
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   const handleRefresh = () => {
     setSearch('');
@@ -120,9 +122,19 @@ export default function NoticeEdit() {
       />
 
       {/* 작성 버튼 */}
-      <div className='fixed right-10 bottom-10 z-40'>
-        <PenBtn onClick={() => alert('작성 버튼 클릭됨')} />
+      <div className='fixed right-40 bottom-16 z-40 lg:right-60 lg:bottom-28'>
+        <PenBtn
+          onClick={() => {
+            setIsModalOpen(true);
+          }}
+        />
       </div>
+      <AnnouncementModal
+        visible={isModalOpen}
+        onClose={() => {
+          setIsModalOpen(false);
+        }}
+      />
     </div>
   );
 }
