@@ -1,8 +1,13 @@
-import LeftMenu from './components/layout/leftMenu';
 import { BrowserRouter, Route, Routes } from 'react-router';
+
+// COMPONENTS
+import LeftMenu from './components/layout/leftMenu';
 import OperationPage from './page/operation/operationPage';
 import CrudPage from './page/crud/crudPage';
 import HomePage from './page/home/homePage';
+
+// CSS
+import 'react-datepicker/dist/react-datepicker.css';
 
 function App() {
   return (
