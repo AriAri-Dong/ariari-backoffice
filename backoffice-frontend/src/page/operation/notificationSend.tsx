@@ -37,8 +37,8 @@ export default function NotificationSend() {
         rowKey='id'
       />
 
-      {/* 작성하기 버튼 - 오른쪽 아래 고정 */}
-      <div className='fixed right-40 bottom-16 z-50 lg:right-60 lg:bottom-28'>
+      {/* 작성하기 버튼 */}
+      <div className='fixed right-40 bottom-16 z-40 lg:right-60 lg:bottom-28'>
         <PenBtn onClick={() => alert('작성 버튼 클릭됨')} />
       </div>
     </div>
