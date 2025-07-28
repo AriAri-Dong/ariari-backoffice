@@ -2,6 +2,7 @@ import { BrowserRouter, Route, Routes } from 'react-router';
 
 // COMPONENTS
 import LeftMenu from './components/layout/leftMenu';
+import HomePage from './page/home/homePage';
 import OperationPage from './page/operation/operationPage';
 import ReportPage from './page/report/reportPage';
 import CrudPage from './page/crud/crudPage';
@@ -19,7 +20,7 @@ function App() {
             <Routes>
               <Route
                 path='/'
-                element={<div>홈</div>}
+                element={<HomePage />}
               />
               <Route
                 path='/operate'
