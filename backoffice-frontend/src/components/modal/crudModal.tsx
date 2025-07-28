@@ -19,8 +19,15 @@ const CurdModal = ({ visible, title, subtitle, data, onClose, onReset }: CurdMod
   if (!visible) return null;
 
   return (
-    <div className='bg-black_50 fixed inset-0 z-40 flex items-center justify-center transition-opacity duration-500'>
-      <div className='flex w-[760px] flex-col gap-3'>
+    <div className='bg-black_50 fixed inset-0 z-40 flex items-center transition-opacity duration-500'>
+      <div
+        className='flex w-[760px] flex-col gap-3'
+        style={{
+          position: 'absolute',
+          left: 'calc(50% + 140px)',
+          transform: 'translateX(-50%)',
+        }}
+      >
         {/* Title */}
         <div className='bg-background flex items-center justify-between rounded-full px-5 py-3'>
           <h1 className='text-text1 text-h3'>
