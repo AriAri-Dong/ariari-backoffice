@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import VectorIcon from '../../assets/icons/mini_vector.svg';
 
 type Option = {
@@ -21,9 +21,9 @@ const Dropdown = ({
   value,
   onChange,
 }: DropdownProps) => {
-  // 선택된 값을 상태로 관리
   const [selected, setSelected] = useState<Option | null>(null);
   const [open, setOpen] = useState<boolean>(false);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   // 필수 선택일 경우 첫 번째 옵션 자동 선택
   useEffect(() => {
@@ -41,6 +41,18 @@ const Dropdown = ({
     }
   }, [value, options]);
 
+  // 외부 클릭 시 드롭다운 닫기
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   const toggleDropdown = () => setOpen((prev) => !prev);
 
   const handleSelect = (option: Option) => {
@@ -50,10 +62,13 @@ const Dropdown = ({
   };
 
   return (
-    <div className='relative inline-block'>
+    <div
+      className='relative inline-block'
+      ref={containerRef}
+    >
       {/* 드롭다운 버튼 */}
       <div
-        className={`flex items-center justify-between gap-2 rounded-full border py-2.5 pr-[14px] pl-5 whitespace-nowrap ${
+        className={`flex cursor-pointer items-center justify-between gap-2 rounded-full border py-2.5 pr-[14px] pl-5 whitespace-nowrap ${
           selected
             ? `bg-selectedoption_default border-selectedoption_border hover:bg-selectedoption_hover focus:bg-selectedoption_pressed`
             : `border-menuborder hover:bg-hover focus:bg-pressed bg-white`
@@ -76,10 +91,10 @@ const Dropdown = ({
           {options.map((option, index) => (
             <li
               key={option.value}
-              className={`cursor-pointer px-4 py-2.5 text-center ${index === 0 ? 'rounded-t-lg' : ''} ${index === option.label.length - 1 ? 'rounded-b-lg' : ''} ${index !== 0 ? 'border-menuborder border-t' : ''} ${
-                selected === option
-                  ? `border-primary bg-selectedoption_default text-primary border`
-                  : `hover:bg-hover text-subtext1`
+              className={`cursor-pointer px-4 py-2.5 text-center ${index === 0 ? 'rounded-t-lg' : ''} ${index === options.length - 1 ? 'rounded-b-lg' : ''} ${index !== 0 ? 'border-menuborder border-t' : ''} ${
+                selected?.value === option.value
+                  ? 'bg-selectedoption_default text-primary border-primary border'
+                  : 'hover:bg-hover text-subtext1'
               }`}
               onClick={() => handleSelect(option)}
             >
