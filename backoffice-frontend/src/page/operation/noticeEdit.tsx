@@ -10,6 +10,7 @@ import Searchbar from '../../components/searchbar';
 import type { Column } from '../../types/table';
 import AnnouncementModal from '../../components/modal/announcementModal';
 
+// 테이블용 데이터 타입
 type RowType = {
   id: string;
   date: string;
@@ -19,38 +20,71 @@ type RowType = {
   views: string;
 };
 
-const columns: Column<RowType>[] = [
-  { key: 'id', title: '번호', width: '10%', align: 'center' },
-  { key: 'date', title: '신고날짜', width: '15%', align: 'left' },
-  { key: 'title', title: '제목', width: '30%', align: 'left', className: 'text-black' },
-  { key: 'status', title: '게시유무', width: '10%', align: 'center' },
-  { key: 'author', title: '작성자', width: '15%', align: 'center' },
-  { key: 'views', title: '조회수', width: '10%', align: 'center' },
-  {
-    key: 'edit',
-    title: '',
-    width: '10%',
-    align: 'center',
-    render: () => <BluePenBtn onClick={() => alert('수정')} />,
-  },
-];
+// 모달용 데이터 타입
+type AnnouncementModalData = {
+  title: string;
+  popupEnabled: boolean;
+  popupOption: boolean;
+  dateRange: [Date | null, Date | null];
+  description: string;
+  images: File[];
+  postStatus: 'posted' | 'unposted';
+};
 
+// 변환 함수: RowType → AnnouncementModalData
+const convertToModalData = (row: RowType): AnnouncementModalData => ({
+  title: row.title,
+  popupEnabled: false,
+  popupOption: false,
+  dateRange: [null, null],
+  description: '',
+  images: [],
+  postStatus: row.status === '게시중' ? 'posted' : 'unposted',
+});
+
+// 더미 데이터
 const data: RowType[] = Array.from({ length: 34 }).map((_, idx) => ({
   id: (idx + 1).toString().padStart(4, '0'),
   date: '2024.03.09',
-  title: '공지사항 제목',
+  title: `공지사항 제목 ${idx + 1}`,
   status: '게시중',
   author: '작성자',
-  views: 'nnnnn',
+  views: '123',
 }));
 
 export default function NoticeEdit() {
   const [search, setSearch] = useState<string>('');
-  const [searchFilter, setSearchFilter] = useState<string>(''); // 'title' or 'author' 나중에 수정해야함
-  const [postStatus, setPostStatus] = useState<string>(''); // 'all' | 'active' | 'inactive'
+  const [searchFilter, setSearchFilter] = useState<string>('');
+  const [postStatus, setPostStatus] = useState<string>('');
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
+
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState<boolean>(false);
+  const [selectedRowData, setSelectedRowData] = useState<RowType | null>(null);
+
+  const columns: Column<RowType>[] = [
+    { key: 'id', title: '번호', width: '10%', align: 'center' },
+    { key: 'date', title: '신고날짜', width: '15%', align: 'left' },
+    { key: 'title', title: '제목', width: '30%', align: 'left', className: 'text-black' },
+    { key: 'status', title: '게시유무', width: '10%', align: 'center' },
+    { key: 'author', title: '작성자', width: '15%', align: 'center' },
+    { key: 'views', title: '조회수', width: '10%', align: 'center' },
+    {
+      key: 'edit',
+      title: '',
+      width: '10%',
+      align: 'center',
+      render: (_, row) => (
+        <BluePenBtn
+          onClick={() => {
+            setSelectedRowData(row);
+            setIsEditModalOpen(true);
+          }}
+        />
+      ),
+    },
+  ];
 
   const handleRefresh = () => {
     setSearch('');
@@ -58,7 +92,6 @@ export default function NoticeEdit() {
     setPostStatus('');
     setStartDate(null);
     setEndDate(null);
-    console.log('설정 초기화됨');
   };
 
   return (
@@ -73,12 +106,8 @@ export default function NoticeEdit() {
               { label: '작성자', value: 'author' },
             ]}
             value={searchFilter}
-            onChange={(option) => {
-              setSearchFilter(option.value);
-              console.log('검색 필터:', option.value);
-            }}
+            onChange={(option) => setSearchFilter(option.value)}
           />
-
           <Searchbar
             value={search}
             onChange={setSearch}
@@ -94,7 +123,6 @@ export default function NoticeEdit() {
             onChange={([start, end]) => {
               setStartDate(start);
               setEndDate(end);
-              console.log('선택된 기간:', start, end);
             }}
           />
           <Dropdown
@@ -105,10 +133,7 @@ export default function NoticeEdit() {
               { label: '비게시', value: 'inactive' },
             ]}
             value={postStatus}
-            onChange={(option) => {
-              setPostStatus(option.value);
-              console.log('게시유무:', option.value);
-            }}
+            onChange={(option) => setPostStatus(option.value)}
           />
         </div>
       </div>
@@ -121,19 +146,27 @@ export default function NoticeEdit() {
         rowKey='id'
       />
 
-      {/* 작성 버튼 */}
+      {/* 작성하기 버튼 */}
       <div className='fixed right-40 bottom-16 z-40 lg:right-60 lg:bottom-28'>
-        <PenBtn
-          onClick={() => {
-            setIsModalOpen(true);
-          }}
-        />
+        <PenBtn onClick={() => setIsModalOpen(true)} />
       </div>
+
+      {/* 작성 모달 */}
       <AnnouncementModal
         visible={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        mode='create'
+      />
+
+      {/* 수정 모달 */}
+      <AnnouncementModal
+        visible={isEditModalOpen}
         onClose={() => {
-          setIsModalOpen(false);
+          setIsEditModalOpen(false);
+          setSelectedRowData(null);
         }}
+        mode='edit'
+        initialData={selectedRowData ? convertToModalData(selectedRowData) : undefined}
       />
     </div>
   );
