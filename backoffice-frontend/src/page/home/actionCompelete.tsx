@@ -26,8 +26,12 @@ const columns: Column<RowType>[] = [
     title: '처리',
     width: '20%',
     align: 'center',
-    render: () => (
-      <button>
+    render: () => ( 
+      <button
+        onClick={() => {
+          console.log('삭제 완료');
+        }}
+      >
         <p className='text-token_1 bg-token_1_bg px-2.5 py-1'>삭제완료</p>
       </button>
     ),
@@ -46,11 +50,15 @@ export default function ActionCompelete() {
   const [search, setSearch] = useState<string>('');
   const [searchFilter, setSearchFilter] = useState<string>('');
   const [postStatus, setPostStatus] = useState<string>('');
+  const [startDate, setStartDate] = useState<Date | null>(null);
+  const [endDate, setEndDate] = useState<Date | null>(null);
 
   const handleRefresh = () => {
     setSearch('');
     setSearchFilter('');
     setPostStatus('');
+    setStartDate(null);
+    setEndDate(null);
     console.log('설정 초기화됨');
   };
 
@@ -81,7 +89,15 @@ export default function ActionCompelete() {
 
         <div className='flex gap-3'>
           <RefreshBtn onClick={handleRefresh} />
-          <Calendar />
+          <Calendar
+            startDate={startDate}
+            endDate={endDate}
+            onChange={([start, end]) => {
+              setStartDate(start);
+              setEndDate(end);
+              console.log('선택된 기간:', start, end);
+            }}
+          />
           <Dropdown
             placeholder='신고위치'
             options={[

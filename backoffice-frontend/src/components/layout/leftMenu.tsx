@@ -1,3 +1,8 @@
+import { useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router';
+
+import AlertWithMessage from '../alert/alertWithMessage';
+
 import logo from '../../assets/icons/logo.svg';
 import home from '../../assets/icons/layout/home.svg';
 import homeActive from '../../assets/icons/layout/home_active.svg';
@@ -8,9 +13,6 @@ import data from '../../assets/icons/layout/data.svg';
 import crud from '../../assets/icons/layout/crud.svg';
 import logout from '../../assets/icons/logout.svg';
 import admin from '../../assets/icons/profile_default.svg';
-import { Link, useLocation, useNavigate } from 'react-router';
-import { useState } from 'react';
-import AlertWithMessage from '../alert/alertWithMessage';
 
 const menuItems = [
   { path: '/', label: '홈', icon: home, activeIcon: homeActive },
@@ -34,7 +36,7 @@ const LeftMenu = () => {
   };
 
   return (
-    <aside className='border-menuborder flex h-screen w-[280px] flex-col justify-between border-r bg-white p-6'>
+    <aside className='border-menuborder z-50 flex h-screen w-[280px] flex-col justify-between border-r bg-white p-6'>
       <div>
         <Link to={'/'}>
           <img

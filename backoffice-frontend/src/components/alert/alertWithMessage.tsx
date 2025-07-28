@@ -27,7 +27,7 @@ const AlertWithMessage = ({
   onRightBtnClick = () => {},
 }: AlertProps) => {
   return (
-    <div className='bg-black_50 fixed inset-0 z-50 flex items-center justify-center transition-opacity duration-500'>
+    <div className='bg-black_50 fixed inset-0 z-40 flex items-center justify-center transition-opacity duration-500'>
       <div className='shadow-default flex w-[300px] flex-col gap-4 rounded-xl bg-white px-3 py-4 md:w-[320px] md:px-4'>
         <div className='flex flex-col gap-2 md:gap-3'>
           <h1 className='text-mobile_body1_sb text-text1 md:text-body1_sb'>{text}</h1>

@@ -1,5 +1,4 @@
 import { useState } from 'react';
-
 import Dropdown from '../../components/dropdown/dropdown';
 import PaginatedTable from '../../components/paginatedTable';
 import Searchbar from '../../components/searchbar';
@@ -7,35 +6,62 @@ import type { Column } from '../../types/table';
 import RedDeleteBtn from '../../components/button/iconBtn/redDeleteBtn';
 import SmallBtn from '../../components/button/basicBtn/smallBtn';
 import NoData from '../../assets/icons/noData.svg';
+import CurdModal from '../../components/modal/crudModal';
 
 type RowType = {
   id: string;
 };
-
-const columns: Column<RowType>[] = [
-  { key: 'id', title: 'ID', width: '90%', align: 'left' },
-  {
-    key: 'edit',
-    title: '',
-    align: 'right',
-    render: () => <RedDeleteBtn onClick={() => alert('삭제')} />,
-  },
-];
 
 const data: RowType[] = Array.from({ length: 34 }).map((_, idx) => ({
   id: (idx + 1).toString().padStart(4, '0'),
 }));
 
 export default function CrudPage() {
-  const [search, setSearch] = useState<string>('');
-  const [searchFilter, setSearchFilter] = useState<string>('');
-  const [table, setTable] = useState<string>('');
+  const [search, setSearch] = useState('');
+  const [searchFilter, setSearchFilter] = useState('');
+  const [table, setTable] = useState('');
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalData, setModalData] = useState<{ field: string; value: string }[]>([]);
 
-  // 간단히 id 기준 검색
   const filteredData = data.filter((row) => {
     if (!search) return true;
     return row.id.includes(search);
   });
+
+  const columns: Column<RowType>[] = [
+    {
+      key: 'id',
+      title: 'ID',
+      width: '90%',
+      align: 'left',
+      render: (value) => (
+        <button
+          className='cursor-pointer hover:underline'
+          onClick={() => {
+            setModalData([
+              { field: 'Field 1', value: value },
+              { field: 'Field 2', value: value },
+              { field: 'Field 3', value: value },
+              { field: 'Field 4', value: value },
+              { field: 'Field 5', value: value },
+              { field: 'Field 6', value: value },
+              { field: 'Field 7', value: value },
+              { field: 'Field 8', value: value },
+            ]);
+            setModalOpen(true);
+          }}
+        >
+          {value}
+        </button>
+      ),
+    },
+    {
+      key: 'edit',
+      title: '',
+      align: 'right',
+      render: () => <RedDeleteBtn onClick={() => alert('삭제')} />,
+    },
+  ];
 
   return (
     <div className='relative'>
@@ -50,9 +76,7 @@ export default function CrudPage() {
             { label: 'DELETE', value: 'delete' },
           ]}
           value={table}
-          onChange={(option) => {
-            setTable(option.value);
-          }}
+          onChange={(option) => setTable(option.value)}
         />
         <Dropdown
           placeholder='검색 필터'
@@ -61,10 +85,7 @@ export default function CrudPage() {
             { label: '작성자', value: 'author' },
           ]}
           value={searchFilter}
-          onChange={(option) => {
-            setSearchFilter(option.value);
-            console.log('검색 필터:', option.value);
-          }}
+          onChange={(option) => setSearchFilter(option.value)}
         />
         <Searchbar
           value={search}
@@ -96,6 +117,18 @@ export default function CrudPage() {
           rowKey='id'
         />
       )}
+
+      {/* 모달 */}
+      <CurdModal
+        visible={modalOpen}
+        title='Title'
+        subtitle='Table : Text'
+        data={modalData}
+        onClose={() => setModalOpen(false)}
+        onReset={() => {
+          console.log('초기화');
+        }}
+      />
     </div>
   );
 }
