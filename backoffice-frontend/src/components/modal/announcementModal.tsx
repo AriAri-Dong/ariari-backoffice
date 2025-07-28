@@ -10,21 +10,39 @@ import CustomInput from '../input/customInput';
 import CustomTextArea from '../textArea/customTextArea';
 import Alert from '../alert/alert';
 
+type AnnouncementModalData = {
+  title: string;
+  popupEnabled: boolean;
+  popupOption: boolean;
+  dateRange: [Date | null, Date | null];
+  description: string;
+  images: File[];
+  postStatus: 'posted' | 'unposted';
+};
+
 type AnnouncementModalProps = {
   visible: boolean;
   onClose: () => void;
+  mode: 'create' | 'edit';
+  initialData?: AnnouncementModalData;
 };
 
-const AnnouncementModal = ({ visible, onClose }: AnnouncementModalProps) => {
+const AnnouncementModal = ({ visible, onClose, mode, initialData }: AnnouncementModalProps) => {
   if (!visible) return null;
 
-  const [title, setTitle] = useState<string>('');
-  const [popupEnabled, setPopupEnabled] = useState<boolean>(false);
-  const [popupOption, setPopupOption] = useState<boolean>(false);
-  const [dateRange, setDateRange] = useState<[Date | null, Date | null]>([null, null]);
-  const [description, setDescription] = useState<string>('');
-  const [images, setImages] = useState<File[]>([]);
-  const [postStatus, setPostStatus] = useState<'posted' | 'unposted'>('posted');
+  const isEditMode = mode === 'edit';
+
+  const [title, setTitle] = useState<string>(initialData?.title || '');
+  const [popupEnabled, setPopupEnabled] = useState<boolean>(initialData?.popupEnabled || false);
+  const [popupOption, setPopupOption] = useState<boolean>(initialData?.popupOption || false);
+  const [dateRange, setDateRange] = useState<[Date | null, Date | null]>(
+    initialData?.dateRange || [null, null],
+  );
+  const [description, setDescription] = useState<string>(initialData?.description || '');
+  const [images, setImages] = useState<File[]>(initialData?.images || []);
+  const [postStatus, setPostStatus] = useState<'posted' | 'unposted'>(
+    initialData?.postStatus || 'posted',
+  );
   const [alertMessage, setAlertMessage] = useState<string | null>(null);
 
   const handleImageAdd = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -89,7 +107,9 @@ const AnnouncementModal = ({ visible, onClose }: AnnouncementModalProps) => {
       >
         {/* 헤더 */}
         <div className='border-menuborder mb-5 flex items-center justify-between border-b pb-5'>
-          <h1 className='text-text1 text-h1_contents_title'>공지사항 작성하기</h1>
+          <h1 className='text-text1 text-h1_contents_title'>
+            {isEditMode ? '공지사항 수정하기' : '공지사항 작성하기'}
+          </h1>
           <img
             src={closeIcon}
             alt='닫기'
@@ -186,6 +206,7 @@ const AnnouncementModal = ({ visible, onClose }: AnnouncementModalProps) => {
                 </div>
               </div>
             </div>
+
             {/* 상세 */}
             <div className='flex flex-col gap-[18px]'>
               <h3 className='text-text1 text-h3'>
@@ -218,7 +239,7 @@ const AnnouncementModal = ({ visible, onClose }: AnnouncementModalProps) => {
           <div className='flex items-center gap-8'>
             <p className='text-unselected text-h4'>{description.length}/300</p>
             <SmallBtn
-              title='등록하기'
+              title={isEditMode ? '수정하기' : '등록하기'}
               onClick={handleSubmit}
             />
           </div>
