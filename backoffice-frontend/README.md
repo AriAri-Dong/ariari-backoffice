@@ -1,54 +1,54 @@
-# React + TypeScript + Vite
+# 🛠️ 백오피스 관리자 시스템
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+이 프로젝트는 서비스 운영을 위한 **백오피스(Admin Panel)** 시스템입니다.  
+사용자 관리, 공지사항, 신고/차단 관리, 통계 대시보드 기능 등을 제공합니다.
 
-Currently, two official plugins are available:
+## 📦 기술 스택
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### Backend
+- **Java 17**
+- **Spring Boot 3**
+- **Gradle (Kotlin DSL or Groovy DSL)**
+- JPA, Spring Security, Spring Data, etc.
 
-## Expanding the ESLint configuration
+### Frontend
+- **Vite**
+- **React 18**
+- **TypeScript**
+- Zustand, React Query, Chart.js, etc.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+---
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+## 🧩 주요 기능
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### ✅ 사용자 관리
+- 회원 목록 조회 및 검색
+- 회원 상세 조회 및 활동 이력 확인
+- 회원 상태 변경 (정지, 탈퇴 등)
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### 🚫 신고/차단 관리
+- 신고 내역 조회 및 처리
+- 차단된 사용자 목록 관리
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+### 📢 공지사항 관리
+- 공지 등록/수정/삭제
+- 팝업 여부 설정
+
+### 📊 통계 대시보드
+- 사용자 유입 추이
+- 월간/일간 가입자 수
+- 신고/차단 건수 통계
+
+---
+
+## 🧪 로컬 실행 방법
+
+### Frontend
+
+# 1. frontend 프로젝트 루트로 이동
+
+# 2. 의존성 설치
+`pnpm i`
+
+# 3. 개발 서버 실행
+`pnpm run dev`
