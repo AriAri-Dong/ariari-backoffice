@@ -55,16 +55,16 @@
 
 ### Frontend
 
-# 1. frontend 프로젝트 루트로 이동
+#### 1. frontend 프로젝트 루트로 이동
 
-# 2. 의존성 설치
+#### 2. 의존성 설치
 
 `pnpm i`
 
-# 3. 개발 서버 실행
+#### 3. 개발 서버 실행
 
 `pnpm run dev`
 
 ### Backend
 
-# 1. backend 프로젝트 루트로 이동
+#### 1. backend 프로젝트 루트로 이동
