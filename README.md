@@ -2,6 +2,8 @@
 
 ✨ Ariari 운영진을 위한 Backoffice ✨
 
+<br/>
+
 # 🛠️ 백오피스 관리자 시스템
 
 이 프로젝트는 서비스 운영을 위한 **백오피스(Admin Panel)** 시스템입니다.  
@@ -24,6 +26,8 @@
 - **React 18**
 - **TypeScript**
 - Zustand, React Query, Chart.js, etc.
+
+<br/>
 
 ---
 
@@ -52,6 +56,8 @@
 - 사용자 유입 추이
 - 월간/일간 가입자 수
 - 신고/차단 건수 통계
+
+<br/>
 
 ---
 
