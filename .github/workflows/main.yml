@@ -192,6 +192,6 @@ jobs:
          username: ${{ secrets.SERVER_USER }}
          key: ${{ secrets.SERVER_SSH_KEY }}
          script: |
-           cd /home/ubuntu/backoffic
+           cd /home/ubuntu/backoffice
            sudo docker compose pull
            sudo docker compose up -d --build
