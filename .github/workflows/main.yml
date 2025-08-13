@@ -85,7 +85,7 @@ jobs:
                 maxFileSize: 10MB
                 maxRequestSize: 10MB
           server:
-            port: 8282
+            port: 8383
           mybatis:
             mapper-locations: mapper/*.xml
             type-aliases-package: com.ariari.ariari.domain
