@@ -193,5 +193,9 @@ jobs:
          key: ${{ secrets.SERVER_SSH_KEY }}
          script: |
            cd /home/ubuntu/backoffice
+           
+           sudo docker compose down --rmi local --volumes --remove-orphans
+           
            sudo docker compose pull
-           sudo docker compose up -d --build
+            sudo docker compose build --no-cache
+            sudo docker compose up -d
