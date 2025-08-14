@@ -10,4 +10,5 @@ import org.springframework.stereotype.Repository;
 public interface ClubReviewReportRepository extends JpaRepository<ClubReviewReport, Long> {
 
     boolean existsByReporterAndReportedClubReview(Member reporter, ClubReview reportedClubReview);
+
 }

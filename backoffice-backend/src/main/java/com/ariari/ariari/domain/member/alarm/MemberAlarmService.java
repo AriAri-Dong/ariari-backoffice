@@ -54,10 +54,10 @@ public class MemberAlarmService {
         // 다중 이벤트 처리
         List<MemberAlarm> memberAlarms = memberAlarmListEvent.getMemberAlarmEventList().stream()
                 .map( memberAlarmEvent -> MemberAlarm.builder()
-                .title(memberAlarmEvent.getTitle())
-                .uri(memberAlarmEvent.getUri())
-                .member(memberAlarmEvent.getMember())
-                .isChecked(false)
+                        .title(memberAlarmEvent.getTitle())
+                        .uri(memberAlarmEvent.getUri())
+                        .member(memberAlarmEvent.getMember())
+                        .isChecked(false)
                         .build())
                 .toList();
         // 알림 저장

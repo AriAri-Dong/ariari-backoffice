@@ -5,6 +5,7 @@ import com.ariari.ariari.commons.exception.exceptions.NoSchoolAuthException;
 import com.ariari.ariari.domain.club.Club;
 import com.ariari.ariari.domain.club.clubmember.ClubMember;
 import com.ariari.ariari.domain.club.clubmember.enums.ClubMemberRoleType;
+import com.ariari.ariari.domain.club.exceptions.NoClubManagerException;
 import com.ariari.ariari.domain.member.Member;
 import com.ariari.ariari.domain.recruitment.Recruitment;
 import com.ariari.ariari.domain.school.School;
@@ -26,6 +27,12 @@ public class GlobalValidator {
         }
         if(list.size() > maxSize){
             throw new MaxSizeExceededException();
+        }
+    }
+
+    public static void isClubManagerOrHigher(ClubMember reqClubMember) {
+        if (reqClubMember.getClubMemberRoleType().equals(ClubMemberRoleType.GENERAL)) {
+            throw new NoClubManagerException();
         }
     }
 
