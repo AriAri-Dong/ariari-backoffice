@@ -1,7 +1,6 @@
 package com.ariari.ariari.domain.member.alarm;
 
 import com.ariari.ariari.commons.auth.springsecurity.CustomUserDetails;
-import com.ariari.ariari.domain.member.alarm.dto.MemberAlarmData;
 import com.ariari.ariari.domain.member.alarm.dto.res.MemberAlarmListRes;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -9,8 +8,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Tag(name = "memberAlarm", description = "회원 알람 기능")
 @RequiredArgsConstructor
@@ -23,7 +20,7 @@ public class MemberAlarmController {
     @Operation(summary = "회원 알림 조회")
     @GetMapping("/alarm")
     public MemberAlarmListRes getAlarms(@AuthenticationPrincipal CustomUserDetails userDetails
-    , Pageable pageable){
+            , Pageable pageable){
         Long memberId = CustomUserDetails.getMemberId(userDetails, false);
         return memberAlarmService.getAlarms(memberId, pageable);
     }
