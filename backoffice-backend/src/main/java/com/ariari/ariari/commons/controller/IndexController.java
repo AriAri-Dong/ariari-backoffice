@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class IndexController {
     private static final String INDEX = "index";
 
-    @GetMapping(value = {"/", "/operate", "/report", "/data", "/crud"})
+    @GetMapping(value = {"/", "/operate/**", "/report/**", "/data/**", "/crud/**"})
     public String root() {
         return INDEX;
     }

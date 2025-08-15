@@ -15,23 +15,67 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
-@RequiredArgsConstructor
 @EnableWebSecurity
-@EnableMethodSecurity(securedEnabled = true)
+@RequiredArgsConstructor
 public class SpringSecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
+    private static final String[] PERMIT_ALL_PATTERNS = {
+            // api 경로
+
+
+
+            // 에러 페이지
+            "/error",
+
+            // front 경로
+            "/",
+            "/operate/**",
+            "/report/**",
+            "/data/**",
+            "/crud/**",
+            "/index.html",
+            "/vite.html",
+            "/static/**",
+            "/image/**",
+            "*.js",
+            "*.css",
+            "*.jpeg",
+            "*.png",
+            "*.gif",
+            "*.ico",
+            "*.svg",
+
+            // Swagger UI 관련 경로
+            "/api-docs",
+            "/api-docs/**",
+            "/v3/api-docs",
+            "/swagger-ui/**",
+            "/swagger-ui/index.html",
+            "/webjars/**",
+            "/swagger-resources/**",
+            "configuration/ui",
+            "configuration/security",
+            "/swagger-resources",
+            "/v3/api-docs/**",
+            "/manifest.json",
+    };
+
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(authorize -> authorize
-                        .anyRequest().permitAll()
-                )
-                .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http.csrf(AbstractHttpConfigurer::disable);
+
+        // session 사용 X
+        http.sessionManagement(session ->
+                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+        );
+
+        http.authorizeHttpRequests(authorize -> authorize
+                .requestMatchers(PERMIT_ALL_PATTERNS).permitAll()
+                .anyRequest().authenticated());
+
+        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
@@ -40,6 +84,5 @@ public class SpringSecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
-
 }
+
