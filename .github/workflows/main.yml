@@ -27,8 +27,8 @@ jobs:
       - name: Install dependencies and build React (Vite)
         working-directory: ./backoffice-frontend
         run: |
-          pnpm install
-          pnpm run build
+          npm ci
+          npm run build
 
       - name: Copy React build to Spring
         run: |
