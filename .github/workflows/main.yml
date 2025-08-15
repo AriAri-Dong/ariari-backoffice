@@ -30,13 +30,13 @@ jobs:
           pnpm install
           pnpm run build
 
-      - name: Copy React build to Spring
-        run: |
-          rm -f ./backoffice-backend/src/main/resources/templates/index.html
-          cp ./backoffice-frontend/dist/index.html ./backoffice-backend/src/main/resources/templates/
-
-          rm -rf ./backoffice-backend/src/main/resources/static/*
-          rsync -av --exclude='index.html' ./backoffice-frontend/dist/ ./backoffice-backend/src/main/resources/static/
+#      - name: Copy React build to Spring
+#        run: |
+#          rm -f ./backoffice-backend/src/main/resources/templates/index.html
+#          cp ./backoffice-frontend/dist/index.html ./backoffice-backend/src/main/resources/templates/
+#
+#          rm -rf ./backoffice-backend/src/main/resources/static/*
+#          rsync -av --exclude='index.html' ./backoffice-frontend/dist/ ./backoffice-backend/src/main/resources/static/
 
       - name: Give Gradle wrapper execute permissions
         run: chmod +x ./backoffice-backend/gradlew
