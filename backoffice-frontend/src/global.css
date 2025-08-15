@@ -132,6 +132,12 @@ body {
     line-height: 19.5px;
   }
 
+  .text-body3_sb {
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 150%;
+  }
+
   .text-body4_r {
     font-size: 12px;
     font-weight: 400;
