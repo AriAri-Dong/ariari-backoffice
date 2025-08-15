@@ -38,6 +38,7 @@ public class SpringSecurityConfig {
             "/index.html",
             "/vite.html",
             "/static/**",
+            "/assets/**",
             "/image/**",
             "*.js",
             "*.css",

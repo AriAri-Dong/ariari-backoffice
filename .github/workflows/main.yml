@@ -27,13 +27,14 @@ jobs:
       - name: Install dependencies and build React (Vite)
         working-directory: ./backoffice-frontend
         run: |
-          npm ci
-          npm run build
+          pnpm install
+          pnpm run build
 
       - name: Copy React build to Spring
         run: |
           rm -f ./backoffice-backend/src/main/resources/templates/index.html
           cp ./backoffice-frontend/dist/index.html ./backoffice-backend/src/main/resources/templates/
+
           rm -rf ./backoffice-backend/src/main/resources/static/*
           rsync -av --exclude='index.html' ./backoffice-frontend/dist/ ./backoffice-backend/src/main/resources/static/
 
