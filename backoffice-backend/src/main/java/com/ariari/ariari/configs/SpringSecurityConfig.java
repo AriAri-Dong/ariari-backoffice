@@ -46,13 +46,6 @@ public class SpringSecurityConfig {
             "*.gif",
             "*.ico",
             "*.svg",
-            "/**/*.js",
-            "/**/*.css",
-            "/**/*.jpeg",
-            "/**/*.png",
-            "/**/*.gif",
-            "/**/*.ico",
-            "/**/*.svg",
 
             // Swagger UI 관련 경로
             "/api-docs",
