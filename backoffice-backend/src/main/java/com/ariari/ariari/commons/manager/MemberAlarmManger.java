@@ -40,6 +40,15 @@ public class MemberAlarmManger {
     }
 
 
+    // 서비스 알림 전송(대상 모든 회원 혹은 동아리 관리자만)
+    public void sendSystemAlarm(List<Member> memberList, String title, String body){
+
+        MemberAlarmEventList memberAlarmEventList = MemberAlarmEventList.from(title
+                ,null
+                , memberList);
+        sendList(memberAlarmEventList);
+    }
+
     // 삭제 안내 공고 알림
     public void sendReportDeleteNotification(Member member, String title){
         MemberAlarmEvent memberAlarmEvent = MemberAlarmEvent.from(

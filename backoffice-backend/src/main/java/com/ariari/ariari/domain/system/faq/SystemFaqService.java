@@ -3,14 +3,16 @@ package com.ariari.ariari.domain.system.faq;
 import com.ariari.ariari.commons.exception.exceptions.NotFoundEntityException;
 import com.ariari.ariari.domain.member.Member;
 import com.ariari.ariari.domain.member.member.MemberRepository;
+import com.ariari.ariari.domain.system.SystemFaq;
 import com.ariari.ariari.domain.system.faq.dto.req.SystemFaqModifyReq;
 import com.ariari.ariari.domain.system.faq.dto.req.SystemFaqSaveReq;
+import com.ariari.ariari.domain.system.faq.dto.res.SystemFaqDetailRes;
 import com.ariari.ariari.domain.system.faq.dto.res.SystemFaqListRes;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -20,13 +22,20 @@ public class SystemFaqService {
     private final MemberRepository memberRepository;
 
 
-    public SystemFaqListRes findSystemFaqs() {
-        List<SystemFaq> systemFaqList = systemFaqRepository.findAll();
-        return SystemFaqListRes.create(systemFaqList);
+    @Transactional(readOnly = true)
+    public SystemFaqListRes findSystemFaqs(Pageable pageable) {
+        Page<SystemFaq> systemFaqList = systemFaqRepository.findAllByOrderByCreatedDateTimeDesc(pageable);
+        return SystemFaqListRes.from(systemFaqList);
+    }
+
+    @Transactional(readOnly = true)
+    public SystemFaqDetailRes findSystemFaqsDetail(Long systemFaqId) {
+        SystemFaq systemFaq = systemFaqRepository.findById(systemFaqId).orElseThrow(NotFoundEntityException::new);
+        return SystemFaqDetailRes.createRes(systemFaq);
     }
 
     @Transactional
-    public void saveSystemNotice(Long reqMemberId, SystemFaqSaveReq saveReq) {
+    public void saveSystemFaq(Long reqMemberId, SystemFaqSaveReq saveReq) {
         Member reqMember = memberRepository.findById(reqMemberId).orElseThrow(NotFoundEntityException::new);
         // 검증 로직 추가 필요
         SystemFaq systemFaq = saveReq.toEntity();
