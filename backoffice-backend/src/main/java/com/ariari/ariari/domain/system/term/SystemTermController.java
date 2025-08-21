@@ -52,7 +52,7 @@ public class SystemTermController {
     }
 
     @Operation(summary = "약관 삭제", description = "")
-    @DeleteMapping("/delete/{systemTermId")
+    @DeleteMapping("/delete/{systemTermId}")
     public void  removeSystemTerm(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable Long systemTermId) {
         systemTermService.removeSystemTerm(systemTermId);
     }
