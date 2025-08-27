@@ -8,11 +8,9 @@ import lombok.Data;
 public class JwtTokenRes {
 
     private String accessToken;
-    private String refreshToken;
-    private Boolean isFirstLogin;
 
-    public static JwtTokenRes createRes(String accessToken, String refreshToken, Boolean isFirstLogin) {
-        return new JwtTokenRes(accessToken, refreshToken, isFirstLogin);
+    public static JwtTokenRes createRes(String accessToken) {
+        return new JwtTokenRes(accessToken);
     }
 
 }

@@ -2,43 +2,45 @@ package com.ariari.ariari.commons.auth.springsecurity;
 
 import com.ariari.ariari.commons.exception.exceptions.NotAuthenticatedException;
 import lombok.Getter;
-import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.HashSet;
+import java.util.Collection;
 import java.util.Set;
 
 @Getter
 public class CustomUserDetails implements UserDetails {
 
     private final Long memberId;
+    private final String username;
+    private final String password;
+    private final Set<GrantedAuthority> authorities;
 
-    @Setter
-    private Set<GrantedAuthority> authorities = new HashSet<>();
-
-    public CustomUserDetails(Long memberId, Set<GrantedAuthority> authorities) {
+    public CustomUserDetails(Long memberId, String username, String password, Set<GrantedAuthority> authorities) {
         this.memberId = memberId;
+        this.username = username;
+        this.password = password;
         this.authorities = authorities;
+    }
+
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+
+        return authorities;
+    }
+
+    @Override
+    public String getPassword() {
+        return password;
     }
 
     @Override
     public String getUsername() {
-        return memberId.toString();
+        return username;
     }
 
-    @Override
-    public Set<GrantedAuthority> getAuthorities() {
-        return authorities;
-    }
 
-    /**
-     * not used
-     */
-    @Override
-    public String getPassword() {
-        return null;
-    }
 
     public static Long getMemberId(CustomUserDetails userDetails, boolean required) {
         if (userDetails != null) {
