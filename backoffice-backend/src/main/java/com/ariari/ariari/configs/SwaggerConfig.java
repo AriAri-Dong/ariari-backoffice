@@ -4,20 +4,18 @@ import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.List;
 
 @Configuration
 public class SwaggerConfig {
 
     @Bean
-    public OpenAPI openAPI(HttpServletRequest request) {
-        String scheme = request.getHeader("X-Forwarded-Proto") != null ?
-                request.getHeader("X-Forwarded-Proto") : "http";
-        String host = request.getHeader("X-Forwarded-Host") != null ?
-                request.getHeader("X-Forwarded-Host") : request.getServerName();
-
+    public OpenAPI openAPI() {
         return new OpenAPI()
                 .components(new Components()
                         .addSecuritySchemes("customAuth", new SecurityScheme()
@@ -26,12 +24,7 @@ public class SwaggerConfig {
                                 .name("Authorization")
                         )
                 )
-                .addSecurityItem(new SecurityRequirement().addList("customAuth"))
-                .servers(List.of(
-                        new Server()
-                                .url(scheme + "://" + host)
-                                .description("Current server")
-                ));
+                .addSecurityItem(new SecurityRequirement().addList("customAuth"));
     }
 
     @Bean
