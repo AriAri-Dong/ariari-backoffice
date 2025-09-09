@@ -26,7 +26,6 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private final MemberRepository memberRepository;
     private final JwtManager jwtManager;
     private final AuthenticationManager authenticationManager;
     private final ObjectMapper objectMapper;
@@ -40,24 +39,31 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             JwtAuthentication jwtAuthentication = new JwtAuthentication(token);
 
             try {
-                Authentication authenticate = authenticationManager.authenticate(jwtAuthentication);
-                SecurityContextHolder.getContext().setAuthentication(authenticate);
+                Authentication authentication = authenticationManager.authenticate(jwtAuthentication);
+                SecurityContextHolder.getContext().setAuthentication(authentication);
             } catch (CustomException e) {
-                setErrorResponse(response, e.getMessage());
+                setErrorResponse(response, e.getHttpStatus(), e.getMessage());
                 return;
             }
         }
 
-        filterChain.doFilter(request, response);
+        try{
+            filterChain.doFilter(request, response);
+        } finally {
+            SecurityContextHolder.clearContext(); // ThreadLocal 누수 방지
+        }
+
     }
 
-    private void setErrorResponse(HttpServletResponse response, String message) throws IOException {
+    private void setErrorResponse(HttpServletResponse response,
+                                  HttpStatus status,
+                                  String message) throws IOException {
         ExceptionRes responseBody = ExceptionRes.builder()
-                .code(HttpStatus.UNAUTHORIZED.value())
+                .code(status.value())
                 .message(message)
                 .build();
 
-        response.setStatus(HttpStatus.UNAUTHORIZED.value());
+        response.setStatus(status.value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding("UTF-8");
         response.getWriter().write(objectMapper.writeValueAsString(responseBody));

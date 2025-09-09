@@ -1,11 +1,11 @@
-package com.ariari.ariari.domain.system.dto.res;
+package com.ariari.ariari.domain.system.notice.dto.res;
 
 import com.ariari.ariari.domain.system.SystemNotice;
-import com.ariari.ariari.domain.system.dto.SystemNoticeData;
+import com.ariari.ariari.domain.system.notice.dto.SystemNoticeData;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 
-@Schema(description = "서비스 공지사항 상세 응답 (clubMemberData 는 작성한 동아리 회원의 데이터입니다.)")
+@Schema(description = "서비스 공지사항 상세 응답 ")
 @Getter
 public class SystemNoticeDetailRes {
 

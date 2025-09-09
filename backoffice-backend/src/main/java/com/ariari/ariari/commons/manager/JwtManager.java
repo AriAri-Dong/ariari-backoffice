@@ -96,8 +96,13 @@ public class JwtManager {
     }
 
     public String extractToken(HttpServletRequest request) {
-        return request.getHeader("Authorization");
+        String header = request.getHeader("Authorization");
+        if (header != null && header.startsWith("Bearer ")) {
+            return header.substring(7); // "Bearer " 제거
+        }
+        return null;
     }
+
 
     public Long getMemberId(String token) {
         Claims payload = Jwts.parser()

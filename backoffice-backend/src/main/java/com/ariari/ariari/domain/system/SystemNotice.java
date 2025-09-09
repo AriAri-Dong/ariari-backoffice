@@ -6,12 +6,14 @@ import com.ariari.ariari.domain.club.notice.image.ClubNoticeImage;
 import com.ariari.ariari.domain.member.Member;
 import com.ariari.ariari.domain.system.image.SystemNoticeImage;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,6 +35,12 @@ public class SystemNotice extends LogicalDeleteEntity {
     @Column(length = 1000)
     private String body;
 
+    private boolean isPopup;
+
+    private LocalDateTime popupStartDate;
+
+    private LocalDateTime popupEndDate;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
@@ -41,14 +49,26 @@ public class SystemNotice extends LogicalDeleteEntity {
     @OneToMany(mappedBy = "systemNotice", cascade = CascadeType.ALL)
     private List<SystemNoticeImage> systemNoticeImages = new ArrayList<>();
 
-    private SystemNotice(String title, String body, Member member) {
+    @Builder
+    private SystemNotice(String title, String body, Member member,
+                         boolean isPopup, LocalDateTime popupStartDate, LocalDateTime popupEndDate) {
         this.title = title;
         this.body = body;
         this.member = member;
+        this.isPopup = isPopup;
+        this.popupStartDate = popupStartDate;
+        this.popupEndDate = popupEndDate;
     }
 
-    public static SystemNotice create(String title, String body, Member member){
-        return new SystemNotice(title, body, member);
+    public static SystemNotice create(String title, String body, Member member, boolean isPopup, LocalDateTime popupStartDate, LocalDateTime popupEndDate) {
+        return SystemNotice.builder()
+                .title(title)
+                .body(body)
+                .isPopup(isPopup)
+                .member(member)
+                .popupStartDate(popupStartDate)
+                .popupEndDate(popupEndDate)
+                .build();
     }
 
 

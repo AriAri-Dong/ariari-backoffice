@@ -1,4 +1,4 @@
-package com.ariari.ariari.domain.system;
+package com.ariari.ariari.domain.system.notice;
 
 import com.ariari.ariari.commons.entity.image.ImageRepository;
 import com.ariari.ariari.commons.exception.exceptions.NotFoundEntityException;
@@ -7,13 +7,16 @@ import com.ariari.ariari.commons.manager.file.FileManager;
 import com.ariari.ariari.domain.club.notice.image.exception.NotBelongInClubNoticeException;
 import com.ariari.ariari.domain.member.Member;
 import com.ariari.ariari.domain.member.member.MemberRepository;
-import com.ariari.ariari.domain.system.dto.req.SystemNoticeModifyReq;
-import com.ariari.ariari.domain.system.dto.req.SystemNoticeSaveReq;
-import com.ariari.ariari.domain.system.dto.res.SystemNoticeDetailRes;
-import com.ariari.ariari.domain.system.dto.res.SystemNoticeListRes;
+import com.ariari.ariari.domain.system.SystemNotice;
 import com.ariari.ariari.domain.system.image.SystemNoticeImage;
 import com.ariari.ariari.domain.system.image.SystemNoticeImageRepository;
+import com.ariari.ariari.domain.system.notice.dto.req.SystemNoticeModifyReq;
+import com.ariari.ariari.domain.system.notice.dto.req.SystemNoticeSaveReq;
+import com.ariari.ariari.domain.system.notice.dto.res.SystemNoticeDetailRes;
+import com.ariari.ariari.domain.system.notice.dto.res.SystemNoticeListRes;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -33,9 +36,9 @@ public class SystemNoticeService {
     private final MemberAlarmManger memberAlarmManger;
 
 
-    public SystemNoticeListRes findSystemNotices() {
-        List<SystemNotice> systemNoticeDataList = systemNoticeRepository.findAllByOrderByCreatedAtDesc();
-        return  SystemNoticeListRes.create(systemNoticeDataList);
+    public SystemNoticeListRes findSystemNotices(Pageable pageable) {
+        Page<SystemNotice> systemNoticeDataList = systemNoticeRepository.findAllByOrderByCreatedDateTimeDesc(pageable);
+        return  SystemNoticeListRes.from(systemNoticeDataList);
     }
 
 
@@ -45,7 +48,7 @@ public class SystemNoticeService {
 
         // 검증 로직이 필요함
 
-        SystemNotice systemNotice = saveReq.toEntity(saveReq.getTitle(), saveReq.getBody(), reqMember);
+        SystemNotice systemNotice = saveReq.toEntity(reqMember);
         systemNoticeRepository.save(systemNotice);
 
         if (files != null) {
@@ -69,6 +72,7 @@ public class SystemNoticeService {
 
         Member reqMember = memberRepository.findById(reqMemberId).orElseThrow(NotFoundEntityException::new);
         SystemNotice systemNotice = systemNoticeRepository.findById(systemNoticeId).orElseThrow(NotFoundEntityException::new);
+
 
         // 검증 로직 추가
 
