@@ -56,6 +56,7 @@ public class SwaggerConfig {
                                 .url("/")
                                 .description("Current server")
                 ));
+
     }
 
 

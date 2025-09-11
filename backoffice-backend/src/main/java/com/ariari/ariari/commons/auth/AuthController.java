@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final AuthService authService;
-    private final KakaoAuthManager kakaoAuthManager;
 
     @Operation(summary = "로그인", description = "로그인")
     @PostMapping("/auth/login")
