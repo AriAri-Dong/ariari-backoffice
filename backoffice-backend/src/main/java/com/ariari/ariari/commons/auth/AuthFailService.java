@@ -1,6 +1,6 @@
 package com.ariari.ariari.commons.auth;
 
-import com.ariari.ariari.domain.admin.AdminMember;
+import com.ariari.ariari.commons.entity.AdminMember;
 import com.ariari.ariari.domain.admin.AdminMemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;

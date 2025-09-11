@@ -1,8 +1,8 @@
 package com.ariari.ariari.domain.member.alarm;
 
+import com.ariari.ariari.commons.entity.MemberAlarm;
 import com.ariari.ariari.commons.exception.exceptions.NotFoundEntityException;
-import com.ariari.ariari.domain.club.alarm.ClubAlarm;
-import com.ariari.ariari.domain.member.Member;
+import com.ariari.ariari.commons.entity.Member;
 import com.ariari.ariari.domain.member.alarm.dto.res.MemberAlarmListRes;
 import com.ariari.ariari.domain.member.alarm.event.MemberAlarmEvent;
 import com.ariari.ariari.domain.member.alarm.event.MemberAlarmEventList;

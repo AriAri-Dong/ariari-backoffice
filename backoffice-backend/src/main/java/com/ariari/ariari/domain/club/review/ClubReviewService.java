@@ -1,8 +1,8 @@
 package com.ariari.ariari.domain.club.review;
 
+import com.ariari.ariari.commons.entity.*;
 import com.ariari.ariari.commons.exception.exceptions.DuplicateDataCreateException;
 import com.ariari.ariari.commons.exception.exceptions.NotFoundEntityException;
-import com.ariari.ariari.domain.club.Club;
 import com.ariari.ariari.domain.club.club.ClubRepository;
 import com.ariari.ariari.domain.club.clubmember.ClubMemberRepository;
 import com.ariari.ariari.domain.club.review.dto.ClubReviewData;
@@ -13,9 +13,6 @@ import com.ariari.ariari.domain.club.review.enums.IconType;
 import com.ariari.ariari.domain.club.review.repository.ClubReviewRepository;
 import com.ariari.ariari.domain.club.review.repository.ClubReviewTagRepository;
 import com.ariari.ariari.domain.club.review.repository.TagRepository;
-import com.ariari.ariari.domain.club.review.reviewtag.ClubReviewTag;
-import com.ariari.ariari.domain.club.review.tag.Tag;
-import com.ariari.ariari.domain.member.Member;
 import com.ariari.ariari.domain.member.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

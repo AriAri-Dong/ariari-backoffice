@@ -4,42 +4,12 @@ import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
-import io.swagger.v3.oas.models.servers.Server;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springdoc.core.models.GroupedOpenApi;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.filter.ForwardedHeaderFilter;
-
-import java.util.List;
 
 @Configuration
 public class SwaggerConfig {
-
-//    @Bean
-//    public OpenAPI openAPI(HttpServletRequest request) {
-//        String scheme = request.getHeader("X-Forwarded-Proto") != null ?
-//                request.getHeader("X-Forwarded-Proto") : "http";
-//        String host = request.getHeader("X-Forwarded-Host") != null ?
-//                request.getHeader("X-Forwarded-Host") : request.getServerName();
-//
-//        return new OpenAPI()
-//                .components(new Components()
-//                        .addSecuritySchemes("customAuth", new SecurityScheme()
-//                                .type(SecurityScheme.Type.APIKEY)
-//                                .in(SecurityScheme.In.HEADER)
-//                                .name("Authorization")
-//                        )
-//                )
-//                .addSecurityItem(new SecurityRequirement().addList("customAuth"))
-//                .servers(List.of(
-//                        new Server()
-//                                .url(scheme + "://" + host)
-//                                .description("Current server")
-//                ));
-//    }
-
     @Bean
     public OpenAPI openAPI() {
         return new OpenAPI()
@@ -50,15 +20,8 @@ public class SwaggerConfig {
                                 .name("Authorization")
                         )
                 )
-                .addSecurityItem(new SecurityRequirement().addList("customAuth"))
-                .servers(List.of(
-                        new Server()
-                                .url("/")
-                                .description("Current server")
-                ));
-
+                .addSecurityItem(new SecurityRequirement().addList("customAuth"));
     }
-
 
     @Bean
     public GroupedOpenApi test() {

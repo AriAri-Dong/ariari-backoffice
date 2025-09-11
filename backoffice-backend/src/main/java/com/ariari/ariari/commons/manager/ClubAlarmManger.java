@@ -1,9 +1,9 @@
 package com.ariari.ariari.commons.manager;
 
-import com.ariari.ariari.domain.club.Club;
+import com.ariari.ariari.commons.entity.Club;
 import com.ariari.ariari.domain.club.alarm.event.ClubAlarmEvent;
 import com.ariari.ariari.domain.club.alarm.event.ClubAlarmEventList;
-import com.ariari.ariari.domain.member.Member;
+import com.ariari.ariari.commons.entity.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;

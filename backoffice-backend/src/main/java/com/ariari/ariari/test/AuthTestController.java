@@ -3,7 +3,7 @@ package com.ariari.ariari.test;
 import com.ariari.ariari.commons.auth.dto.JwtTokenRes;
 import com.ariari.ariari.commons.exception.exceptions.NotFoundEntityException;
 import com.ariari.ariari.commons.manager.JwtManager;
-import com.ariari.ariari.domain.member.Member;
+import com.ariari.ariari.commons.entity.Member;
 import com.ariari.ariari.domain.member.member.MemberRepository;
 import com.ariari.ariari.test.dto.TokenInfoRes;
 import com.ariari.ariari.test.dto.TokenReq;

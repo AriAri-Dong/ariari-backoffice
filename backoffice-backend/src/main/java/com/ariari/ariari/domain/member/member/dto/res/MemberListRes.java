@@ -1,6 +1,6 @@
 package com.ariari.ariari.domain.member.member.dto.res;
 
-import com.ariari.ariari.domain.member.Member;
+import com.ariari.ariari.commons.entity.Member;
 import com.ariari.ariari.domain.member.member.dto.MemberData;
 import lombok.AllArgsConstructor;
 import lombok.Data;

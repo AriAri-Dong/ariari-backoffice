@@ -1,7 +1,8 @@
 package com.ariari.ariari.domain.club.activity.like;
 
-import com.ariari.ariari.domain.club.activity.ClubActivity;
-import com.ariari.ariari.domain.member.Member;
+import com.ariari.ariari.commons.entity.ClubActivity;
+import com.ariari.ariari.commons.entity.ClubActivityLike;
+import com.ariari.ariari.commons.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,6 +1,6 @@
 package com.ariari.ariari.domain.system.faq;
 
-import com.ariari.ariari.domain.system.SystemFaq;
+import com.ariari.ariari.commons.entity.SystemFaq;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

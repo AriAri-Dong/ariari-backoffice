@@ -1,6 +1,6 @@
 package com.ariari.ariari.domain.system.alarm.dto.req;
 
-import com.ariari.ariari.domain.system.SystemAlarm;
+import com.ariari.ariari.commons.entity.SystemAlarm;
 import com.ariari.ariari.domain.system.enums.AlarmTargetType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;

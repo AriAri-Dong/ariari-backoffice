@@ -1,7 +1,8 @@
 package com.ariari.ariari.domain.club.bookmark;
 
-import com.ariari.ariari.domain.club.Club;
-import com.ariari.ariari.domain.member.Member;
+import com.ariari.ariari.commons.entity.Club;
+import com.ariari.ariari.commons.entity.ClubBookmark;
+import com.ariari.ariari.commons.entity.Member;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;

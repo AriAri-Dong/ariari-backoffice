@@ -1,13 +1,13 @@
 package com.ariari.ariari.domain.system.alarm;
 
+import com.ariari.ariari.commons.entity.ClubMember;
 import com.ariari.ariari.commons.exception.exceptions.NotFoundEntityException;
 import com.ariari.ariari.commons.manager.MemberAlarmManger;
-import com.ariari.ariari.domain.club.clubmember.ClubMember;
 import com.ariari.ariari.domain.club.clubmember.ClubMemberRepository;
 import com.ariari.ariari.domain.club.clubmember.enums.ClubMemberRoleType;
-import com.ariari.ariari.domain.member.Member;
+import com.ariari.ariari.commons.entity.Member;
 import com.ariari.ariari.domain.member.member.MemberRepository;
-import com.ariari.ariari.domain.system.SystemAlarm;
+import com.ariari.ariari.commons.entity.SystemAlarm;
 import com.ariari.ariari.domain.system.alarm.dto.req.SystemAlarmSaveReq;
 import com.ariari.ariari.domain.system.alarm.dto.res.SystemAlarmDetailRes;
 import com.ariari.ariari.domain.system.alarm.dto.res.SystemAlarmListRes;

@@ -1,6 +1,6 @@
 package com.ariari.ariari.domain.system.faq.dto;
 
-import com.ariari.ariari.domain.system.SystemFaq;
+import com.ariari.ariari.commons.entity.SystemFaq;
 import com.ariari.ariari.domain.system.enums.SystemFaqStatusType;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;

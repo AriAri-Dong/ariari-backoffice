@@ -1,7 +1,5 @@
 package com.ariari.ariari.domain.recruitment.applyform.dto;
 
-import com.ariari.ariari.domain.recruitment.Recruitment;
-import com.ariari.ariari.domain.recruitment.applyform.applyquestion.ApplyQuestion;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;

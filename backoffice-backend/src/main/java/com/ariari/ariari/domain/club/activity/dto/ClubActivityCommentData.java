@@ -1,8 +1,7 @@
 package com.ariari.ariari.domain.club.activity.dto;
 
-import com.ariari.ariari.domain.club.activity.comment.ClubActivityComment;
-import com.ariari.ariari.domain.club.activity.comment.QClubActivityComment;
-import com.ariari.ariari.domain.club.clubmember.ClubMember;
+import com.ariari.ariari.commons.entity.ClubActivityComment;
+import com.ariari.ariari.commons.entity.ClubMember;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -50,7 +49,7 @@ public class ClubActivityCommentData {
     private boolean isBlocked;
 
     public static ClubActivityCommentData fromEntity(ClubActivityComment clubActivityComment, Optional<ClubMember> clubMember,
-                                              int likeCount, boolean isMyLiked, boolean isBlocked) {
+                                                     int likeCount, boolean isMyLiked, boolean isBlocked) {
         return ClubActivityCommentData.builder()
                 .id(clubActivityComment.getId())
                 .creatorId(clubActivityComment.getMember().getId())
