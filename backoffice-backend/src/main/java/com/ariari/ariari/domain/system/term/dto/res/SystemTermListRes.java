@@ -1,6 +1,6 @@
 package com.ariari.ariari.domain.system.term.dto.res;
 
-import com.ariari.ariari.domain.system.SystemTerm;
+import com.ariari.ariari.commons.entity.SystemTerm;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 

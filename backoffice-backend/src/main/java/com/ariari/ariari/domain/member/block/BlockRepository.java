@@ -1,6 +1,7 @@
 package com.ariari.ariari.domain.member.block;
 
-import com.ariari.ariari.domain.member.Member;
+import com.ariari.ariari.commons.entity.Block;
+import com.ariari.ariari.commons.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

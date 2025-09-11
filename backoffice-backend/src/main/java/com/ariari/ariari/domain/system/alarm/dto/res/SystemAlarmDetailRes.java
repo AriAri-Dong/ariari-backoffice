@@ -1,7 +1,7 @@
 package com.ariari.ariari.domain.system.alarm.dto.res;
 
-import com.ariari.ariari.domain.system.SystemAlarm;
-import com.ariari.ariari.domain.system.SystemFaq;
+import com.ariari.ariari.commons.entity.SystemAlarm;
+import com.ariari.ariari.commons.entity.SystemFaq;
 import com.ariari.ariari.domain.system.alarm.dto.SystemAlarmData;
 import com.ariari.ariari.domain.system.faq.dto.SystemFaqData;
 import com.ariari.ariari.domain.system.faq.dto.res.SystemFaqDetailRes;

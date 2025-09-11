@@ -1,7 +1,7 @@
 package com.ariari.ariari.domain.system.alarm.dto;
 
-import com.ariari.ariari.domain.system.SystemAlarm;
-import com.ariari.ariari.domain.system.SystemNotice;
+import com.ariari.ariari.commons.entity.SystemAlarm;
+import com.ariari.ariari.commons.entity.SystemNotice;
 import com.ariari.ariari.domain.system.enums.AlarmTargetType;
 import com.ariari.ariari.domain.system.notice.dto.SystemNoticeData;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;

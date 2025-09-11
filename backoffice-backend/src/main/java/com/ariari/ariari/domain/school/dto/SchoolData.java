@@ -1,7 +1,7 @@
 package com.ariari.ariari.domain.school.dto;
 
-import com.ariari.ariari.domain.school.QSchool;
-import com.ariari.ariari.domain.school.School;
+import com.ariari.ariari.commons.entity.QSchool;
+import com.ariari.ariari.commons.entity.School;
 import com.querydsl.core.types.ConstructorExpression;
 import com.querydsl.core.types.Projections;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -11,7 +11,7 @@ import org.springframework.data.domain.Page;
 
 import java.util.List;
 
-import static com.ariari.ariari.domain.school.QSchool.school;
+import static com.ariari.ariari.commons.entity.QSchool.school;
 
 @Data
 @AllArgsConstructor

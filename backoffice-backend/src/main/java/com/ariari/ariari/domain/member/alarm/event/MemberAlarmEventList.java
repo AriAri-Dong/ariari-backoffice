@@ -1,6 +1,6 @@
 package com.ariari.ariari.domain.member.alarm.event;
 
-import com.ariari.ariari.domain.member.Member;
+import com.ariari.ariari.commons.entity.Member;
 import com.ariari.ariari.domain.member.alarm.enums.MemberAlarmType;
 import lombok.Getter;
 

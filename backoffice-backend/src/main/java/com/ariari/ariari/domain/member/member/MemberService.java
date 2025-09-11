@@ -2,7 +2,7 @@ package com.ariari.ariari.domain.member.member;
 
 import com.ariari.ariari.commons.exception.exceptions.NotFoundEntityException;
 import com.ariari.ariari.domain.club.clubmember.ClubMemberRepository;
-import com.ariari.ariari.domain.member.Member;
+import com.ariari.ariari.commons.entity.Member;
 import com.ariari.ariari.domain.member.member.dto.req.NicknameModifyReq;
 import com.ariari.ariari.domain.member.member.dto.req.ProfileModifyReq;
 import com.ariari.ariari.domain.member.member.dto.res.MemberDetailRes;

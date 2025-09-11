@@ -1,9 +1,8 @@
 package com.ariari.ariari.domain.club.event.attendance;
 
-import com.ariari.ariari.domain.club.Club;
-import com.ariari.ariari.domain.club.clubmember.ClubMember;
-import com.ariari.ariari.domain.club.event.ClubEvent;
-import com.ariari.ariari.domain.member.Member;
+import com.ariari.ariari.commons.entity.Attendance;
+import com.ariari.ariari.commons.entity.ClubEvent;
+import com.ariari.ariari.commons.entity.Member;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,7 +13,6 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 import java.util.Optional;
 
-import static com.ariari.ariari.domain.member.QMember.member;
 
 public interface AttendanceRepository extends JpaRepository<Attendance, Long> {
 

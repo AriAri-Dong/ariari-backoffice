@@ -1,11 +1,12 @@
 package com.ariari.ariari.domain.club.activity.report;
 
-import com.ariari.ariari.commons.entity.report.dto.ReportReq;
+import com.ariari.ariari.commons.commonentity.report.dto.ReportReq;
+import com.ariari.ariari.commons.entity.ClubActivity;
+import com.ariari.ariari.commons.entity.ClubActivityReport;
 import com.ariari.ariari.commons.exception.exceptions.NotFoundEntityException;
 import com.ariari.ariari.commons.exception.exceptions.ReportExistsException;
-import com.ariari.ariari.domain.club.activity.ClubActivity;
 import com.ariari.ariari.domain.club.activity.ClubActivityRepository;
-import com.ariari.ariari.domain.member.Member;
+import com.ariari.ariari.commons.entity.Member;
 import com.ariari.ariari.domain.member.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

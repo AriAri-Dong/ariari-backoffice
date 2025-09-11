@@ -1,6 +1,6 @@
 package com.ariari.ariari.domain.member.member.dto.req;
 
-import com.ariari.ariari.domain.member.Member;
+import com.ariari.ariari.commons.entity.Member;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
