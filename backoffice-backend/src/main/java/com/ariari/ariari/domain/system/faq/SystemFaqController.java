@@ -1,6 +1,7 @@
 package com.ariari.ariari.domain.system.faq;
 
 import com.ariari.ariari.commons.auth.springsecurity.CustomUserDetails;
+import com.ariari.ariari.commons.constant.ApiHelper;
 import com.ariari.ariari.domain.system.faq.dto.req.SystemFaqModifyReq;
 import com.ariari.ariari.domain.system.faq.dto.req.SystemFaqSaveReq;
 import com.ariari.ariari.domain.system.faq.dto.res.SystemFaqDetailRes;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "system_faq", description = "서비스 FAQ 기능")
 @RestController
+@RequestMapping(ApiHelper.CONST_API)
 @RequiredArgsConstructor
 public class SystemFaqController {
 

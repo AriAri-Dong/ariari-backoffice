@@ -61,6 +61,7 @@ public class SpringSecurityConfig {
             "/swagger-resources",
             "/v3/api-docs/**",
             "/manifest.json",
+            "/api/v1/**"
     };
 
     @Bean

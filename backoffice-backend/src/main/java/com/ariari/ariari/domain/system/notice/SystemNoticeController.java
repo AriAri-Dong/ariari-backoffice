@@ -1,6 +1,7 @@
 package com.ariari.ariari.domain.system.notice;
 
 import com.ariari.ariari.commons.auth.springsecurity.CustomUserDetails;
+import com.ariari.ariari.commons.constant.ApiHelper;
 import com.ariari.ariari.domain.system.notice.dto.req.SystemNoticeModifyReq;
 import com.ariari.ariari.domain.system.notice.dto.req.SystemNoticeSaveReq;
 import com.ariari.ariari.domain.system.notice.dto.res.SystemNoticeDetailRes;
@@ -13,11 +14,12 @@ import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.util.List;
+
 
 @Tag(name = "system_notice", description = "서비스 공지사항 기능")
 @RestController
+@RequestMapping(ApiHelper.CONST_API)
 @RequiredArgsConstructor
 public class SystemNoticeController {
 

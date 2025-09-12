@@ -6,6 +6,7 @@ import com.ariari.ariari.commons.commonentity.report.dto.req.ResolveSaveReq;
 import com.ariari.ariari.commons.commonentity.report.dto.req.SearchReq;
 import com.ariari.ariari.commons.commonentity.report.dto.res.PendingReportListRes;
 import com.ariari.ariari.commons.commonentity.report.dto.res.ResolvedReportListRes;
+import com.ariari.ariari.commons.constant.ApiHelper;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -16,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/report")
+@RequestMapping(ApiHelper.CONST_API)
 public class ReportController {
 
 

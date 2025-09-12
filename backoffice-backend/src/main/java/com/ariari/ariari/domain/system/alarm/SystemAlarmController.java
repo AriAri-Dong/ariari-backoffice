@@ -1,6 +1,7 @@
 package com.ariari.ariari.domain.system.alarm;
 
 import com.ariari.ariari.commons.auth.springsecurity.CustomUserDetails;
+import com.ariari.ariari.commons.constant.ApiHelper;
 import com.ariari.ariari.domain.system.alarm.dto.req.SystemAlarmSaveReq;
 import com.ariari.ariari.domain.system.alarm.dto.res.SystemAlarmDetailRes;
 import com.ariari.ariari.domain.system.alarm.dto.res.SystemAlarmListRes;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "system_alarm", description = "서비스 관리자 알림 기능")
 @RestController
+@RequestMapping(ApiHelper.CONST_API)
 @RequiredArgsConstructor
 public class SystemAlarmController {
 
