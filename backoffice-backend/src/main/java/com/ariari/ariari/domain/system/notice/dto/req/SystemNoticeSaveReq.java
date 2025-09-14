@@ -1,10 +1,13 @@
 package com.ariari.ariari.domain.system.notice.dto.req;
 
+import com.ariari.ariari.commons.entity.AdminMember;
 import com.ariari.ariari.commons.validator.ValidPopupDateRange;
 import com.ariari.ariari.commons.entity.Member;
 import com.ariari.ariari.commons.entity.SystemNotice;
+import com.ariari.ariari.domain.system.notice.enums.PopStatusType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
@@ -23,24 +26,34 @@ public class SystemNoticeSaveReq {
     private String body;
 
     @Schema(description = "공지사항 팝업 여부", example = "true")
-    private boolean isPopup;
+    private boolean popupEnabled;
 
-    @Schema(description = "공지사항 팝업 여부", example = "2025-08-09T12:00:00")
+    @Schema(description = "공지사항 여부", example = "POSTED / UNPOSTED")
+    @NotNull
+    private PopStatusType status;
+
+    @Schema(description = "팝업 시작일 (popupEnabled=true일 때)", example = "2025-08-09")
     private LocalDateTime popupStartDate;
 
-    @Schema(description = "공지사항 팝업 여부", example = "2025-08-10T12:00:00")
+    @Schema(description = "팝업 종료일 (popupEnabled=true일 때)", example = "2025-08-10")
     private LocalDateTime popupEndDate;
 
 
-    public SystemNotice toEntity(Member member) {
+    public SystemNotice toEntity(AdminMember adminMember) {
+
+        LocalDateTime adjustedEndDate = popupEndDate;
+        if (popupEnabled && popupEndDate != null) {
+            adjustedEndDate = popupEndDate.withHour(23).withMinute(59).withSecond(59);
+        }
+
         return SystemNotice.create(
                 title,
                 body,
-                member,
-                isPopup,
+                adminMember,
+                status,
+                popupEnabled,
                 popupStartDate,
-                popupEndDate
+                adjustedEndDate
         );
     }
-
 }

@@ -1,16 +1,12 @@
 package com.ariari.ariari.domain.system.alarm.dto;
 
 import com.ariari.ariari.commons.entity.SystemAlarm;
-import com.ariari.ariari.commons.entity.SystemNotice;
 import com.ariari.ariari.domain.system.enums.AlarmTargetType;
-import com.ariari.ariari.domain.system.notice.dto.SystemNoticeData;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
-
-import java.time.LocalDateTime;
 
 @Schema(description = "서비스 알림 데이터 ")
 @Getter

@@ -35,27 +35,42 @@ public class SystemFaq extends LogicalDeleteEntity {
     @Enumerated(EnumType.STRING)
     private SystemFaqStatusType systemFaqStatusType;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "admin_member_id")
+    private AdminMember createdBy; // 최초 작성자
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "updated_by")
+    private AdminMember updatedBy; // 마지막 수정자
+
+    @Version
+    private Long version; // 낙관적 락
+
     @Builder
-    private SystemFaq(String title, String body, String color, SystemFaqStatusType systemFaqStatusType) {
+    private SystemFaq(String title, String body, String color, SystemFaqStatusType systemFaqStatusType, AdminMember adminMember) {
         this.title = title;
         this.body = body;
         this.color = color;
         this.systemFaqStatusType = systemFaqStatusType;
+        this.createdBy = adminMember;
+        this.updatedBy = adminMember;
     }
 
-    public static SystemFaq create(String title, String body, String color, SystemFaqStatusType  systemFaqStatusType){
+    public static SystemFaq create(String title, String body, String color, SystemFaqStatusType  systemFaqStatusType, AdminMember adminMember){
         return SystemFaq.builder()
                 .title(title)
                 .body(body)
                 .color(color)
                 .systemFaqStatusType(systemFaqStatusType)
+                .adminMember(adminMember)
                 .build();
     }
 
-    public void modify(String title, String body, String color, SystemFaqStatusType systemFaqStatusType) {
+    public void modify(String title, String body, String color, SystemFaqStatusType systemFaqStatusType, AdminMember updatedBy) {
         this.title = title;
         this.body = body;
         this.color = color;
         this.systemFaqStatusType = systemFaqStatusType;
+        this.updatedBy = updatedBy;
     }
 }

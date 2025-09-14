@@ -2,10 +2,14 @@ package com.ariari.ariari.domain.system.faq;
 
 import com.ariari.ariari.commons.auth.springsecurity.CustomUserDetails;
 import com.ariari.ariari.commons.constant.ApiHelper;
+import com.ariari.ariari.commons.repsonse.ApiResponse;
+import com.ariari.ariari.commons.repsonse.PageResponse;
 import com.ariari.ariari.domain.system.faq.dto.req.SystemFaqModifyReq;
 import com.ariari.ariari.domain.system.faq.dto.req.SystemFaqSaveReq;
 import com.ariari.ariari.domain.system.faq.dto.res.SystemFaqDetailRes;
 import com.ariari.ariari.domain.system.faq.dto.res.SystemFaqListRes;
+import com.ariari.ariari.domain.system.faq.dto.res.SystemFaqModifyRes;
+import com.ariari.ariari.domain.system.faq.dto.res.SystemFaqSaveRes;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -15,48 +19,54 @@ import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "system_faq", description = "서비스 FAQ 기능")
 @RestController
-@RequestMapping(ApiHelper.CONST_API)
+@RequestMapping(ApiHelper.CONST_API + "/faqs")
 @RequiredArgsConstructor
 public class SystemFaqController {
 
     private final SystemFaqService systemFaqService;
 
-    @Operation(summary = "서비스 FAQ 리스트 조회", description = "운영 관리자만이 조회할 수 있습니다.")
-    @GetMapping("/service-faqs")
-    public SystemFaqListRes findSystemFaqs(
+    @Operation(summary = "서비스 FAQ 목록 조회", description = "운영 관리자만이 조회할 수 있습니다.")
+    @GetMapping
+    public PageResponse<SystemFaqListRes> findSystemFaqs(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @RequestPart(required = false) String category,
             Pageable pageable) {
-        return systemFaqService.findSystemFaqs(pageable);
+        Long adminMemberId = CustomUserDetails.getMemberId(userDetails, false);
+        return systemFaqService.findSystemFaqs(adminMemberId, category, pageable);
     }
 
     @Operation(summary = "서비스 FAQ 상세 조회", description = "운영 관리자만이 조회할 수 있습니다.")
-    @GetMapping("/service-faqs/{systemFaqId}")
-    public SystemFaqDetailRes findSystemFaqsDetail(@PathVariable Long systemFaqId) {
-        return systemFaqService.findSystemFaqsDetail(systemFaqId);
+    @GetMapping("/{id}")
+    public ApiResponse<SystemFaqDetailRes> findSystemFaqsDetail(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @PathVariable Long id) {
+        Long adminMemberId = CustomUserDetails.getMemberId(userDetails, false);
+        return systemFaqService.findSystemFaqsDetail(adminMemberId, id);
     }
 
     @Operation(summary = "서비스 FAQ 등록", description = "운영 관리자만이 등록할 수 있습니다.")
-    @PostMapping(value = "/service-faq/create")
-    public void saveSystemFaq(@AuthenticationPrincipal CustomUserDetails userDetails,
-                              @RequestBody SystemFaqSaveReq systemFaq){
+    @PostMapping
+    public ApiResponse<SystemFaqSaveRes> saveSystemFaq(@AuthenticationPrincipal CustomUserDetails userDetails,
+                                                       @RequestBody SystemFaqSaveReq systemFaq){
         Long reqMemberId = CustomUserDetails.getMemberId(userDetails, true);
-        systemFaqService.saveSystemFaq(reqMemberId, systemFaq);
+        return systemFaqService.saveSystemFaq(reqMemberId, systemFaq);
     }
 
     @Operation(summary = "서비스 FAQ 수정", description = "운영 관리자만이 수정할 수 있습니다.")
-    @PatchMapping(value = "/service-faq/{systemFaqId}")
-    public void modifySystemNotice(@AuthenticationPrincipal CustomUserDetails userDetails,
-                                   @PathVariable Long systemFaqId,
-                                   @RequestBody SystemFaqModifyReq modifyReq) {
+    @PutMapping( "/{id}")
+    public ApiResponse<SystemFaqModifyRes> modifySystemNotice(@AuthenticationPrincipal CustomUserDetails userDetails,
+                                                              @PathVariable Long id,
+                                                              @RequestBody SystemFaqModifyReq modifyReq) {
         Long reqMemberId = CustomUserDetails.getMemberId(userDetails, true);
-        systemFaqService.modifySystemFaq(reqMemberId, systemFaqId, modifyReq);
+        return systemFaqService.modifySystemFaq(reqMemberId, id, modifyReq);
     }
 
 
     @Operation(summary = "서비스 FAQ 삭제", description = "운영 관리자만이 삭제할 수 있습니다.")
-    @DeleteMapping(value = "/service-faq/{systemFaqId}")
-    public void removeSystemFaq(@AuthenticationPrincipal CustomUserDetails userDetails,
-                              @PathVariable Long systemFaqId ){
+    @DeleteMapping(value = "/{id}")
+    public ApiResponse<Void> removeSystemFaq(@AuthenticationPrincipal CustomUserDetails userDetails,
+                              @PathVariable Long id ){
         Long reqMemberId = CustomUserDetails.getMemberId(userDetails, true);
-        systemFaqService.removeSystemFaq(reqMemberId, systemFaqId);
+       return systemFaqService.removeSystemFaq(reqMemberId, id);
     }
 }

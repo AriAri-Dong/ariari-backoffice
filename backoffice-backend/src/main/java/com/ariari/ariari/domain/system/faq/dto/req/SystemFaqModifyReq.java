@@ -1,5 +1,6 @@
 package com.ariari.ariari.domain.system.faq.dto.req;
 
+import com.ariari.ariari.commons.entity.AdminMember;
 import com.ariari.ariari.commons.entity.SystemFaq;
 import com.ariari.ariari.domain.system.enums.SystemFaqStatusType;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -18,7 +19,7 @@ public class SystemFaqModifyReq {
     @Schema(description = "서비스 FAQ 타입", example = "일정")
     private SystemFaqStatusType systemFaqStatusType;
 
-    public void modifyEntity(SystemFaq systemFaq) {
-        systemFaq.modify(title, body, color, systemFaqStatusType);
+    public void modifyEntity(SystemFaq systemFaq, AdminMember updatedBy) {
+        systemFaq.modify(title, body, color, systemFaqStatusType, updatedBy);
     }
 }
