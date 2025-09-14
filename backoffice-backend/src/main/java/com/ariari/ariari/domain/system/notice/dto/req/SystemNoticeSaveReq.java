@@ -5,11 +5,13 @@ import com.ariari.ariari.commons.validator.ValidPopupDateRange;
 import com.ariari.ariari.commons.entity.Member;
 import com.ariari.ariari.commons.entity.SystemNotice;
 import com.ariari.ariari.domain.system.notice.enums.PopStatusType;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @ValidPopupDateRange
@@ -33,27 +35,35 @@ public class SystemNoticeSaveReq {
     private PopStatusType status;
 
     @Schema(description = "팝업 시작일 (popupEnabled=true일 때)", example = "2025-08-09")
-    private LocalDateTime popupStartDate;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private LocalDate popupStartDate;
 
     @Schema(description = "팝업 종료일 (popupEnabled=true일 때)", example = "2025-08-10")
-    private LocalDateTime popupEndDate;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private LocalDate popupEndDate;
 
 
     public SystemNotice toEntity(AdminMember adminMember) {
 
-        LocalDateTime adjustedEndDate = popupEndDate;
-        if (popupEnabled && popupEndDate != null) {
-            adjustedEndDate = popupEndDate.withHour(23).withMinute(59).withSecond(59);
-        }
+        LocalDateTime start = null;
+        LocalDateTime end = null;
 
+        if (popupEnabled) {
+            if (popupStartDate != null) {
+                start = popupStartDate.atStartOfDay(); // LocalDate → LocalDateTime
+            }
+            if (popupEndDate != null) {
+                end = popupEndDate.atTime(23, 59, 59);
+            }
+        }
         return SystemNotice.create(
                 title,
                 body,
                 adminMember,
                 status,
                 popupEnabled,
-                popupStartDate,
-                adjustedEndDate
+                start,
+                end
         );
     }
 }

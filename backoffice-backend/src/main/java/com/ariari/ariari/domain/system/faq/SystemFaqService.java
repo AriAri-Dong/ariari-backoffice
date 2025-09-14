@@ -47,7 +47,7 @@ public class SystemFaqService {
         AdminMember reqMember = adminMemberRepository.findById(reqMemberId).orElseThrow(NotFoundEntityException::new);
         // 검증 로직 추가 필요
         SystemFaq systemFaq = saveReq.toEntity(reqMember);
-        systemFaqRepository.save(systemFaq);
+        systemFaqRepository.saveAndFlush(systemFaq);
 
         return ApiResponse.success(SystemFaqSaveRes.fromEntity(systemFaq));
     }
@@ -58,6 +58,8 @@ public class SystemFaqService {
         // 검증 로직 추가 필요
         SystemFaq systemFaq = systemFaqRepository.findById(systemFaqId).orElseThrow(NotFoundEntityException::new);
         modifyReq.modifyEntity(systemFaq, reqMember);
+
+        systemFaqRepository.saveAndFlush(systemFaq);
 
         return ApiResponse.success(SystemFaqModifyRes.fromEntity(systemFaq));
     }

@@ -76,7 +76,7 @@ public class AuthService {
                 new SimpleGrantedAuthority(adminMember.getAdminRoleType().name())
         );
 
-        String accessToken = jwtManager.generateToken(authorities, adminMember.getId(), ACCESS_TOKEN);
+        String accessToken = "Bearer " + jwtManager.generateToken(authorities, adminMember.getId(), ACCESS_TOKEN);
         String refreshToken = jwtManager.generateToken(authorities, adminMember.getId(), REFRESH_TOKEN);
 
         adminMember.updateLastLoginDateTime();
@@ -106,7 +106,7 @@ public class AuthService {
                 new SimpleGrantedAuthority(adminMember.getAdminRoleType().name())
         );
 
-        String accessToken = jwtManager.generateToken(authorities, reqMemberId, ACCESS_TOKEN);
+        String accessToken ="Bearer " + jwtManager.generateToken(authorities, reqMemberId, ACCESS_TOKEN);
         return AccessTokenRes.createRes(accessToken);
     }
 

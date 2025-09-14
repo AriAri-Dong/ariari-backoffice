@@ -68,6 +68,8 @@ public class SystemTermService {
 
         SystemTerm systemTerm = systemTermRepository.findById(systemTermId).orElseThrow(NotFoundEntityException::new);
         systemTermModifyReq.modifyEntity(systemTerm,  reqMember);
+        systemTermRepository.saveAndFlush(systemTerm);
+
         return ApiResponse.success(SystemTermDetailRes.fromEntity(systemTerm));
     }
 

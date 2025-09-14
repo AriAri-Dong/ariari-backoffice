@@ -72,7 +72,7 @@ public class SystemNoticeService {
 
         SystemNotice systemNotice = saveReq.toEntity(reqMember);
 
-        systemNoticeRepository.save(systemNotice);
+        systemNoticeRepository.saveAndFlush(systemNotice);
 
         if (files != null && files.size() > 10) {
             return ApiResponse.failMessage("이미지는 최대 10장까지 업로드 가능합니다.");
@@ -84,10 +84,11 @@ public class SystemNoticeService {
                 systemNotice.getSystemNoticeImages().add(new SystemNoticeImage(filePath, systemNotice));
             }
         }
-
+        systemNoticeRepository.saveAndFlush(systemNotice);
         // 알림 로직 추가
         List<Member> memberList = memberRepository.findAll();
         memberAlarmManger.sendSystemNotification(memberList);
+
         return ApiResponse.success(SystemNoticeSaveRes.fromEntity(systemNotice));
     }
 
@@ -122,7 +123,7 @@ public class SystemNoticeService {
                 systemNotice.getSystemNoticeImages().add(new SystemNoticeImage(filePath, systemNotice));
             }
         }
-
+        systemNoticeRepository.saveAndFlush(systemNotice);
         return ApiResponse.success(SystemNoticeModifyRes.fromEntity(systemNotice));
     }
 

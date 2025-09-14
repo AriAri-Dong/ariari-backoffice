@@ -43,11 +43,11 @@ public class SystemNotice extends LogicalDeleteEntity {
     private LocalDateTime popupEndDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "admin_member_id")
+    @JoinColumn(name = "created_by_id")
     private AdminMember createdBy; // 최초 작성자
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "updated_by")
+    @JoinColumn(name = "updated_by_id")
     private AdminMember updatedBy; // 마지막 수정자
 
     @Version
@@ -55,6 +55,7 @@ public class SystemNotice extends LogicalDeleteEntity {
 
     @Setter
     @OneToMany(mappedBy = "systemNotice", cascade = CascadeType.ALL)
+    @Builder.Default
     private List<SystemNoticeImage> systemNoticeImages = new ArrayList<>();
 
 
