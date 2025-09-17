@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 
@@ -31,13 +32,13 @@ public class SystemTermListRes {
 
     @Schema(description = "생성일자", example = "2024-03-01")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private final LocalDateTime createdAt;
+    private final LocalDate createdAt;
 
     public static SystemTermListRes fromEntity(SystemTerm systemTerm) {
         return SystemTermListRes.builder()
                 .id(systemTerm.getId())
                 .title(systemTerm.getTermType())
-                .createdAt(systemTerm.getCreatedDateTime())
+                .createdAt(systemTerm.getCreatedDateTime().toLocalDate())
                 .author(systemTerm.getUpdatedBy().getUsername())
                 .build();
     }

@@ -74,9 +74,19 @@ public class SystemNotice extends LogicalDeleteEntity {
     }
 
 
-    public void modify(String title, String body, AdminMember updatedBy) {
+    public void modify(String title,
+                       String body,
+                       boolean popupEnabled,
+                       PopStatusType postStatus,
+                       LocalDateTime popupStartDate,
+                       LocalDateTime popupEndDate,
+                       AdminMember updatedBy) {
         this.title = title;
         this.body = body;
+        this.popupEnabled = popupEnabled;
+        this.postStatus = postStatus;
+        this.popupStartDate = popupStartDate;
+        this.popupEndDate = popupEndDate;
         this.updatedBy = updatedBy;
     }
 

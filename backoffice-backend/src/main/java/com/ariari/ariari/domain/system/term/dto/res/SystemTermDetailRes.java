@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Schema(description = "서비스 약관 상세 응답")
@@ -27,7 +28,7 @@ public class SystemTermDetailRes {
 
     @Schema(description = "생성일자", example = "2024-03-01")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private final LocalDateTime createdAt;
+    private final LocalDate createdAt;
 
     @Schema(description = "작성자", example = "홍길동")
     private String author;
@@ -37,7 +38,7 @@ public class SystemTermDetailRes {
                 .id(systemTerm.getId())
                 .title(systemTerm.getTermType())
                 .body(systemTerm.getBody())
-                .createdAt(systemTerm.getCreatedDateTime())
+                .createdAt(systemTerm.getCreatedDateTime().toLocalDate())
                 .author(systemTerm.getUpdatedBy().getUsername())
                 .build();
     }

@@ -12,6 +12,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -46,10 +47,12 @@ public class SystemNoticeDetailRes {
     private final LocalDateTime popupEndDate;
 
     @Schema(description = "생성일자", example = "2024-03-01")
-    private final LocalDateTime createdAt;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private final LocalDate createdAt;
 
     @Schema(description = "업데이트일자", example = "2024-03-01")
-    private final LocalDateTime updatedAt;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private final LocalDate updatedAt;
 
     @Schema(description = "게시 상태", example = "POSTED")
     private final PopStatusType status;
@@ -66,8 +69,8 @@ public class SystemNoticeDetailRes {
                 .popupEnabled(systemNotice.isPopupEnabled())
                 .popupStartDate(systemNotice.getPopupStartDate())
                 .popupEndDate(systemNotice.getPopupEndDate())
-                .createdAt(systemNotice.getCreatedDateTime())
-                .updatedAt(systemNotice.getUpdatedDateTime())
+                .createdAt(systemNotice.getCreatedDateTime().toLocalDate())
+                .updatedAt(systemNotice.getUpdatedDateTime().toLocalDate())
                 .status(systemNotice.getPostStatus())
                 .images(systemNotice.getSystemNoticeImages().stream().map(SystemNoticeImage::getImageUri).toList())
                 .build();

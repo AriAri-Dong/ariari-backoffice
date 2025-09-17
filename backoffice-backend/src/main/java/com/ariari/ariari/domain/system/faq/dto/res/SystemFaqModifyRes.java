@@ -34,8 +34,6 @@ public class SystemFaqModifyRes {
     private final String description;
 
 
-
-
     public static SystemFaqModifyRes fromEntity(SystemFaq systemFaq){
         return new SystemFaqModifyRes(
                 systemFaq.getTitle(),

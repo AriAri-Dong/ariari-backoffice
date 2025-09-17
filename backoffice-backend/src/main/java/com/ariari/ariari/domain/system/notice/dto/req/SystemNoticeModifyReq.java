@@ -5,12 +5,14 @@ import com.ariari.ariari.commons.entity.AdminMember;
 import com.ariari.ariari.commons.entity.SystemNotice;
 import com.ariari.ariari.commons.entity.SystemNoticeImage;
 import com.ariari.ariari.domain.system.notice.enums.PopStatusType;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,16 +38,24 @@ public class SystemNoticeModifyReq {
     private PopStatusType status;
 
     @Schema(description = "팝업 시작일 (popupEnabled=true일 때)", example = "2025-08-09")
-    private LocalDateTime popupStartDate;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private LocalDate popupStartDate;
 
     @Schema(description = "팝업 종료일 (popupEnabled=true일 때)", example = "2025-08-10")
-    private LocalDateTime popupEndDate;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private LocalDate popupEndDate;
+
 
     @Schema(description = "삭제할 공지사항 이미지 id 리스트", example = "[url, url, url, url]")
     private List<String> removeImages;
 
     public void modifyEntity(SystemNotice systemNotice, AdminMember updatedBy) {
-        systemNotice.modify(title, body, updatedBy);
+        systemNotice.modify(
+                title,
+                body,
+                popupEnabled,
+                status
+                updatedBy);
     }
 }
 
