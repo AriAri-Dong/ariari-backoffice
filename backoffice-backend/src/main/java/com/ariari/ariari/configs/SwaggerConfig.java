@@ -83,5 +83,11 @@ public class SwaggerConfig {
                 .build();
     }
 
-
+    @Bean
+    public GroupedOpenApi dataOps() {
+        return GroupedOpenApi.builder()
+                .group("10.  데이터 조회/삭제")
+                .packagesToScan("com.ariari.ariari.domain.admin.dataops", "com.ariari.ariari.test")
+                .build();
+    }
 }
