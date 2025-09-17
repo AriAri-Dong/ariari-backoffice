@@ -1,13 +1,19 @@
 package com.ariari.ariari.domain.system.faq;
 
+import com.ariari.ariari.commons.entity.AdminMember;
 import com.ariari.ariari.commons.exception.exceptions.NotFoundEntityException;
 import com.ariari.ariari.commons.entity.Member;
+import com.ariari.ariari.commons.repsonse.ApiResponse;
+import com.ariari.ariari.commons.repsonse.PageResponse;
+import com.ariari.ariari.domain.admin.AdminMemberRepository;
 import com.ariari.ariari.domain.member.member.MemberRepository;
 import com.ariari.ariari.commons.entity.SystemFaq;
 import com.ariari.ariari.domain.system.faq.dto.req.SystemFaqModifyReq;
 import com.ariari.ariari.domain.system.faq.dto.req.SystemFaqSaveReq;
 import com.ariari.ariari.domain.system.faq.dto.res.SystemFaqDetailRes;
 import com.ariari.ariari.domain.system.faq.dto.res.SystemFaqListRes;
+import com.ariari.ariari.domain.system.faq.dto.res.SystemFaqModifyRes;
+import com.ariari.ariari.domain.system.faq.dto.res.SystemFaqSaveRes;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,43 +25,52 @@ import org.springframework.transaction.annotation.Transactional;
 public class SystemFaqService {
 
     private final SystemFaqRepository systemFaqRepository;
-    private final MemberRepository memberRepository;
+    private final AdminMemberRepository adminMemberRepository;
 
 
     @Transactional(readOnly = true)
-    public SystemFaqListRes findSystemFaqs(Pageable pageable) {
+    public PageResponse<SystemFaqListRes> findSystemFaqs(Long adminMemberId, String category, Pageable pageable) {
         Page<SystemFaq> systemFaqList = systemFaqRepository.findAllByOrderByCreatedDateTimeDesc(pageable);
-        return SystemFaqListRes.from(systemFaqList);
+        Page<SystemFaqListRes> systemFaqListResPage = systemFaqList.map(SystemFaqListRes::fromEntity);
+        Page<SystemFaqListRes> dtoPage = systemFaqList.map(SystemFaqListRes::fromEntity);
+        return PageResponse.of(dtoPage);
     }
 
     @Transactional(readOnly = true)
-    public SystemFaqDetailRes findSystemFaqsDetail(Long systemFaqId) {
+    public ApiResponse<SystemFaqDetailRes> findSystemFaqsDetail(Long adminMemberId, Long systemFaqId) {
         SystemFaq systemFaq = systemFaqRepository.findById(systemFaqId).orElseThrow(NotFoundEntityException::new);
-        return SystemFaqDetailRes.createRes(systemFaq);
+        return ApiResponse.success(SystemFaqDetailRes.fromEntity(systemFaq));
     }
 
     @Transactional
-    public void saveSystemFaq(Long reqMemberId, SystemFaqSaveReq saveReq) {
-        Member reqMember = memberRepository.findById(reqMemberId).orElseThrow(NotFoundEntityException::new);
+    public ApiResponse<SystemFaqSaveRes> saveSystemFaq(Long reqMemberId, SystemFaqSaveReq saveReq) {
+        AdminMember reqMember = adminMemberRepository.findById(reqMemberId).orElseThrow(NotFoundEntityException::new);
         // 검증 로직 추가 필요
-        SystemFaq systemFaq = saveReq.toEntity();
-        systemFaqRepository.save(systemFaq);
+        SystemFaq systemFaq = saveReq.toEntity(reqMember);
+        systemFaqRepository.saveAndFlush(systemFaq);
+
+        return ApiResponse.success(SystemFaqSaveRes.fromEntity(systemFaq));
     }
 
     @Transactional
-    public void modifySystemFaq(Long reqMemberId, Long systemFaqId, SystemFaqModifyReq modifyReq) {
-        Member reqMember = memberRepository.findById(reqMemberId).orElseThrow(NotFoundEntityException::new);
+    public ApiResponse<SystemFaqModifyRes> modifySystemFaq(Long reqMemberId, Long systemFaqId, SystemFaqModifyReq modifyReq) {
+        AdminMember reqMember = adminMemberRepository.findById(reqMemberId).orElseThrow(NotFoundEntityException::new);
         // 검증 로직 추가 필요
         SystemFaq systemFaq = systemFaqRepository.findById(systemFaqId).orElseThrow(NotFoundEntityException::new);
-        modifyReq.modifyEntity(systemFaq);
+        modifyReq.modifyEntity(systemFaq, reqMember);
+
+        systemFaqRepository.saveAndFlush(systemFaq);
+
+        return ApiResponse.success(SystemFaqModifyRes.fromEntity(systemFaq));
     }
 
     @Transactional
-    public void removeSystemFaq(Long reqMemberId, Long systemFaqId) {
-        Member reqMember = memberRepository.findById(reqMemberId).orElseThrow(NotFoundEntityException::new);
+    public ApiResponse<Void> removeSystemFaq(Long reqMemberId, Long systemFaqId) {
+        AdminMember reqMember = adminMemberRepository.findById(reqMemberId).orElseThrow(NotFoundEntityException::new);
         // 검증 로직 추가 필요
         SystemFaq systemFaq = systemFaqRepository.findById(systemFaqId).orElseThrow(NotFoundEntityException::new);
         systemFaqRepository.delete(systemFaq);
+        return ApiResponse.successMessage(null);
     }
 
 

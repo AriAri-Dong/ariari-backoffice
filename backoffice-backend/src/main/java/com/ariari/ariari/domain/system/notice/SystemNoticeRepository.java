@@ -10,7 +10,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface SystemNoticeRepository extends JpaRepository<SystemNotice, Long> {
+public interface SystemNoticeRepository extends JpaRepository<SystemNotice, Long>, SystemNoticeRepositoryCustom {
 
-    Page<SystemNotice> findAllByOrderByCreatedDateTimeDesc(Pageable pageable);
 }

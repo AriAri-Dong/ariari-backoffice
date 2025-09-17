@@ -2,11 +2,10 @@ package com.ariari.ariari.commons.entity;
 
 import com.ariari.ariari.commons.commonentity.LogicalDeleteEntity;
 import com.ariari.ariari.commons.pkgenerator.CustomPkGenerate;
+import com.ariari.ariari.domain.system.notice.enums.PopStatusType;
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import org.checkerframework.checker.units.qual.A;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
@@ -19,6 +18,8 @@ import java.util.List;
 @Getter
 @SQLDelete(sql = "UPDATE system_notice SET deleted_date_time= CURRENT_TIMESTAMP WHERE system_notice_id= ?")
 @SQLRestriction("deleted_date_time is null")
+@Builder
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class SystemNotice extends LogicalDeleteEntity {
 
     @Id
@@ -32,46 +33,51 @@ public class SystemNotice extends LogicalDeleteEntity {
     @Column(length = 1000)
     private String body;
 
-    private boolean isPopup;
+    @Enumerated(EnumType.STRING)
+    private PopStatusType postStatus;
+
+    private boolean popupEnabled;
 
     private LocalDateTime popupStartDate;
 
     private LocalDateTime popupEndDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
-    private Member member;
+    @JoinColumn(name = "created_by_id")
+    private AdminMember createdBy; // 최초 작성자
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "updated_by_id")
+    private AdminMember updatedBy; // 마지막 수정자
+
+    @Version
+    private Long version;
 
     @Setter
     @OneToMany(mappedBy = "systemNotice", cascade = CascadeType.ALL)
+    @Builder.Default
     private List<SystemNoticeImage> systemNoticeImages = new ArrayList<>();
 
-    @Builder
-    private SystemNotice(String title, String body, Member member,
-                         boolean isPopup, LocalDateTime popupStartDate, LocalDateTime popupEndDate) {
-        this.title = title;
-        this.body = body;
-        this.member = member;
-        this.isPopup = isPopup;
-        this.popupStartDate = popupStartDate;
-        this.popupEndDate = popupEndDate;
-    }
 
-    public static SystemNotice create(String title, String body, Member member, boolean isPopup, LocalDateTime popupStartDate, LocalDateTime popupEndDate) {
+    public static SystemNotice create(String title, String body, AdminMember adminMember,
+                                      PopStatusType postStatus, boolean popupEnabled, LocalDateTime popupStartDate, LocalDateTime popupEndDate) {
         return SystemNotice.builder()
                 .title(title)
                 .body(body)
-                .isPopup(isPopup)
-                .member(member)
+                .createdBy(adminMember)
+                .updatedBy(adminMember)
+                .postStatus(postStatus)
+                .popupEnabled(popupEnabled)
                 .popupStartDate(popupStartDate)
                 .popupEndDate(popupEndDate)
                 .build();
     }
 
 
-    public void modify(String title, String body) {
+    public void modify(String title, String body, AdminMember updatedBy) {
         this.title = title;
         this.body = body;
+        this.updatedBy = updatedBy;
     }
 
 

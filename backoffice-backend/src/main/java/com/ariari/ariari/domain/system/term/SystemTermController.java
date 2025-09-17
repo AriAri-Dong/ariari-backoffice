@@ -1,6 +1,8 @@
 package com.ariari.ariari.domain.system.term;
 
 import com.ariari.ariari.commons.auth.springsecurity.CustomUserDetails;
+import com.ariari.ariari.commons.repsonse.ApiResponse;
+import com.ariari.ariari.commons.repsonse.PageResponse;
 import com.ariari.ariari.domain.system.enums.TermType;
 import com.ariari.ariari.domain.system.term.dto.req.SystemTermModifyReq;
 import com.ariari.ariari.domain.system.term.dto.req.SystemTermSaveReq;
@@ -9,6 +11,8 @@ import com.ariari.ariari.domain.system.term.dto.res.SystemTermListRes;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,37 +28,44 @@ public class SystemTermController {
 
     @Operation(summary = "약관 목록 조회", description = "PRIVACY_POLICY : 개인정보 처리방침 , CLUB_RULES : 동아리 이용수칙, PLATFORM_RULES : 플랫폼 이용수칙")
     @GetMapping
-    public SystemTermListRes findSystemTerms() {
-        return systemTermService.findSystemTerms();
+    public PageResponse<SystemTermListRes> findSystemTerms(@AuthenticationPrincipal CustomUserDetails userDetails, Pageable pageable) {
+        Long adminMemberId = CustomUserDetails.getMemberId(userDetails, false);
+        return systemTermService.findSystemTerms(adminMemberId, pageable);
     }
 
     @Operation(summary = "약관 상세 조회", description = "PRIVACY_POLICY : 개인정보 처리방침 , CLUB_RULES : 동아리 이용수칙, PLATFORM_RULES : 플랫폼 이용수칙")
     @GetMapping("/{id}")
-    public SystemTermDetailRes findSystemTerm(@PathVariable Long id) {
-        return systemTermService.findSystemTermDetail(id);
+    public ApiResponse<SystemTermDetailRes> findSystemTerm(@AuthenticationPrincipal CustomUserDetails userDetails, @PathVariable Long id) {
+        Long adminMemberId = CustomUserDetails.getMemberId(userDetails, false);
+        return systemTermService.findSystemTermDetail(adminMemberId, id);
     }
 
     @Operation(summary = "약관 등록", description = "")
     @PostMapping("/create")
-    public void saveSystemTerm(@RequestBody SystemTermSaveReq systemTermSaveReq) {
-        systemTermService.saveSystemTerm(systemTermSaveReq);
+    public void saveSystemTerm(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestBody SystemTermSaveReq systemTermSaveReq) {
+        Long adminMemberId = CustomUserDetails.getMemberId(userDetails, false);
+        systemTermService.saveSystemTerm(adminMemberId, systemTermSaveReq);
     }
 
     @Operation(summary = "약관 유형으로 약관 조회", description = "PRIVACY_POLICY : 개인정보 처리방침 , CLUB_RULES : 동아리 이용수칙, PLATFORM_RULES : 플랫폼 이용수칙")
     @GetMapping("/{termType}")
-    public SystemTermDetailRes findSystemNoticeDetail(@PathVariable(value = "termType") TermType termType) {
-        return systemTermService.getSystemTermByTermType(termType);
+    public SystemTermDetailRes findSystemNoticeDetail(@AuthenticationPrincipal CustomUserDetails userDetails,
+                                                      @PathVariable(value = "termType") TermType termType) {
+        Long adminMemberId = CustomUserDetails.getMemberId(userDetails, false);
+        return systemTermService.getSystemTermByTermType(adminMemberId, termType);
     }
 
     @Operation(summary = "약관 수정", description = "")
     @PutMapping("/{id}")
-    public void modifySystemTerm(@RequestBody SystemTermModifyReq systemTermModifyReq, @PathVariable Long id) {
-        systemTermService.modifySystemTerm(systemTermModifyReq, id);
+    public ApiResponse<SystemTermDetailRes> modifySystemTerm(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestBody SystemTermModifyReq systemTermModifyReq, @PathVariable Long id) {
+        Long adminMemberId = CustomUserDetails.getMemberId(userDetails, false);
+        return systemTermService.modifySystemTerm(adminMemberId, systemTermModifyReq, id);
     }
 
     @Operation(summary = "약관 삭제", description = "")
     @DeleteMapping("/{id}")
-    public void  removeSystemTerm(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable Long id) {
-        systemTermService.removeSystemTerm(id);
+    public ApiResponse<Void>  removeSystemTerm(@AuthenticationPrincipal CustomUserDetails userDetails, @PathVariable Long id) {
+        Long adminMemberId = CustomUserDetails.getMemberId(userDetails, false);
+        return systemTermService.removeSystemTerm(adminMemberId, id);
     }
 }

@@ -2,23 +2,24 @@ package com.ariari.ariari.domain.system.faq.dto.res;
 
 import com.ariari.ariari.commons.entity.SystemFaq;
 import com.ariari.ariari.domain.system.enums.SystemFaqStatusType;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 
-@Schema(description = "서비스 FAQ 리스트 응답")
-@Getter
-@Builder
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class SystemFaqListRes {
+import java.time.LocalDateTime;
 
-    @JsonSerialize(using = ToStringSerializer.class)
-    @Schema(description = "서비스 공지사항 id", example = "673012345142938986")
-    private final Long id;
+@Schema(description = "서비스 FAQ 수정 응답")
+@Getter
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+public class SystemFaqModifyRes {
+
+//    @JsonSerialize(using = ToStringSerializer.class)
+//    @Schema(description = "서비스 공지사항 id", example = "673012345142938986")
+//    private final Long id;
 
     @Schema(description = "제목", example = "Faq입니다.")
     private final String title;
@@ -34,13 +35,13 @@ public class SystemFaqListRes {
 
 
 
-    public static SystemFaqListRes fromEntity(SystemFaq systemFaq){
-        return SystemFaqListRes.builder()
-                .id(systemFaq.getId())
-                .title(systemFaq.getTitle())
-                .category(systemFaq.getSystemFaqStatusType())
-                .tokenColor(systemFaq.getColor())
-                .description(systemFaq.getBody())
-                .build();
+
+    public static SystemFaqModifyRes fromEntity(SystemFaq systemFaq){
+        return new SystemFaqModifyRes(
+                systemFaq.getTitle(),
+                systemFaq.getSystemFaqStatusType(),
+                systemFaq.getColor(),
+                systemFaq.getBody()
+        );
     }
 }

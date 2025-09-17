@@ -1,12 +1,17 @@
 package com.ariari.ariari.domain.system.notice.dto.req;
 
+import com.ariari.ariari.commons.entity.AdminMember;
 import com.ariari.ariari.commons.validator.ValidPopupDateRange;
 import com.ariari.ariari.commons.entity.Member;
 import com.ariari.ariari.commons.entity.SystemNotice;
+import com.ariari.ariari.domain.system.notice.enums.PopStatusType;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @ValidPopupDateRange
@@ -23,24 +28,42 @@ public class SystemNoticeSaveReq {
     private String body;
 
     @Schema(description = "공지사항 팝업 여부", example = "true")
-    private boolean isPopup;
+    private boolean popupEnabled;
 
-    @Schema(description = "공지사항 팝업 여부", example = "2025-08-09T12:00:00")
-    private LocalDateTime popupStartDate;
+    @Schema(description = "공지사항 여부", example = "POSTED / UNPOSTED")
+    @NotNull
+    private PopStatusType status;
 
-    @Schema(description = "공지사항 팝업 여부", example = "2025-08-10T12:00:00")
-    private LocalDateTime popupEndDate;
+    @Schema(description = "팝업 시작일 (popupEnabled=true일 때)", example = "2025-08-09")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private LocalDate popupStartDate;
+
+    @Schema(description = "팝업 종료일 (popupEnabled=true일 때)", example = "2025-08-10")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private LocalDate popupEndDate;
 
 
-    public SystemNotice toEntity(Member member) {
+    public SystemNotice toEntity(AdminMember adminMember) {
+
+        LocalDateTime start = null;
+        LocalDateTime end = null;
+
+        if (popupEnabled) {
+            if (popupStartDate != null) {
+                start = popupStartDate.atStartOfDay(); // LocalDate → LocalDateTime
+            }
+            if (popupEndDate != null) {
+                end = popupEndDate.atTime(23, 59, 59);
+            }
+        }
         return SystemNotice.create(
                 title,
                 body,
-                member,
-                isPopup,
-                popupStartDate,
-                popupEndDate
+                adminMember,
+                status,
+                popupEnabled,
+                start,
+                end
         );
     }
-
 }

@@ -1,5 +1,6 @@
 package com.ariari.ariari.domain.system.term.dto.req;
 
+import com.ariari.ariari.commons.entity.AdminMember;
 import com.ariari.ariari.commons.pkgenerator.CustomPkGenerate;
 import com.ariari.ariari.commons.entity.SystemTerm;
 import com.ariari.ariari.domain.system.enums.TermType;
@@ -18,10 +19,11 @@ public class SystemTermSaveReq {
     private String body;
 
 
-    public SystemTerm toEntity(){
+    public SystemTerm toEntity(AdminMember adminMember) {
         return SystemTerm.create(
                 termType,
-                body
+                body,
+                adminMember
         );
     }
 
