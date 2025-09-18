@@ -4,6 +4,7 @@ package com.ariari.ariari.domain.system.notice.dto.req;
 import com.ariari.ariari.commons.entity.AdminMember;
 import com.ariari.ariari.commons.entity.SystemNotice;
 import com.ariari.ariari.commons.entity.SystemNoticeImage;
+import com.ariari.ariari.commons.manager.SystemManager;
 import com.ariari.ariari.domain.system.notice.enums.PopStatusType;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -16,6 +17,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Schema(description = "서비스 공지사항 수정 형식")
 @Getter
@@ -50,11 +52,23 @@ public class SystemNoticeModifyReq {
     private List<String> removeImages;
 
     public void modifyEntity(SystemNotice systemNotice, AdminMember updatedBy) {
+
+        LocalDateTime start = null;
+        LocalDateTime end = null;
+
+        if (popupEnabled && popupStartDate != null && popupEndDate != null) {
+            Map<String, LocalDateTime> dateTimes = SystemManager.formatter(popupStartDate, popupEndDate);
+            start = dateTimes.get("startDate");
+            end = dateTimes.get("endDate");
+        }
+
         systemNotice.modify(
                 title,
                 body,
                 popupEnabled,
-                status
+                status,
+                start,
+                end,
                 updatedBy);
     }
 }
