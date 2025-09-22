@@ -11,6 +11,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Schema(description = "서비스 FAQ 상세 응답 ")
@@ -37,12 +38,12 @@ public class SystemFaqDetailRes {
 
     @Schema(description = "생성일자", example = "2024-03-01")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private final LocalDateTime createdAt;
+    private final LocalDate createdAt;
 
 
     @Schema(description = "업데이트일자", example = "2024-03-01")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private final LocalDateTime updateAt;
+    private final LocalDate updateAt;
 
 
 
@@ -53,8 +54,8 @@ public class SystemFaqDetailRes {
                 .category(systemFaq.getSystemFaqStatusType())
                 .tokenColor(systemFaq.getColor())
                 .description(systemFaq.getBody())
-                .createdAt(systemFaq.getCreatedDateTime())
-                .updateAt(systemFaq.getUpdatedDateTime())
+                .createdAt(systemFaq.getCreatedDateTime().toLocalDate())
+                .updateAt(systemFaq.getUpdatedDateTime().toLocalDate())
                 .build();
     }
 }

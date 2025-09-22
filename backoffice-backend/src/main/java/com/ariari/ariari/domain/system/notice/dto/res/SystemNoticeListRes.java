@@ -11,6 +11,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Schema(description = "서비스 공지사항 리스트 응답")
@@ -31,7 +32,7 @@ public class SystemNoticeListRes {
 
     @Schema(description = "생성일자", example = "2024-03-01")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private final LocalDateTime createdAt;
+    private final LocalDate createdAt;
 
 
     @Schema(description = "작성자", example = "홍길동")
@@ -43,7 +44,7 @@ public class SystemNoticeListRes {
                 .id(systemNotice.getId())
                 .title(systemNotice.getTitle())
                 .status(systemNotice.getPostStatus())
-                .createdAt(systemNotice.getCreatedDateTime())
+                .createdAt(systemNotice.getCreatedDateTime().toLocalDate())
                 .author(systemNotice.getUpdatedBy().getUsername())
                 .build();
 

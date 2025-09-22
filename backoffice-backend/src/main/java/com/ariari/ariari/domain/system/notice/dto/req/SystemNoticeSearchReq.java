@@ -26,11 +26,11 @@ public class SystemNoticeSearchReq {
 
     @Schema(description = "시작일 (YYYY-MM-DD)", example = "2024-03-01")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private LocalDateTime startDate;
+    private LocalDate startDate;
 
     @Schema(description = "종료일 (YYYY-MM-DD)", example = "2024-03-01")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private LocalDateTime endDate;
+    private LocalDate endDate;
 
 
 }

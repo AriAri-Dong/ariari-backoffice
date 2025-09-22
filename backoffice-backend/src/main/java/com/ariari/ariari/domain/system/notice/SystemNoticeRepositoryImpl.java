@@ -45,8 +45,8 @@ public class SystemNoticeRepositoryImpl implements SystemNoticeRepositoryCustom{
                 .where(
                         titleOrAuthor(req.getSearch(), req.getFilter()),
                         statusEq(req.getStatus()),
-                        createdAfter(req.getStartDate()),
-                        createdBefore(req.getEndDate())
+                        createdAfter(req.getStartDate().atStartOfDay()),
+                        createdBefore(req.getEndDate().atTime(23, 59, 59))
                 )
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -60,8 +60,8 @@ public class SystemNoticeRepositoryImpl implements SystemNoticeRepositoryCustom{
                 .where(
                         titleOrAuthor(req.getSearch(), req.getFilter()),
                         statusEq(req.getStatus()),
-                        createdAfter(req.getStartDate()),
-                        createdBefore(req.getEndDate())
+                        createdAfter(req.getStartDate().atStartOfDay()),
+                        createdBefore(req.getEndDate().atTime(23, 59, 59))
                 )
                 .fetchOne();
 

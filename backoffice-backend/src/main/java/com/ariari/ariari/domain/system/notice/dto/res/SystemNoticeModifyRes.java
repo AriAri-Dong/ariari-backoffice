@@ -11,6 +11,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -33,14 +34,14 @@ public class SystemNoticeModifyRes {
 
     @Schema(description = "업데이트일자", example = "2024-03-01")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private final LocalDateTime updatedAt;
+    private final LocalDate updatedAt;
 
 
     public static SystemNoticeModifyRes fromEntity(SystemNotice systemNotice){
         return SystemNoticeModifyRes.builder()
                 .id(systemNotice.getId())
                 .title(systemNotice.getTitle())
-                .updatedAt(systemNotice.getUpdatedDateTime())
+                .updatedAt(systemNotice.getUpdatedDateTime().toLocalDate())
                 .images(systemNotice.getSystemNoticeImages().stream().map(SystemNoticeImage::getImageUri).toList())
                 .build();
 
