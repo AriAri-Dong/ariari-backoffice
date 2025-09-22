@@ -1,0 +1,742 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ariari.ariari.domain.admin.dashboard.DashboardMapper">
+
+    <select id="countCreatedClubsByDateAndCategory" resultType="Integer">
+        SELECT COUNT(*)
+        FROM club
+        WHERE DATE(created_date_time) = #{date}
+        AND deleted_date_time IS NULL
+        <if test="category != 'All'">
+            AND club_category_type = #{category}
+        </if>
+    </select>
+
+    <select id="countCreatedClubsByDateAndRegion" resultType="Integer">
+        SELECT COUNT(*)
+        FROM club
+        WHERE DATE(created_date_time) = #{date}
+        AND deleted_date_time IS NULL
+        <if test="region != 'All'">
+            AND club_region_type = #{region}
+        </if>
+    </select>
+
+    <select id="countDeletedClubsByDateAndCategory" resultType="Integer">
+        SELECT COUNT(*)
+        FROM club
+        WHERE DATE(deleted_date_time) = #{date}
+        AND deleted_date_time IS NOT NULL
+        <if test="category != 'All'">
+            AND club_category_type = #{category}
+        </if>
+    </select>
+
+    <select id="countDeletedClubsByDateAndRegion" resultType="Integer">
+        SELECT COUNT(*)
+        FROM club
+        WHERE DATE(deleted_date_time) = #{date}
+        AND deleted_date_time IS NOT NULL
+        <if test="region != 'All'">
+            AND club_region_type = #{region}
+        </if>
+    </select>
+
+    <!-- Club Ranking Base Data Query -->
+    <select id="getClubRankingBaseData" resultType="com.ariari.ariari.domain.admin.dashboard.dto.ClubRankingBaseData">
+        SELECT
+            c.club_id as clubId,
+            c.name as clubName,
+
+            -- 동아리별 회원 수
+            COALESCE(member_stats.memberCount, 0) as memberCount,
+
+            -- 활동내역 게시글 수
+            COALESCE(activity_stats.activityPostCount, 0) as activityPostCount,
+
+            -- 활동내역 게시글의 댓글 수
+            COALESCE(comment_stats.activityCommentCount, 0) as activityCommentCount,
+
+            -- 활동내역 게시글 및 댓글의 좋아요 수
+            COALESCE(like_stats.activityLikeCount, 0) as activityLikeCount,
+
+            -- 총합 조회수 (동아리 조회수 + 모집글 조회수)
+            (COALESCE(c.views, 0) + COALESCE(recruitment_stats.recruitmentViews, 0)) as totalViews,
+
+            -- 동아리 조회수
+            COALESCE(c.views, 0) as clubViews,
+
+            -- 동아리 모집 조회수
+            COALESCE(recruitment_stats.recruitmentViews, 0) as clubRecruitmentViews,
+
+            -- 최근 3일간 들어온 유저 수
+            COALESCE(recent_participant_stats.recentParticipantCount, 0) as recentParticipantCount
+
+        FROM club c
+
+        -- 동아리별 회원 수
+        LEFT JOIN (
+            SELECT
+                cm.club_id,
+                COUNT(*) as memberCount
+            FROM club_member cm
+            WHERE cm.deleted_date_time IS NULL
+            GROUP BY cm.club_id
+        ) member_stats ON c.club_id = member_stats.club_id
+
+        -- 활동내역 게시글 수
+        LEFT JOIN (
+            SELECT
+                ca.club_id,
+                COUNT(*) as activityPostCount
+            FROM club_activity ca
+            WHERE ca.deleted_date_time IS NULL
+            GROUP BY ca.club_id
+        ) activity_stats ON c.club_id = activity_stats.club_id
+
+        -- 활동내역 댓글 수
+        LEFT JOIN (
+            SELECT
+                ca.club_id,
+                COUNT(cac.club_activity_comment_id) as activityCommentCount
+            FROM club_activity ca
+            LEFT JOIN club_activity_comment cac ON ca.club_activity_id = cac.club_activity_id
+                AND cac.deleted_date_time IS NULL
+            WHERE ca.deleted_date_time IS NULL
+            GROUP BY ca.club_id
+        ) comment_stats ON c.club_id = comment_stats.club_id
+
+        -- 활동내역 게시글 좋아요 수
+        LEFT JOIN (
+            SELECT
+                ca.club_id,
+                COUNT(cal.club_activity_like_id) as activityLikeCount
+            FROM club_activity ca
+            LEFT JOIN club_activity_like cal ON ca.club_activity_id = cal.club_activity_id
+                AND cal.deleted_date_time IS NULL
+            WHERE ca.deleted_date_time IS NULL
+            GROUP BY ca.club_id
+        ) like_stats ON c.club_id = like_stats.club_id
+
+        -- 모집글 조회수 합계
+        LEFT JOIN (
+            SELECT
+                r.club_id,
+                SUM(COALESCE(r.views, 0)) as recruitmentViews
+            FROM recruitment r
+            WHERE r.deleted_date_time IS NULL
+            GROUP BY r.club_id
+        ) recruitment_stats ON c.club_id = recruitment_stats.club_id
+
+        -- 최근 3일간 참여자 수 (club_member 기준)
+        LEFT JOIN (
+            SELECT
+                cm.club_id,
+                COUNT(DISTINCT cm.member_id) as recentParticipantCount
+            FROM club_member cm
+            WHERE cm.deleted_date_time IS NULL
+                AND cm.created_date_time >= DATE_SUB(NOW(), INTERVAL 3 DAY)
+            GROUP BY cm.club_id
+        ) recent_participant_stats ON c.club_id = recent_participant_stats.club_id
+
+        WHERE c.deleted_date_time IS NULL
+        ORDER BY c.club_id
+    </select>
+
+    <!-- 전체 인기 동아리 랭킹 (모든 동아리, 생성일 무관) -->
+    <select id="getAllPopularClubRankingData" resultType="com.ariari.ariari.domain.admin.dashboard.dto.ClubRankingBaseData">
+        SELECT
+            c.club_id as clubId,
+            c.name as clubName,
+
+            -- 동아리별 회원 수
+            COALESCE(member_stats.memberCount, 0) as memberCount,
+
+            -- 활동내역 게시글 수
+            COALESCE(activity_stats.activityPostCount, 0) as activityPostCount,
+
+            -- 활동내역 게시글의 댓글 수
+            COALESCE(comment_stats.activityCommentCount, 0) as activityCommentCount,
+
+            -- 활동내역 게시글 좋아요 수
+            COALESCE(like_stats.activityLikeCount, 0) as activityLikeCount,
+
+            -- 동아리 조회수
+            COALESCE(c.views, 0) as clubViews,
+
+            -- 동아리 모집 조회수
+            COALESCE(recruitment_stats.recruitmentViews, 0) as clubRecruitmentViews,
+
+            -- 최근 3일간 들어온 유저 수
+            COALESCE(recent_participant_stats.recentParticipantCount, 0) as recentParticipantCount
+
+        FROM club c
+
+        -- 동아리별 회원 수
+        LEFT JOIN (
+            SELECT
+                cm.club_id,
+                COUNT(*) as memberCount
+            FROM club_member cm
+            WHERE cm.deleted_date_time IS NULL
+            GROUP BY cm.club_id
+        ) member_stats ON c.club_id = member_stats.club_id
+
+        -- 활동내역 게시글 수
+        LEFT JOIN (
+            SELECT
+                ca.club_id,
+                COUNT(*) as activityPostCount
+            FROM club_activity ca
+            WHERE ca.deleted_date_time IS NULL
+            GROUP BY ca.club_id
+        ) activity_stats ON c.club_id = activity_stats.club_id
+
+        -- 활동내역 댓글 수
+        LEFT JOIN (
+            SELECT
+                ca.club_id,
+                COUNT(cac.club_activity_comment_id) as activityCommentCount
+            FROM club_activity ca
+            LEFT JOIN club_activity_comment cac ON ca.club_activity_id = cac.club_activity_id
+                AND cac.deleted_date_time IS NULL
+            WHERE ca.deleted_date_time IS NULL
+            GROUP BY ca.club_id
+        ) comment_stats ON c.club_id = comment_stats.club_id
+
+        -- 활동내역 게시글 좋아요 수
+        LEFT JOIN (
+            SELECT
+                ca.club_id,
+                COUNT(cal.club_activity_like_id) as activityLikeCount
+            FROM club_activity ca
+            LEFT JOIN club_activity_like cal ON ca.club_activity_id = cal.club_activity_id
+                AND cal.deleted_date_time IS NULL
+            WHERE ca.deleted_date_time IS NULL
+            GROUP BY ca.club_id
+        ) like_stats ON c.club_id = like_stats.club_id
+
+        -- 모집글 조회수 합계
+        LEFT JOIN (
+            SELECT
+                r.club_id,
+                SUM(COALESCE(r.views, 0)) as recruitmentViews
+            FROM recruitment r
+            WHERE r.deleted_date_time IS NULL
+            GROUP BY r.club_id
+        ) recruitment_stats ON c.club_id = recruitment_stats.club_id
+
+        -- 최근 3일간 참여자 수 (club_member 기준)
+        LEFT JOIN (
+            SELECT
+                cm.club_id,
+                COUNT(DISTINCT cm.member_id) as recentParticipantCount
+            FROM club_member cm
+            WHERE cm.deleted_date_time IS NULL
+                AND cm.created_date_time >= DATE_SUB(NOW(), INTERVAL 3 DAY)
+            GROUP BY cm.club_id
+        ) recent_participant_stats ON c.club_id = recent_participant_stats.club_id
+
+        WHERE c.deleted_date_time IS NULL
+        ORDER BY c.club_id
+    </select>
+
+    <!-- 전체 신규 동아리 랭킹 (모든 동아리, 생성한지 14일 이내) -->
+    <select id="getAllNewClubRankingData" resultType="com.ariari.ariari.domain.admin.dashboard.dto.ClubRankingBaseData">
+        SELECT
+            c.club_id as clubId,
+            c.name as clubName,
+
+            -- 동아리별 회원 수
+            COALESCE(member_stats.memberCount, 0) as memberCount,
+
+            -- 활동내역 게시글 수
+            COALESCE(activity_stats.activityPostCount, 0) as activityPostCount,
+
+            -- 활동내역 게시글의 댓글 수
+            COALESCE(comment_stats.activityCommentCount, 0) as activityCommentCount,
+
+            -- 활동내역 게시글 좋아요 수
+            COALESCE(like_stats.activityLikeCount, 0) as activityLikeCount,
+
+            -- 동아리 조회수
+            COALESCE(c.views, 0) as clubViews,
+
+            -- 동아리 모집 조회수
+            COALESCE(recruitment_stats.recruitmentViews, 0) as clubRecruitmentViews,
+
+            -- 최근 3일간 들어온 유저 수
+            COALESCE(recent_participant_stats.recentParticipantCount, 0) as recentParticipantCount
+
+        FROM club c
+
+        -- 동아리별 회원 수
+        LEFT JOIN (
+            SELECT
+                cm.club_id,
+                COUNT(*) as memberCount
+            FROM club_member cm
+            WHERE cm.deleted_date_time IS NULL
+            GROUP BY cm.club_id
+        ) member_stats ON c.club_id = member_stats.club_id
+
+        -- 활동내역 게시글 수
+        LEFT JOIN (
+            SELECT
+                ca.club_id,
+                COUNT(*) as activityPostCount
+            FROM club_activity ca
+            WHERE ca.deleted_date_time IS NULL
+            GROUP BY ca.club_id
+        ) activity_stats ON c.club_id = activity_stats.club_id
+
+        -- 활동내역 댓글 수
+        LEFT JOIN (
+            SELECT
+                ca.club_id,
+                COUNT(cac.club_activity_comment_id) as activityCommentCount
+            FROM club_activity ca
+            LEFT JOIN club_activity_comment cac ON ca.club_activity_id = cac.club_activity_id
+                AND cac.deleted_date_time IS NULL
+            WHERE ca.deleted_date_time IS NULL
+            GROUP BY ca.club_id
+        ) comment_stats ON c.club_id = comment_stats.club_id
+
+        -- 활동내역 게시글 좋아요 수
+        LEFT JOIN (
+            SELECT
+                ca.club_id,
+                COUNT(cal.club_activity_like_id) as activityLikeCount
+            FROM club_activity ca
+            LEFT JOIN club_activity_like cal ON ca.club_activity_id = cal.club_activity_id
+                AND cal.deleted_date_time IS NULL
+            WHERE ca.deleted_date_time IS NULL
+            GROUP BY ca.club_id
+        ) like_stats ON c.club_id = like_stats.club_id
+
+        -- 모집글 조회수 합계
+        LEFT JOIN (
+            SELECT
+                r.club_id,
+                SUM(COALESCE(r.views, 0)) as recruitmentViews
+            FROM recruitment r
+            WHERE r.deleted_date_time IS NULL
+            GROUP BY r.club_id
+        ) recruitment_stats ON c.club_id = recruitment_stats.club_id
+
+        -- 최근 3일간 참여자 수 (club_member 기준)
+        LEFT JOIN (
+            SELECT
+                cm.club_id,
+                COUNT(DISTINCT cm.member_id) as recentParticipantCount
+            FROM club_member cm
+            WHERE cm.deleted_date_time IS NULL
+                AND cm.created_date_time >= DATE_SUB(NOW(), INTERVAL 3 DAY)
+            GROUP BY cm.club_id
+        ) recent_participant_stats ON c.club_id = recent_participant_stats.club_id
+
+        WHERE c.deleted_date_time IS NULL
+            AND c.created_date_time >= DATE_SUB(NOW(), INTERVAL 14 DAY)
+        ORDER BY c.club_id
+    </select>
+
+    <!-- 교내 인기 동아리 랭킹 (school_id가 NOT NULL인 동아리, 생성일 무관) -->
+    <select id="getInternalPopularClubRankingData" resultType="com.ariari.ariari.domain.admin.dashboard.dto.ClubRankingBaseData">
+        SELECT
+            c.club_id as clubId,
+            c.name as clubName,
+
+            -- 동아리별 회원 수
+            COALESCE(member_stats.memberCount, 0) as memberCount,
+
+            -- 활동내역 게시글 수
+            COALESCE(activity_stats.activityPostCount, 0) as activityPostCount,
+
+            -- 활동내역 게시글의 댓글 수
+            COALESCE(comment_stats.activityCommentCount, 0) as activityCommentCount,
+
+            -- 활동내역 게시글 좋아요 수
+            COALESCE(like_stats.activityLikeCount, 0) as activityLikeCount,
+
+            -- 동아리 조회수
+            COALESCE(c.views, 0) as clubViews,
+
+            -- 동아리 모집 조회수
+            COALESCE(recruitment_stats.recruitmentViews, 0) as clubRecruitmentViews,
+
+            -- 최근 3일간 들어온 유저 수
+            COALESCE(recent_participant_stats.recentParticipantCount, 0) as recentParticipantCount
+
+        FROM club c
+
+        -- 동아리별 회원 수
+        LEFT JOIN (
+            SELECT
+                cm.club_id,
+                COUNT(*) as memberCount
+            FROM club_member cm
+            WHERE cm.deleted_date_time IS NULL
+            GROUP BY cm.club_id
+        ) member_stats ON c.club_id = member_stats.club_id
+
+        -- 활동내역 게시글 수
+        LEFT JOIN (
+            SELECT
+                ca.club_id,
+                COUNT(*) as activityPostCount
+            FROM club_activity ca
+            WHERE ca.deleted_date_time IS NULL
+            GROUP BY ca.club_id
+        ) activity_stats ON c.club_id = activity_stats.club_id
+
+        -- 활동내역 댓글 수
+        LEFT JOIN (
+            SELECT
+                ca.club_id,
+                COUNT(cac.club_activity_comment_id) as activityCommentCount
+            FROM club_activity ca
+            LEFT JOIN club_activity_comment cac ON ca.club_activity_id = cac.club_activity_id
+                AND cac.deleted_date_time IS NULL
+            WHERE ca.deleted_date_time IS NULL
+            GROUP BY ca.club_id
+        ) comment_stats ON c.club_id = comment_stats.club_id
+
+        -- 활동내역 게시글 좋아요 수
+        LEFT JOIN (
+            SELECT
+                ca.club_id,
+                COUNT(cal.club_activity_like_id) as activityLikeCount
+            FROM club_activity ca
+            LEFT JOIN club_activity_like cal ON ca.club_activity_id = cal.club_activity_id
+                AND cal.deleted_date_time IS NULL
+            WHERE ca.deleted_date_time IS NULL
+            GROUP BY ca.club_id
+        ) like_stats ON c.club_id = like_stats.club_id
+
+        -- 모집글 조회수 합계
+        LEFT JOIN (
+            SELECT
+                r.club_id,
+                SUM(COALESCE(r.views, 0)) as recruitmentViews
+            FROM recruitment r
+            WHERE r.deleted_date_time IS NULL
+            GROUP BY r.club_id
+        ) recruitment_stats ON c.club_id = recruitment_stats.club_id
+
+        -- 최근 3일간 참여자 수 (club_member 기준)
+        LEFT JOIN (
+            SELECT
+                cm.club_id,
+                COUNT(DISTINCT cm.member_id) as recentParticipantCount
+            FROM club_member cm
+            WHERE cm.deleted_date_time IS NULL
+                AND cm.created_date_time >= DATE_SUB(NOW(), INTERVAL 3 DAY)
+            GROUP BY cm.club_id
+        ) recent_participant_stats ON c.club_id = recent_participant_stats.club_id
+
+        WHERE c.deleted_date_time IS NULL
+            AND c.school_id IS NOT NULL
+        ORDER BY c.club_id
+    </select>
+
+    <!-- 교내 신규 동아리 랭킹 (school_id가 NOT NULL인 동아리, 생성한지 14일 이내) -->
+    <select id="getInternalNewClubRankingData" resultType="com.ariari.ariari.domain.admin.dashboard.dto.ClubRankingBaseData">
+        SELECT
+            c.club_id as clubId,
+            c.name as clubName,
+
+            -- 동아리별 회원 수
+            COALESCE(member_stats.memberCount, 0) as memberCount,
+
+            -- 활동내역 게시글 수
+            COALESCE(activity_stats.activityPostCount, 0) as activityPostCount,
+
+            -- 활동내역 게시글의 댓글 수
+            COALESCE(comment_stats.activityCommentCount, 0) as activityCommentCount,
+
+            -- 활동내역 게시글 좋아요 수
+            COALESCE(like_stats.activityLikeCount, 0) as activityLikeCount,
+
+            -- 동아리 조회수
+            COALESCE(c.views, 0) as clubViews,
+
+            -- 동아리 모집 조회수
+            COALESCE(recruitment_stats.recruitmentViews, 0) as clubRecruitmentViews,
+
+            -- 최근 3일간 들어온 유저 수
+            COALESCE(recent_participant_stats.recentParticipantCount, 0) as recentParticipantCount
+
+        FROM club c
+
+        -- 동아리별 회원 수
+        LEFT JOIN (
+            SELECT
+                cm.club_id,
+                COUNT(*) as memberCount
+            FROM club_member cm
+            WHERE cm.deleted_date_time IS NULL
+            GROUP BY cm.club_id
+        ) member_stats ON c.club_id = member_stats.club_id
+
+        -- 활동내역 게시글 수
+        LEFT JOIN (
+            SELECT
+                ca.club_id,
+                COUNT(*) as activityPostCount
+            FROM club_activity ca
+            WHERE ca.deleted_date_time IS NULL
+            GROUP BY ca.club_id
+        ) activity_stats ON c.club_id = activity_stats.club_id
+
+        -- 활동내역 댓글 수
+        LEFT JOIN (
+            SELECT
+                ca.club_id,
+                COUNT(cac.club_activity_comment_id) as activityCommentCount
+            FROM club_activity ca
+            LEFT JOIN club_activity_comment cac ON ca.club_activity_id = cac.club_activity_id
+                AND cac.deleted_date_time IS NULL
+            WHERE ca.deleted_date_time IS NULL
+            GROUP BY ca.club_id
+        ) comment_stats ON c.club_id = comment_stats.club_id
+
+        -- 활동내역 게시글 좋아요 수
+        LEFT JOIN (
+            SELECT
+                ca.club_id,
+                COUNT(cal.club_activity_like_id) as activityLikeCount
+            FROM club_activity ca
+            LEFT JOIN club_activity_like cal ON ca.club_activity_id = cal.club_activity_id
+                AND cal.deleted_date_time IS NULL
+            WHERE ca.deleted_date_time IS NULL
+            GROUP BY ca.club_id
+        ) like_stats ON c.club_id = like_stats.club_id
+
+        -- 모집글 조회수 합계
+        LEFT JOIN (
+            SELECT
+                r.club_id,
+                SUM(COALESCE(r.views, 0)) as recruitmentViews
+            FROM recruitment r
+            WHERE r.deleted_date_time IS NULL
+            GROUP BY r.club_id
+        ) recruitment_stats ON c.club_id = recruitment_stats.club_id
+
+        -- 최근 3일간 참여자 수 (club_member 기준)
+        LEFT JOIN (
+            SELECT
+                cm.club_id,
+                COUNT(DISTINCT cm.member_id) as recentParticipantCount
+            FROM club_member cm
+            WHERE cm.deleted_date_time IS NULL
+                AND cm.created_date_time >= DATE_SUB(NOW(), INTERVAL 3 DAY)
+            GROUP BY cm.club_id
+        ) recent_participant_stats ON c.club_id = recent_participant_stats.club_id
+
+        WHERE c.deleted_date_time IS NULL
+            AND c.school_id IS NOT NULL
+            AND c.created_date_time >= DATE_SUB(NOW(), INTERVAL 14 DAY)
+        ORDER BY c.club_id
+    </select>
+
+    <!-- 연합 인기 동아리 랭킹 (school_id가 NULL인 동아리, 생성일 무관) -->
+    <select id="getExternalPopularClubRankingData" resultType="com.ariari.ariari.domain.admin.dashboard.dto.ClubRankingBaseData">
+        SELECT
+            c.club_id as clubId,
+            c.name as clubName,
+
+            -- 동아리별 회원 수
+            COALESCE(member_stats.memberCount, 0) as memberCount,
+
+            -- 활동내역 게시글 수
+            COALESCE(activity_stats.activityPostCount, 0) as activityPostCount,
+
+            -- 활동내역 게시글의 댓글 수
+            COALESCE(comment_stats.activityCommentCount, 0) as activityCommentCount,
+
+            -- 활동내역 게시글 좋아요 수
+            COALESCE(like_stats.activityLikeCount, 0) as activityLikeCount,
+
+            -- 동아리 조회수
+            COALESCE(c.views, 0) as clubViews,
+
+            -- 동아리 모집 조회수
+            COALESCE(recruitment_stats.recruitmentViews, 0) as clubRecruitmentViews,
+
+            -- 최근 3일간 들어온 유저 수
+            COALESCE(recent_participant_stats.recentParticipantCount, 0) as recentParticipantCount
+
+        FROM club c
+
+        -- 동아리별 회원 수
+        LEFT JOIN (
+            SELECT
+                cm.club_id,
+                COUNT(*) as memberCount
+            FROM club_member cm
+            WHERE cm.deleted_date_time IS NULL
+            GROUP BY cm.club_id
+        ) member_stats ON c.club_id = member_stats.club_id
+
+        -- 활동내역 게시글 수
+        LEFT JOIN (
+            SELECT
+                ca.club_id,
+                COUNT(*) as activityPostCount
+            FROM club_activity ca
+            WHERE ca.deleted_date_time IS NULL
+            GROUP BY ca.club_id
+        ) activity_stats ON c.club_id = activity_stats.club_id
+
+        -- 활동내역 댓글 수
+        LEFT JOIN (
+            SELECT
+                ca.club_id,
+                COUNT(cac.club_activity_comment_id) as activityCommentCount
+            FROM club_activity ca
+            LEFT JOIN club_activity_comment cac ON ca.club_activity_id = cac.club_activity_id
+                AND cac.deleted_date_time IS NULL
+            WHERE ca.deleted_date_time IS NULL
+            GROUP BY ca.club_id
+        ) comment_stats ON c.club_id = comment_stats.club_id
+
+        -- 활동내역 게시글 좋아요 수
+        LEFT JOIN (
+            SELECT
+                ca.club_id,
+                COUNT(cal.club_activity_like_id) as activityLikeCount
+            FROM club_activity ca
+            LEFT JOIN club_activity_like cal ON ca.club_activity_id = cal.club_activity_id
+                AND cal.deleted_date_time IS NULL
+            WHERE ca.deleted_date_time IS NULL
+            GROUP BY ca.club_id
+        ) like_stats ON c.club_id = like_stats.club_id
+
+        -- 모집글 조회수 합계
+        LEFT JOIN (
+            SELECT
+                r.club_id,
+                SUM(COALESCE(r.views, 0)) as recruitmentViews
+            FROM recruitment r
+            WHERE r.deleted_date_time IS NULL
+            GROUP BY r.club_id
+        ) recruitment_stats ON c.club_id = recruitment_stats.club_id
+
+        -- 최근 3일간 참여자 수 (club_member 기준)
+        LEFT JOIN (
+            SELECT
+                cm.club_id,
+                COUNT(DISTINCT cm.member_id) as recentParticipantCount
+            FROM club_member cm
+            WHERE cm.deleted_date_time IS NULL
+                AND cm.created_date_time >= DATE_SUB(NOW(), INTERVAL 3 DAY)
+            GROUP BY cm.club_id
+        ) recent_participant_stats ON c.club_id = recent_participant_stats.club_id
+
+        WHERE c.deleted_date_time IS NULL
+            AND c.school_id IS NULL
+        ORDER BY c.club_id
+    </select>
+
+    <!-- 연합 신규 동아리 랭킹 (school_id가 NULL인 동아리, 생성한지 14일 이내) -->
+    <select id="getExternalNewClubRankingData" resultType="com.ariari.ariari.domain.admin.dashboard.dto.ClubRankingBaseData">
+        SELECT
+            c.club_id as clubId,
+            c.name as clubName,
+
+            -- 동아리별 회원 수
+            COALESCE(member_stats.memberCount, 0) as memberCount,
+
+            -- 활동내역 게시글 수
+            COALESCE(activity_stats.activityPostCount, 0) as activityPostCount,
+
+            -- 활동내역 게시글의 댓글 수
+            COALESCE(comment_stats.activityCommentCount, 0) as activityCommentCount,
+
+            -- 활동내역 게시글 좋아요 수
+            COALESCE(like_stats.activityLikeCount, 0) as activityLikeCount,
+
+            -- 동아리 조회수
+            COALESCE(c.views, 0) as clubViews,
+
+            -- 동아리 모집 조회수
+            COALESCE(recruitment_stats.recruitmentViews, 0) as clubRecruitmentViews,
+
+            -- 최근 3일간 들어온 유저 수
+            COALESCE(recent_participant_stats.recentParticipantCount, 0) as recentParticipantCount
+
+        FROM club c
+
+        -- 동아리별 회원 수
+        LEFT JOIN (
+            SELECT
+                cm.club_id,
+                COUNT(*) as memberCount
+            FROM club_member cm
+            WHERE cm.deleted_date_time IS NULL
+            GROUP BY cm.club_id
+        ) member_stats ON c.club_id = member_stats.club_id
+
+        -- 활동내역 게시글 수
+        LEFT JOIN (
+            SELECT
+                ca.club_id,
+                COUNT(*) as activityPostCount
+            FROM club_activity ca
+            WHERE ca.deleted_date_time IS NULL
+            GROUP BY ca.club_id
+        ) activity_stats ON c.club_id = activity_stats.club_id
+
+        -- 활동내역 댓글 수
+        LEFT JOIN (
+            SELECT
+                ca.club_id,
+                COUNT(cac.club_activity_comment_id) as activityCommentCount
+            FROM club_activity ca
+            LEFT JOIN club_activity_comment cac ON ca.club_activity_id = cac.club_activity_id
+                AND cac.deleted_date_time IS NULL
+            WHERE ca.deleted_date_time IS NULL
+            GROUP BY ca.club_id
+        ) comment_stats ON c.club_id = comment_stats.club_id
+
+        -- 활동내역 게시글 좋아요 수
+        LEFT JOIN (
+            SELECT
+                ca.club_id,
+                COUNT(cal.club_activity_like_id) as activityLikeCount
+            FROM club_activity ca
+            LEFT JOIN club_activity_like cal ON ca.club_activity_id = cal.club_activity_id
+                AND cal.deleted_date_time IS NULL
+            WHERE ca.deleted_date_time IS NULL
+            GROUP BY ca.club_id
+        ) like_stats ON c.club_id = like_stats.club_id
+
+        -- 모집글 조회수 합계
+        LEFT JOIN (
+            SELECT
+                r.club_id,
+                SUM(COALESCE(r.views, 0)) as recruitmentViews
+            FROM recruitment r
+            WHERE r.deleted_date_time IS NULL
+            GROUP BY r.club_id
+        ) recruitment_stats ON c.club_id = recruitment_stats.club_id
+
+        -- 최근 3일간 참여자 수 (club_member 기준)
+        LEFT JOIN (
+            SELECT
+                cm.club_id,
+                COUNT(DISTINCT cm.member_id) as recentParticipantCount
+            FROM club_member cm
+            WHERE cm.deleted_date_time IS NULL
+                AND cm.created_date_time >= DATE_SUB(NOW(), INTERVAL 3 DAY)
+            GROUP BY cm.club_id
+        ) recent_participant_stats ON c.club_id = recent_participant_stats.club_id
+
+        WHERE c.deleted_date_time IS NULL
+            AND c.school_id IS NULL
+            AND c.created_date_time >= DATE_SUB(NOW(), INTERVAL 14 DAY)
+        ORDER BY c.club_id
+    </select>
+
+</mapper>
