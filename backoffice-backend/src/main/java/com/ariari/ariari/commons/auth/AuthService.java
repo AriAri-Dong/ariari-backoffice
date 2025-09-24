@@ -46,7 +46,7 @@ public class AuthService {
     private final LoginFailEventManger loginFailEventManger;
 
 
-    public JwtTokenRes login(LoginReq req, HttpServletResponse response) {
+    public JwtTokenRes login(LoginReq req) {
         AdminMember adminMember = adminMemberRepository.findByUsername(req.getUsername())
                 .orElseThrow(() -> new UsernameNotFoundException("사용자 없습니다."));
 
@@ -80,20 +80,17 @@ public class AuthService {
         String refreshToken = jwtManager.generateToken(authorities, adminMember.getId(), REFRESH_TOKEN);
 
         adminMember.updateLastLoginDateTime();
-        response.addCookie(buildRefreshTokenCookie(refreshToken, 180_000));
-        return JwtTokenRes.createRes(accessToken);
+        return JwtTokenRes.createRes(accessToken, refreshToken);
     }
 
 
-    public void logout(String accessToken, String refreshToken, HttpServletResponse response) {
+    public void logout(String accessToken, String refreshToken) {
 
         Date accessExpiration = jwtManager.getExpiration(accessToken);
         Date refreshExpiration = jwtManager.getExpiration(refreshToken);
 
         jwtControlManager.banToken(accessToken, accessExpiration);
         jwtControlManager.banToken(refreshToken, refreshExpiration);
-
-        response.addCookie(buildRefreshTokenCookie(null, 0));
     }
 
     public AccessTokenRes reissueAccessToken(String refreshToken) {
@@ -110,13 +107,5 @@ public class AuthService {
         return AccessTokenRes.createRes(accessToken);
     }
 
-    private Cookie buildRefreshTokenCookie(String value, int maxAge) {
-        Cookie cookie = new Cookie("refreshToken", value);
-        cookie.setHttpOnly(true);
-        cookie.setSecure(true);
-        cookie.setPath("/");
-        cookie.setMaxAge(maxAge);
-        return cookie;
-    }
 
 }
