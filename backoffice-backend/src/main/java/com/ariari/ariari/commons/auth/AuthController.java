@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -30,10 +31,8 @@ public class AuthController {
 
     @Operation(summary = "로그아웃", description = "로그아웃")
     @PostMapping("/auth/logout")
-    public void logout(
-            @RequestHeader(value = "Authorization") String accessToken,
-            @RequestBody LogoutRes logoutRes
-            ) {
+    public void logout(HttpServletRequest request, @RequestBody LogoutRes logoutRes) {
+        String accessToken = request.getHeader("Authorization");
         if (accessToken != null && accessToken.startsWith("Bearer ")) {
             accessToken = accessToken.substring(7);
         }
