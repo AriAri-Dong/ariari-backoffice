@@ -30,7 +30,7 @@ public class AuthController {
     @Operation(summary = "로그아웃", description = "로그아웃")
     @PostMapping("/auth/logout")
     public void logout(
-            @RequestHeader("Authorization") String accessToken,
+            @RequestHeader(value = "Authorization", required = false) String accessToken,
             @CookieValue(value = "refreshToken") String refreshToken,
             HttpServletResponse response) {
         if (accessToken != null && accessToken.startsWith("Bearer ")) {
