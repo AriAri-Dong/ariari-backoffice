@@ -90,4 +90,12 @@ public class SwaggerConfig {
                 .packagesToScan("com.ariari.ariari.domain.admin.dataops", "com.ariari.ariari.test")
                 .build();
     }
+
+    @Bean
+    public GroupedOpenApi dashboard() {
+        return GroupedOpenApi.builder()
+                .group("11.  대시보드")
+                .packagesToScan("com.ariari.ariari.domain.admin.dashboard", "com.ariari.ariari.test")
+                .build();
+    }
 }
