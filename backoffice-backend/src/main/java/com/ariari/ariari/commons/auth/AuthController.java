@@ -31,7 +31,7 @@ public class AuthController {
     @PostMapping("/auth/logout")
     public void logout(
             @RequestHeader(value = "Authorization", required = false) String accessToken,
-            @CookieValue(value = "refreshToken") String refreshToken,
+            @CookieValue(value = "refreshToken", required = false) String refreshToken,
             HttpServletResponse response) {
         if (accessToken != null && accessToken.startsWith("Bearer ")) {
             accessToken = accessToken.substring(7);
