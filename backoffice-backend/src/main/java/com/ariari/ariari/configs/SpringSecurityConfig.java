@@ -30,7 +30,7 @@ public class SpringSecurityConfig {
 
             // front 경로
             "/",
-            "/auth/**",
+            "/auth/login",
             "/operate/**",
             "/report/**",
             "/data/**",
