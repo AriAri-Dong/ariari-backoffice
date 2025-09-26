@@ -33,7 +33,7 @@ public class AuthController {
     @PostMapping("/auth/logout")
     public void logout(HttpServletRequest request, @RequestBody LogoutRes logoutRes) {
         String accessToken = request.getHeader("Authorization");
-        System.out.println("accessToken: " + accessToken);
+
         if (accessToken != null && accessToken.startsWith("Bearer ")) {
             accessToken = accessToken.substring(7);
         }
