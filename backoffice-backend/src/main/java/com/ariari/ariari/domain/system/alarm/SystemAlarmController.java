@@ -16,40 +16,42 @@ import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "system_alarm", description = "서비스 관리자 알림 기능")
 @RestController
-@RequestMapping(ApiHelper.CONST_API)
+@RequestMapping(ApiHelper.CONST_API + "/notifications")
 @RequiredArgsConstructor
 public class SystemAlarmController {
 
     private final SystemAlarmService systemAlarmService;
 
     @Operation(summary = "서비스 알림 리스트 조회", description = "운영 관리자만이 조회할 수 있습니다.")
-    @GetMapping("/service-alarm")
-    public SystemAlarmListRes findSystemAlarms(Pageable pageable) {
-        return systemAlarmService.findSystemAlarms(pageable);
+    @GetMapping
+    public SystemAlarmListRes findSystemAlarms(@AuthenticationPrincipal CustomUserDetails userDetails, Pageable pageable) {
+        Long adminMemberId = CustomUserDetails.getMemberId(userDetails, false);
+        return systemAlarmService.findSystemAlarms(adminMemberId, pageable);
     }
 
     @Operation(summary = "서비스 알림 상세 조회", description = "운영 관리자만이 조회할 수 있습니다.")
-    @GetMapping("/service-alarm/{systemAlarmId}")
-    public SystemAlarmDetailRes findSystemAlarmDetail(@PathVariable Long systemAlarmId) {
-        return systemAlarmService.findSystemAlarmDetail(systemAlarmId);
+    @GetMapping("/{id}")
+    public SystemAlarmDetailRes findSystemAlarmDetail(@AuthenticationPrincipal CustomUserDetails userDetails, @PathVariable Long id) {
+        Long adminMemberId = CustomUserDetails.getMemberId(userDetails, false);
+        return systemAlarmService.findSystemAlarmDetail(adminMemberId, id);
     }
 
 
 
     @Operation(summary = "서비스 알림 등록", description = "운영 관리자만이 등록할 수 있습니다.")
-    @PostMapping(value = "/service-alarm/create")
+    @PostMapping
     public void saveSystemAlarm(@AuthenticationPrincipal CustomUserDetails userDetails,
                               @RequestBody SystemAlarmSaveReq systemAlarmSaveReq){
-        Long reqMemberId = CustomUserDetails.getMemberId(userDetails, true);
-        systemAlarmService.saveSystemAlarm(reqMemberId, systemAlarmSaveReq);
+        Long adminMemberId = CustomUserDetails.getMemberId(userDetails, true);
+        systemAlarmService.saveSystemAlarm(adminMemberId, systemAlarmSaveReq);
     }
 
     @Operation(summary = "서비스 알림 삭제", description = "운영 관리자만이 삭제할 수 있습니다.")
-    @DeleteMapping(value = "/service-alarm/{systemAlarmId}")
+    @DeleteMapping("/{id}")
     public void removeSystemAlarm(@AuthenticationPrincipal CustomUserDetails userDetails,
-                                @PathVariable Long systemAlarmId ){
+                                @PathVariable Long id ){
         Long reqMemberId = CustomUserDetails.getMemberId(userDetails, true);
-        systemAlarmService.removeSystemAlarm(reqMemberId, systemAlarmId);
+        systemAlarmService.removeSystemAlarm(reqMemberId, id);
     }
 
 

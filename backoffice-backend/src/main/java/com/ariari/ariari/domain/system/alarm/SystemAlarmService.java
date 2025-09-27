@@ -30,19 +30,19 @@ public class SystemAlarmService {
     private final ClubMemberRepository clubMemberRepository;
 
     @Transactional(readOnly = true)
-    public SystemAlarmDetailRes findSystemAlarmDetail(Long systemAlarmId) {
+    public SystemAlarmDetailRes findSystemAlarmDetail(Long adminMemberId, Long systemAlarmId) {
         SystemAlarm systemAlarm = systemAlarmRepository.findById(systemAlarmId).orElseThrow(NotFoundEntityException::new);
         return SystemAlarmDetailRes.createRes(systemAlarm);
     }
 
     @Transactional(readOnly = true)
-    public SystemAlarmListRes findSystemAlarms(Pageable pageable) {
+    public SystemAlarmListRes findSystemAlarms(Long adminMemberId, Pageable pageable) {
         Page<SystemAlarm> systemAlarmPage = systemAlarmRepository.findAllByOrderByCreatedDateTimeDesc(pageable);
         return SystemAlarmListRes.from(systemAlarmPage);
     }
 
     @Transactional
-    public void saveSystemAlarm(Long reqMemberId, SystemAlarmSaveReq systemAlarmSaveReq) {
+    public void saveSystemAlarm(Long adminMemberId, SystemAlarmSaveReq systemAlarmSaveReq) {
         SystemAlarm systemAlarm = systemAlarmSaveReq.toEntity();
         systemAlarmRepository.save(systemAlarm);
 
@@ -59,8 +59,8 @@ public class SystemAlarmService {
 
     }
 
-
-    public void removeSystemAlarm(Long reqMemberId, Long systemAlarmId) {
+    @Transactional
+    public void removeSystemAlarm(Long adminMemberId, Long systemAlarmId) {
         SystemAlarm systemAlarm = systemAlarmRepository.findById(systemAlarmId).orElseThrow(NotFoundEntityException::new);
         systemAlarmRepository.delete(systemAlarm);
     }
