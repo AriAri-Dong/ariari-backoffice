@@ -41,7 +41,6 @@ public class SystemNoticeService {
     private final SystemNoticeRepository systemNoticeRepository;
     private final S3Manager s3Manager;
     private final SystemNoticeImageRepository systemNoticeImageRepository;
-    private final ImageRepository imageRepository;
     private final MemberAlarmManger memberAlarmManger;
     private final AdminMemberRepository adminMemberRepository;
 
@@ -72,19 +71,28 @@ public class SystemNoticeService {
 
         SystemNotice systemNotice = saveReq.toEntity(reqMember);
 
-        systemNoticeRepository.saveAndFlush(systemNotice);
+        systemNoticeRepository.save(systemNotice);
+        // systemNoticeImages를 매핑할 때 FK(system_notice_id) 값이 필요하기 때문에 ID를 미리 확보
 
-        if (files != null && files.size() > 10) {
-            return ApiResponse.failMessage("이미지는 최대 10장까지 업로드 가능합니다.");
-        }
 
-        if (files != null && !files.isEmpty()) {
+        // 이미지 처리
+        if (files != null) {
+            if (files.size() > 10) {
+                return ApiResponse.failMessage("이미지는 최대 10장까지 업로드 가능합니다.");
+            }
             for (MultipartFile file : files) {
-                String filePath = s3Manager.saveFile(file, "system_notice_image");
+
+                String originalFilename = file.getOriginalFilename();
+                if (originalFilename == null || !originalFilename.matches("(?i).+\\.(jpg|jpeg|png|gif)$")) {
+                    return ApiResponse.failMessage("이미지는 JPG, JPEG, PNG, GIF 형식만 업로드 가능합니다.");
+                }
+
+                String filePath = s3Manager.saveFile(file, "system_alarm_image");
                 systemNotice.getSystemNoticeImages().add(new SystemNoticeImage(filePath, systemNotice));
             }
         }
-        systemNoticeRepository.saveAndFlush(systemNotice);
+
+
         // 알림 로직 추가
         List<Member> memberList = memberRepository.findAll();
         memberAlarmManger.sendSystemNotification(memberList);

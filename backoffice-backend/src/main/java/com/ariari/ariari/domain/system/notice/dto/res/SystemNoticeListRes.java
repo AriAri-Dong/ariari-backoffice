@@ -12,7 +12,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+
 
 @Schema(description = "서비스 공지사항 리스트 응답")
 @Getter

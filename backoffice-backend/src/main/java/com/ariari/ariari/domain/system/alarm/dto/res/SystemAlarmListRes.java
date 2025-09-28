@@ -1,32 +1,49 @@
 package com.ariari.ariari.domain.system.alarm.dto.res;
 
-import com.ariari.ariari.commons.manager.PageInfo;
 import com.ariari.ariari.commons.entity.SystemAlarm;
-import com.ariari.ariari.domain.system.alarm.dto.SystemAlarmData;
+import com.ariari.ariari.domain.system.enums.AlarmTargetType;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
-import org.springframework.data.domain.Page;
 
-import java.util.List;
+import java.time.LocalDate;
 
 @Schema(description = "서비스 알림 리스트 응답")
 @Getter
+@Builder
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class SystemAlarmListRes {
 
-    @Schema(description = "서비스 알림 데이터 리스트")
-    private final List<SystemAlarmData> systemAlarmDataList;
-    private final PageInfo pageInfo;
+    @JsonSerialize(using = ToStringSerializer.class)
+    @Schema(description = "서비스 알림 id", example = "673012345142938986")
+    private final Long id;
 
-    private SystemAlarmListRes(List<SystemAlarmData> systemAlarmDataList, PageInfo pageInfo) {
-        this.systemAlarmDataList = systemAlarmDataList;
-        this.pageInfo = pageInfo;
-    }
+    @Schema(description = "제목", example = "공지사항입니다.")
+    private final String title;
 
-    public static SystemAlarmListRes from(Page<SystemAlarm> page) {
-        List<SystemAlarmData> systemAlarmData = page.getContent().stream()
-                .map(SystemAlarmData::fromEntity)
-                .toList();
+    @Schema(description = "알림 조회수", example = "POSTED / UNPOSTED")
+    private final int views;
 
-        return new SystemAlarmListRes(systemAlarmData, PageInfo.fromPage(page));
+    @Schema(description = "알림 대상", example = "ALL / ADMIN")
+    private final AlarmTargetType target;
+
+    @Schema(description = "생성일자", example = "2024-03-01")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private final LocalDate createdAt;
+
+    public static SystemAlarmListRes fromEntity(SystemAlarm systemAlarm){
+        return SystemAlarmListRes.builder()
+                .id(systemAlarm.getId())
+                .title(systemAlarm.getTitle())
+                .views(systemAlarm.getViews())
+                .createdAt(systemAlarm.getCreatedDateTime().toLocalDate())
+                .target(systemAlarm.getTargetType())
+                .build();
+
     }
 }

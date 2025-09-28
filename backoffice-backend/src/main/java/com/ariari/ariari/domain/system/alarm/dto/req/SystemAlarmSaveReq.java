@@ -4,9 +4,12 @@ import com.ariari.ariari.commons.entity.SystemAlarm;
 import com.ariari.ariari.domain.system.enums.AlarmTargetType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
+import org.checkerframework.checker.units.qual.Length;
 
-@Schema(description = "서비스 알림 저장 형식")
+@Schema(description = "서비스 알림 등록 형식")
 @Getter
 public class SystemAlarmSaveReq {
 
@@ -14,19 +17,21 @@ public class SystemAlarmSaveReq {
     @NotBlank
     private String title;
 
-    @Schema(description = "서비스 알림 내용", example = "아리아리에서 개발한 동아리 커뮤니티 서비스의 배포가 시작되었습니다!")
+    @Schema(description = "서비스 알림 설명", example = "아리아리에서 개발한 서비스의 배포 시작")
     @NotBlank
-    private String body;
+    @Size(max = 3000)
+    private String description;
 
-    @Schema(description = "서비스 알림 대상", example = "서비스 알림 대상 (ALL, CLUB_ADMIN)")
-    private AlarmTargetType alarmTargetType;
+    @Schema(description = "서비스 알림 대상", example = "ALL, ADMIN")
+    @NotNull
+    private AlarmTargetType target;
 
 
     public SystemAlarm toEntity() {
         return SystemAlarm.create(
                 title,
-                body,
-                alarmTargetType
+                description,
+                target
         );
     }
 
