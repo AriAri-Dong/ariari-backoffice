@@ -3,11 +3,13 @@ package com.ariari.ariari.commons.entity;
 import com.ariari.ariari.commons.commonentity.LogicalDeleteEntity;
 import com.ariari.ariari.commons.pkgenerator.CustomPkGenerate;
 import com.ariari.ariari.domain.system.enums.AlarmTargetType;
+import com.ariari.ariari.domain.system.notice.enums.PopStatusType;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,7 +30,7 @@ public class SystemAlarm extends LogicalDeleteEntity {
     @Column(length = 50)
     private String title;
 
-    @Column(length = 500)
+    @Column(length = 3000)
     private String body;
 
     private int views;
@@ -48,5 +50,11 @@ public class SystemAlarm extends LogicalDeleteEntity {
                 .targetType(targetType)
                 .views(0)
                 .build();
+    }
+
+
+
+    public void count(){
+        views++;
     }
 }

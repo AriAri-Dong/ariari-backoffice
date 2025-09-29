@@ -14,4 +14,6 @@ public interface SystemAlarmRepository extends JpaRepository<SystemAlarm, Long> 
     Page<SystemAlarm> findByTitleContaining(String title, Pageable pageable);
     Page<SystemAlarm> findByTargetType(AlarmTargetType target, Pageable pageable);
     Page<SystemAlarm> findByTitleContainingAndTargetType(String title, AlarmTargetType target, Pageable pageable);
+
+    SystemAlarm findByTitle(String title);
 }

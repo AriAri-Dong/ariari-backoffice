@@ -10,6 +10,7 @@ import com.ariari.ariari.domain.system.term.dto.res.SystemTermDetailRes;
 import com.ariari.ariari.domain.system.term.dto.res.SystemTermListRes;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;

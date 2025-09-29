@@ -13,6 +13,7 @@ import com.ariari.ariari.domain.system.notice.dto.res.SystemNoticeModifyRes;
 import com.ariari.ariari.domain.system.notice.dto.res.SystemNoticeSaveRes;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
@@ -50,7 +51,7 @@ public class SystemNoticeController {
     @Operation(summary = "서비스 공지사항 등록", description = "운영 관리자만이 등록할 수 있습니다.")
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponse<SystemNoticeSaveRes> saveSystemNotice(@AuthenticationPrincipal CustomUserDetails userDetails,
-                                                             @RequestPart SystemNoticeSaveReq saveReq,
+                                                             @Valid @RequestPart SystemNoticeSaveReq saveReq,
                                                              @RequestPart(required = false) List<MultipartFile> files) {
         Long reqMemberId = CustomUserDetails.getMemberId(userDetails, true);
        return systemNoticeService.saveSystemNotice(reqMemberId, saveReq, files);
@@ -60,7 +61,7 @@ public class SystemNoticeController {
     @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponse<SystemNoticeModifyRes> modifySystemNotice(@AuthenticationPrincipal CustomUserDetails userDetails,
                                                                  @PathVariable Long id,
-                                                                 @RequestPart SystemNoticeModifyReq modifyReq,
+                                                                 @Valid @RequestPart SystemNoticeModifyReq modifyReq,
                                                                  @RequestPart(required = false) List<MultipartFile> files) {
         Long reqMemberId = CustomUserDetails.getMemberId(userDetails, true);
         return systemNoticeService.modifySystemNotice(reqMemberId, id, modifyReq, files);

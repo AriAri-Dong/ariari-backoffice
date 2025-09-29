@@ -1,12 +1,14 @@
 package com.ariari.ariari.domain.member.alarm;
 
 import com.ariari.ariari.commons.entity.MemberAlarm;
+import com.ariari.ariari.commons.entity.SystemAlarm;
 import com.ariari.ariari.commons.exception.exceptions.NotFoundEntityException;
 import com.ariari.ariari.commons.entity.Member;
 import com.ariari.ariari.domain.member.alarm.dto.res.MemberAlarmListRes;
 import com.ariari.ariari.domain.member.alarm.event.MemberAlarmEvent;
 import com.ariari.ariari.domain.member.alarm.event.MemberAlarmEventList;
 import com.ariari.ariari.domain.member.member.MemberRepository;
+import com.ariari.ariari.domain.system.alarm.SystemAlarmRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,6 +25,7 @@ public class MemberAlarmService {
 
     private final MemberRepository memberRepository;
     private final MemberAlarmRepository memberAlarmRepository;
+    private final SystemAlarmRepository systemAlarmRepository;
 
     @Transactional(readOnly = true)
     public MemberAlarmListRes getAlarms(Long memberId, Pageable pageable) {
@@ -70,9 +73,13 @@ public class MemberAlarmService {
         // 알림을 조회하여 없으면 예외 처리
         MemberAlarm memberAlarm = memberAlarmRepository.findByIdAndMemberId(alarmId, memberId)
                 .orElseThrow(NotFoundEntityException::new);
+        SystemAlarm systemAlarm = systemAlarmRepository.findByTitle(memberAlarm.getTitle());
         // 읽음 처리
         if(!memberAlarm.getIsChecked()) {
             memberAlarm.MarkRead();
+            if(systemAlarm != null) {
+                systemAlarm.count();
+            }
         }
     }
 

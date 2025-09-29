@@ -84,6 +84,14 @@ public class SwaggerConfig {
     }
 
     @Bean
+    public GroupedOpenApi systemAlarm() {
+        return GroupedOpenApi.builder()
+                .group("08.  시스템 알림 API")
+                .packagesToScan("com.ariari.ariari.domain.system.alarm", "com.ariari.ariari.test")
+                .build();
+    }
+
+    @Bean
     public GroupedOpenApi dataOps() {
         return GroupedOpenApi.builder()
                 .group("10.  데이터 조회/삭제")

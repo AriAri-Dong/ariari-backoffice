@@ -12,6 +12,7 @@ import com.ariari.ariari.domain.system.faq.dto.res.SystemFaqModifyRes;
 import com.ariari.ariari.domain.system.faq.dto.res.SystemFaqSaveRes;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -47,7 +48,7 @@ public class SystemFaqController {
     @Operation(summary = "서비스 FAQ 등록", description = "운영 관리자만이 등록할 수 있습니다.")
     @PostMapping
     public ApiResponse<SystemFaqSaveRes> saveSystemFaq(@AuthenticationPrincipal CustomUserDetails userDetails,
-                                                       @RequestBody SystemFaqSaveReq systemFaq){
+                                                       @Valid @RequestBody SystemFaqSaveReq systemFaq){
         Long reqMemberId = CustomUserDetails.getMemberId(userDetails, true);
         return systemFaqService.saveSystemFaq(reqMemberId, systemFaq);
     }

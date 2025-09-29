@@ -94,7 +94,7 @@ public class SystemAlarmService {
                     .map(ClubMember::getMember)
                     .toList();
         };
-        memberAlarmManger.sendSystemNotification(targetMembers);
+        memberAlarmManger.sendSystemNotification(targetMembers, systemAlarm.getTitle());
 
         return ApiResponse.success(SystemAlarmSaveRes.fromEntity(systemAlarm));
 

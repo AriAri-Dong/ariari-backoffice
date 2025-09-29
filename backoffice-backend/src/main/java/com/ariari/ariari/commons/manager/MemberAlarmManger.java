@@ -18,20 +18,9 @@ public class MemberAlarmManger {
     private final ApplicationEventPublisher eventPublisher;
 
     // 시스템 공지사항 추가
-    public void sendSystemNotification(List<Member> memberList){
-        String title = "새로운 아리아리 플랫폼 공지사항이 등록되었습니다. 서비스 관련 중요한 내용을 확인해 보세요.";
+    public void sendSystemNotification(List<Member> memberList, String title){
         MemberAlarmEventList memberAlarmEventList = MemberAlarmEventList.from(title
-                ,"/service-notices", memberList);
-        sendList(memberAlarmEventList);
-    }
-
-
-    // 서비스 알림 전송(대상 모든 회원 혹은 동아리 관리자만)
-    public void sendSystemAlarm(List<Member> memberList, String title, String body){
-
-        MemberAlarmEventList memberAlarmEventList = MemberAlarmEventList.from(title
-                ,null
-                , memberList);
+                ,"/help", memberList);
         sendList(memberAlarmEventList);
     }
 

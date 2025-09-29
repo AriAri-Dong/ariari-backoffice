@@ -37,11 +37,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SystemNoticeService {
 
-    private final MemberRepository memberRepository;
     private final SystemNoticeRepository systemNoticeRepository;
     private final S3Manager s3Manager;
     private final SystemNoticeImageRepository systemNoticeImageRepository;
-    private final MemberAlarmManger memberAlarmManger;
     private final AdminMemberRepository adminMemberRepository;
 
 
@@ -91,11 +89,6 @@ public class SystemNoticeService {
                 systemNotice.getSystemNoticeImages().add(new SystemNoticeImage(filePath, systemNotice));
             }
         }
-
-
-        // 알림 로직 추가
-        List<Member> memberList = memberRepository.findAll();
-        memberAlarmManger.sendSystemNotification(memberList);
 
         return ApiResponse.success(SystemNoticeSaveRes.fromEntity(systemNotice));
     }
