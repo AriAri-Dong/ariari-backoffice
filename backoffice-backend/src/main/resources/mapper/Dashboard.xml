@@ -114,7 +114,6 @@
                 COUNT(cal.club_activity_like_id) as activityLikeCount
             FROM club_activity ca
             LEFT JOIN club_activity_like cal ON ca.club_activity_id = cal.club_activity_id
-                AND cal.deleted_date_time IS NULL
             WHERE ca.deleted_date_time IS NULL
             GROUP BY ca.club_id
         ) like_stats ON c.club_id = like_stats.club_id
@@ -212,7 +211,6 @@
                 COUNT(cal.club_activity_like_id) as activityLikeCount
             FROM club_activity ca
             LEFT JOIN club_activity_like cal ON ca.club_activity_id = cal.club_activity_id
-                AND cal.deleted_date_time IS NULL
             WHERE ca.deleted_date_time IS NULL
             GROUP BY ca.club_id
         ) like_stats ON c.club_id = like_stats.club_id
@@ -310,7 +308,6 @@
                 COUNT(cal.club_activity_like_id) as activityLikeCount
             FROM club_activity ca
             LEFT JOIN club_activity_like cal ON ca.club_activity_id = cal.club_activity_id
-                AND cal.deleted_date_time IS NULL
             WHERE ca.deleted_date_time IS NULL
             GROUP BY ca.club_id
         ) like_stats ON c.club_id = like_stats.club_id
@@ -409,7 +406,6 @@
                 COUNT(cal.club_activity_like_id) as activityLikeCount
             FROM club_activity ca
             LEFT JOIN club_activity_like cal ON ca.club_activity_id = cal.club_activity_id
-                AND cal.deleted_date_time IS NULL
             WHERE ca.deleted_date_time IS NULL
             GROUP BY ca.club_id
         ) like_stats ON c.club_id = like_stats.club_id
@@ -508,7 +504,6 @@
                 COUNT(cal.club_activity_like_id) as activityLikeCount
             FROM club_activity ca
             LEFT JOIN club_activity_like cal ON ca.club_activity_id = cal.club_activity_id
-                AND cal.deleted_date_time IS NULL
             WHERE ca.deleted_date_time IS NULL
             GROUP BY ca.club_id
         ) like_stats ON c.club_id = like_stats.club_id
@@ -608,7 +603,6 @@
                 COUNT(cal.club_activity_like_id) as activityLikeCount
             FROM club_activity ca
             LEFT JOIN club_activity_like cal ON ca.club_activity_id = cal.club_activity_id
-                AND cal.deleted_date_time IS NULL
             WHERE ca.deleted_date_time IS NULL
             GROUP BY ca.club_id
         ) like_stats ON c.club_id = like_stats.club_id
@@ -707,7 +701,6 @@
                 COUNT(cal.club_activity_like_id) as activityLikeCount
             FROM club_activity ca
             LEFT JOIN club_activity_like cal ON ca.club_activity_id = cal.club_activity_id
-                AND cal.deleted_date_time IS NULL
             WHERE ca.deleted_date_time IS NULL
             GROUP BY ca.club_id
         ) like_stats ON c.club_id = like_stats.club_id
