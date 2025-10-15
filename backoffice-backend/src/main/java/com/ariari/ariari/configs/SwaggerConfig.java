@@ -53,7 +53,7 @@ public class SwaggerConfig {
     public GroupedOpenApi report() {
         return GroupedOpenApi.builder()
                 .group("04. 신고 API")
-                .packagesToScan("com.ariari.ariari.commons.entity.report"
+                .packagesToScan("com.ariari.ariari.commons.commonentity.report"
                 , "com.ariari.ariari.test")
                 .build();
     }
