@@ -76,13 +76,15 @@ public class DashboardService {
         Map<Integer, Long> dailyWithdrawals = new HashMap<>();
 
         for (Object[] result : signupResults) {
-            LocalDate date1 = (LocalDate) result[0];
+            java.sql.Date sqlDate = (java.sql.Date) result[0];
+            LocalDate date1 = sqlDate.toLocalDate();
             Long count = (Long) result[1];
             dailySignups.put(date1.getDayOfMonth(), count);
         }
 
         for (Object[] result : withdrawalResults) {
-            LocalDate date1 = (LocalDate) result[0];
+            java.sql.Date sqlDate = (java.sql.Date) result[0];
+            LocalDate date1 = sqlDate.toLocalDate();
             Long count = (Long) result[1];
             dailyWithdrawals.put(date1.getDayOfMonth(), count);
         }
