@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes } from 'react-router';
+import { BrowserRouter, Outlet, Route, Routes } from 'react-router';
 
 // COMPONENTS
 import LeftMenu from './components/layout/leftMenu';
@@ -9,14 +9,39 @@ import CrudPage from './page/crud/crudPage';
 
 // CSS
 import 'react-datepicker/dist/react-datepicker.css';
+import LoginPage from './page/login/loginPage';
+import AuthGuard from './components/auth/authGuard';
+
+function ProtectedLayout() {
+  return (
+    <div className='flex h-screen'>
+      <LeftMenu />
+      <div className='bg-sub_bg flex-1 overflow-y-auto pt-20 pb-[100px]'>
+        <Outlet />
+      </div>
+    </div>
+  );
+}
 
 function App() {
   return (
     <BrowserRouter>
-      <div className='flex h-screen'>
-        <LeftMenu />
-        <div className='bg-sub_bg flex-1 overflow-y-auto pt-20 pb-[100px]'>
-          <Routes>
+      <Routes>
+        <Route
+          path='/login'
+          element={<LoginPage />}
+        />
+        <Route
+          element={
+            <AuthGuard>
+              <ProtectedLayout />
+            </AuthGuard>
+          }
+        >
+            <Route
+              path='/login'
+              element={<LoginPage />}
+            />
             <Route
               path='/'
               element={
@@ -53,9 +78,8 @@ function App() {
                 </div>
               }
             />
-          </Routes>
-        </div>
-      </div>
+        </Route>
+      </Routes>
     </BrowserRouter>
   );
 }

@@ -13,6 +13,7 @@ import data from '../../assets/icons/layout/data.svg';
 import crud from '../../assets/icons/layout/crud.svg';
 import logout from '../../assets/icons/logout.svg';
 import admin from '../../assets/icons/profile_default.svg';
+import { useLogout } from '../../hooks/auth/useLogout';
 
 const menuItems = [
   { path: '/', label: '홈', icon: home, activeIcon: homeActive },
@@ -28,8 +29,12 @@ const LeftMenu = () => {
 
   const [showLogoutAlert, setShowLogoutAlert] = useState<boolean>(false);
 
+  const { mutate: logoutMutate } = useLogout();
+
   const handleLogout = () => {
-    console.log('로그아웃');
+    const refreshToken = localStorage.getItem('refreshToken');
+    if (!refreshToken) return;
+    logoutMutate({ refreshToken: refreshToken });
     setShowLogoutAlert(false);
     // 경로 임시 적용
     navigate('/login');
