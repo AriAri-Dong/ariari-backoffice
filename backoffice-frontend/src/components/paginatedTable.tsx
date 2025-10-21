@@ -9,6 +9,7 @@ type PaginatedTableProps<T> = {
   pageSize?: number;
   rowKey?: keyof T | ((row: T) => string | number);
   className?: string;
+  onRowClick?: (row: T) => void;
 };
 
 export default function PaginatedTable<T>({
@@ -17,6 +18,7 @@ export default function PaginatedTable<T>({
   pageSize = 10,
   rowKey,
   className = '',
+  onRowClick,
 }: PaginatedTableProps<T>) {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const totalPages = Math.ceil(data.length / pageSize);
@@ -33,6 +35,7 @@ export default function PaginatedTable<T>({
           columns={columns}
           data={pagedData}
           rowKey={rowKey}
+          onRowClick={onRowClick}
         />
       </div>
 

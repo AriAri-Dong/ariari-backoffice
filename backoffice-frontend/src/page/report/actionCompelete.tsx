@@ -26,7 +26,7 @@ const columns: Column<RowType>[] = [
     title: '처리',
     width: '20%',
     align: 'center',
-    render: () => ( 
+    render: () => (
       <button
         onClick={() => {
           console.log('삭제 완료');
@@ -38,15 +38,20 @@ const columns: Column<RowType>[] = [
   },
 ];
 
-const data: RowType[] = Array.from({ length: 45 }).map((_, idx) => ({
+const types = ['ACCEPTANCE_REVIEW', 'QNA', 'CLUB', 'CLUB_REVIEW', 'POST', 'RECRUITMENT'];
+export const data: RowType[] = Array.from({ length: 45 }).map((_, idx) => ({
   id: (idx + 1).toString().padStart(4, '0'),
-  date: '2025.03.04',
-  title: '불쾌감을 조성하는 사진, 게시글이 올라와요.',
-  position: '활동 후기',
-  user: '귀엽고닭',
+  date: '2025.10.21',
+  title: '제목',
+  position: types[idx % types.length],
+  user: 'user',
 }));
 
-export default function ActionCompelete() {
+export default function ActionCompelete({
+  setSelectedRow,
+}: {
+  setSelectedRow: (row: RowType | null) => void;
+}) {
   const [search, setSearch] = useState<string>('');
   const [searchFilter, setSearchFilter] = useState<string>('');
   const [postStatus, setPostStatus] = useState<string>('');
@@ -70,8 +75,9 @@ export default function ActionCompelete() {
           <Dropdown
             placeholder='검색 필터'
             options={[
-              { label: '제목', value: 'title' },
-              { label: '작성자', value: 'author' },
+              { label: '전체', value: 'all' },
+              { label: '활동후기', value: 'review' },
+              { label: '모집공고', value: 'recruitment' },
             ]}
             value={searchFilter}
             onChange={(option) => {
@@ -119,6 +125,7 @@ export default function ActionCompelete() {
         data={data}
         pageSize={10}
         rowKey='id'
+        onRowClick={(row) => setSelectedRow(row)}
       />
     </div>
   );

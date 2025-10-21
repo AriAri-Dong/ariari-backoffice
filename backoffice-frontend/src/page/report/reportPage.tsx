@@ -1,7 +1,9 @@
+import { useState } from 'react';
 import { useSearchParams } from 'react-router';
 import Tabs from '../../components/tabs';
-import ActionRequired from './actionRequired';
+import ActionRequired, { type RowType } from './actionRequired';
 import ActionCompelete from './actionCompelete';
+import CommonModal from '../../components/modal/report/commonModal';
 
 // 탭 목록
 const TABS = [
@@ -11,6 +13,7 @@ const TABS = [
 
 export default function ReportPage() {
   const [searchParams, setSearchParams] = useSearchParams();
+  const [selectedRow, setSelectedRow] = useState<RowType | null>(null);
 
   // 쿼리에서 탭 추출
   const tabKey = searchParams.get('tab');
@@ -25,17 +28,25 @@ export default function ReportPage() {
 
   return (
     <div className='w-full'>
-      <Tabs
-        tabs={TABS.map(({ label, count }) => ({ label, count }))}
-        selected={tab.label}
-        onChange={handleTabChange}
-      />
-
-      <div className='mt-6'>
-        {/* <div className='mt-6 min-h-[600px]'> */}
-        {tab.key === 'required' && <ActionRequired />}
-        {tab.key === 'compelete' && <ActionCompelete />}
-      </div>
+      {!selectedRow && (
+        <>
+          <Tabs
+            tabs={TABS.map(({ label, count }) => ({ label, count }))}
+            selected={tab.label}
+            onChange={handleTabChange}
+          />
+          <div className='mt-6'>
+            {tab.key === 'required' && <ActionRequired setSelectedRow={setSelectedRow} />}
+            {tab.key === 'compelete' && <ActionCompelete setSelectedRow={setSelectedRow} />}
+          </div>
+        </>
+      )}
+      {selectedRow && (
+        <CommonModal
+          row={selectedRow}
+          onClose={() => setSelectedRow(null)}
+        />
+      )}
     </div>
   );
 }

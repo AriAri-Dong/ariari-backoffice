@@ -7,13 +7,26 @@ type TableProps<T> = {
   data: T[];
   rowKey?: keyof T | ((row: T) => string | number);
   className?: string;
+  onRowClick?: (row: T) => void;
 };
 
-export default function Table<T>({ columns, data, rowKey, className = '' }: TableProps<T>) {
+export default function Table<T>({
+  columns,
+  data,
+  rowKey,
+  className = '',
+  onRowClick,
+}: TableProps<T>) {
   const getRowKey = (row: T, index: number): React.Key => {
     if (typeof rowKey === 'function') return rowKey(row);
     if (typeof rowKey === 'string') return row[rowKey as keyof T] as React.Key;
     return index;
+  };
+  const onRowClickHandler = (row: T) => {
+    if (onRowClick) {
+      onRowClick(row);
+      console.log(row);
+    }
   };
 
   return (
@@ -49,6 +62,7 @@ export default function Table<T>({ columns, data, rowKey, className = '' }: Tabl
             return (
               <tr
                 key={getRowKey(row, index)}
+                onClick={() => onRowClickHandler(row)}
                 // className='hover:bg-sub_bg'
               >
                 {columns.map((col, colIndex) => {
