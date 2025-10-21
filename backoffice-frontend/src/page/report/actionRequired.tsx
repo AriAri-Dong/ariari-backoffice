@@ -3,8 +3,9 @@ import RefreshBtn from '../../components/button/iconBtn/refreshBtn';
 import Dropdown from '../../components/dropdown/dropdown';
 import PaginatedTable from '../../components/paginatedTable';
 import type { Column } from '../../types/table';
+import { data } from './actionCompelete';
 
-type RowType = {
+export type RowType = {
   id: string;
   date: string;
   title: string;
@@ -20,15 +21,11 @@ const columns: Column<RowType>[] = [
   { key: 'user', title: '신고자', width: '10%', align: 'center' },
 ];
 
-const data: RowType[] = Array.from({ length: 17 }).map((_, idx) => ({
-  id: (idx + 1).toString().padStart(4, '0'),
-  date: '2025.03.04',
-  title: '불쾌감을 조성하는 사진, 게시글이 올라와요.',
-  position: '활동 후기',
-  user: '귀엽고닭',
-}));
-
-export default function ActionRequired() {
+export default function ActionRequired({
+  setSelectedRow,
+}: {
+  setSelectedRow: (row: RowType | null) => void;
+}) {
   const [category, setCategory] = useState<string>('');
 
   const handleRefresh = () => {
@@ -45,7 +42,11 @@ export default function ActionRequired() {
           options={[
             { label: '전체', value: 'all' },
             { label: '활동후기', value: 'review' },
-            { label: '활동내역', value: 'history' },
+            { label: '모집공고', value: 'recruitment' },
+            { label: '합격후기', value: 'history' },
+            { label: '게시글', value: 'history' },
+            { label: '동아리', value: 'club' },
+            { label: 'Q&A', value: 'club' },
           ]}
           value={category}
           onChange={(option) => {
@@ -60,6 +61,7 @@ export default function ActionRequired() {
         data={data}
         pageSize={10}
         rowKey='id'
+        onRowClick={(row) => setSelectedRow(row)}
       />
     </div>
   );
