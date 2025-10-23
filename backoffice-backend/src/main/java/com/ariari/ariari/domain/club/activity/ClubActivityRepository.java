@@ -26,4 +26,8 @@ public interface ClubActivityRepository extends JpaRepository<ClubActivity, Long
     @Modifying
     @Query("update ClubActivity as ca set ca.member = null where ca.club= :club and ca.member = :member")
     void clubActivityUpdate(@Param("club") Club club, @Param("member") Member member);
+
+    @Modifying(clearAutomatically = true)
+    @Query("update ClubActivity ca set ca.member= null where ca.member= :member")
+    void updateMemberNull(Member member);
 }

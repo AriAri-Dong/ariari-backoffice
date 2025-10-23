@@ -12,15 +12,21 @@ public interface DataopsMapper {
     List<Map<String, Object>> findIdsForTargetTable(
             @Param("table") String table,
             @Param("id") String id,
+            @Param("filter") String filter,
+            @Param("keyword") String keyword,
             @Param("size") int size,
             @Param("offset") int offset
     );
 
+    int countTotalForTargetTable(
+            @Param("table") String table,
+            @Param("filter") String filter,
+            @Param("keyword") String keyword
+    );
+
     Map<String, Object> getDetailDataById(
             @Param("table") String table,
-            @Param("id") String id,
-            @Param("dataId") String dataId,
-            @Param("size") int size,
-            @Param("offset") int offset
+            @Param("idColumn") String idColumn,
+            @Param("dataId") String dataId
     );
 }

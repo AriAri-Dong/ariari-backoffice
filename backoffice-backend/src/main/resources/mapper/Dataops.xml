@@ -2,18 +2,31 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.ariari.ariari.domain.admin.dataops.DataopsMapper">
-    <select id="findIdsForTargetTable">
+    <select id="findIdsForTargetTable" resultType="map">
         SELECT ${id}
         FROM ${table}
-        ORDER BY pr.created_date_time DESC
+        <where>
+            <if test="filter != null and keyword != null">
+                ${filter} LIKE CONCAT('%', #{keyword}, '%')
+            </if>
+        </where>
+        ORDER BY ${id} DESC
         LIMIT #{size} OFFSET #{offset}
     </select>
 
-    <select id="getDetailDataById">
+    <select id="countTotalForTargetTable" resultType="int">
+        SELECT COUNT(*)
+        FROM ${table}
+        <where>
+            <if test="filter != null and keyword != null">
+                ${filter} LIKE CONCAT('%', #{keyword}, '%')
+            </if>
+        </where>
+    </select>
+
+    <select id="getDetailDataById" resultType="map">
         SELECT *
         FROM ${table}
-        WHERE ${id} = #{dataId}
-        ORDER BY pr.created_date_time DESC
-            LIMIT #{size} OFFSET #{offset}
+        WHERE ${idColumn} = #{dataId}
     </select>
 </mapper>
