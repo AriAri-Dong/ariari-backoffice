@@ -19,16 +19,16 @@ public class DataopsController {
             @RequestParam(required = false) String keyword,
             @RequestParam int page,
             @RequestParam int pageSize) {
-        return dataopsService.findDataops();
+        return dataopsService.findDataops(table, filter, keyword, page, pageSize);
     }
 
     @GetMapping("/detail/{table}/{id}")
     public GetDataopsRes getDataops(@PathVariable(value = "table") String table, @PathVariable(value = "id") String id) {
-        return dataopsService.getDataops();
+        return dataopsService.getDataops(table, id);
     }
 
     @DeleteMapping("/{table}/{id}")
     public DeleteDataopsRes deleteDataops(@PathVariable(value = "table") String table, @PathVariable(value = "id") String id) {
-        return dataopsService.deleteDataops();
+        return dataopsService.deleteDataops(table, id);
     }
 }

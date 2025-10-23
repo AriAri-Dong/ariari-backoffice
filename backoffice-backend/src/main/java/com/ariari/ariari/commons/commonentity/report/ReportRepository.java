@@ -1,10 +1,12 @@
 package com.ariari.ariari.commons.commonentity.report;
 
 import com.ariari.ariari.commons.commonentity.report.enums.ReportStatusType;
+import com.ariari.ariari.commons.entity.Member;
 import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
@@ -19,4 +21,7 @@ public interface ReportRepository extends JpaRepository<Report, Long>, ReportRep
     @Query("select r from Report as r join fetch r.reporter where r.id = :reportId")
     Optional<Report> findWithReporterById(@Param("reportId") Long reportId);
 
+    @Modifying(clearAutomatically = true)
+    @Query("update Report r set r.reporter= null where r.reporter= :member")
+    void updateMemberNull(Member member);
 }

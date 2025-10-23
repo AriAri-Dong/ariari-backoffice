@@ -14,13 +14,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class DashboardController {
     private final DashboardService dashboardService;
 
-    // ok
     @GetMapping("/member/retention-ratio")
     public GetMemberRetentionRatioRes getMemberRetentionRatio(){
         return dashboardService.getMemberRetentionRatio();
     }
 
-    // ok
     @GetMapping("/visit/trend")
     public GetVisitTrendRes getVisitTrend(@RequestParam(required = true) String date,
                                           @RequestParam(required = true) String range){
@@ -30,13 +28,11 @@ public class DashboardController {
         return dashboardService.getVisitTrend(date,range);
     }
 
-    //
     @GetMapping("/club/ranking")
     public GetClubRankingRes getClubRanking(){
         return dashboardService.getClubRanking();
     }
 
-    // ok
     @GetMapping("/club/statistics")
     public GetClubStatisticsRes getClubStatistics(@RequestParam(required = true) String date,
                                                   @RequestParam(required = true) String category,
@@ -50,7 +46,6 @@ public class DashboardController {
         return dashboardService.getClubStatistics(date,category,region);
     }
 
-    // 일단 수정중
     @GetMapping("/member/registration-trend")
     public GetMemberRegistrationTrendRes getMemberRegistrationTrend(@RequestParam(required = true) String date){
         // date형식 검사

@@ -16,4 +16,6 @@ public interface ClubReviewRepository extends JpaRepository<ClubReview, Long> {
     @Modifying(clearAutomatically = true)
     @Query("update ClubReview cr set cr.member= null where cr.member= :member")
     void updateMemberNull(Member member);
+
+
 }
