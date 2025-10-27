@@ -7,9 +7,13 @@ import com.ariari.ariari.commons.entity.Recruitment;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface ClubReviewReportRepository extends JpaRepository<ClubReviewReport, Long> {
 
     boolean existsByReporterAndReportedClubReview(Member reporter, ClubReview reportedClubReview);
+
+    List<ClubReviewReport> findByReportedClubReview(ClubReview reportedClubReview);
 
 }

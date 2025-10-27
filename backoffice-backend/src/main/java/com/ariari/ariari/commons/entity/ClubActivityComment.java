@@ -9,6 +9,9 @@ import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @NoArgsConstructor
 @Getter
@@ -35,6 +38,12 @@ public class ClubActivityComment extends LogicalDeleteEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_comment_id")
     private ClubActivityComment parentComment;
+
+    @OneToMany(mappedBy = "clubActivityComment", cascade = CascadeType.REMOVE)
+    private List<ClubActivityCommentLike> clubActivityCommentLikes = new ArrayList<>();
+
+    @OneToMany(mappedBy = "parentComment", cascade = CascadeType.REMOVE)
+    private List<ClubActivityComment> childComments = new ArrayList<>();
 
     public void modifyClubMember(){
         this.member = null;

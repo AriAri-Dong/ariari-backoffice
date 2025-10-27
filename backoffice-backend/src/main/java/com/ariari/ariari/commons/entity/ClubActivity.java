@@ -46,8 +46,14 @@ public class ClubActivity extends LogicalDeleteEntity {
     }
 
     @Setter
-    @OneToMany(mappedBy = "clubActivity", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToMany(mappedBy = "clubActivity", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
     private List<ClubActivityImage> clubActivityImages = new ArrayList<>();
+
+    @OneToMany(mappedBy = "clubActivity", cascade = CascadeType.REMOVE)
+    private List<ClubActivityLike> clubActivityLikes = new ArrayList<>();
+
+    @OneToMany(mappedBy = "clubActivity", cascade = CascadeType.REMOVE)
+    private List<ClubActivityComment> clubActivityComments = new ArrayList<>();
 
     public ClubActivity(Club club, Member member, AccessType accessType, String body) {
         this.club = club;

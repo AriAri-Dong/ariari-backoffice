@@ -38,8 +38,11 @@ public class ClubReview extends LogicalDeleteEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @OneToMany(mappedBy = "clubReview", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "clubReview", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private List<ClubReviewTag> clubReviewTags = new ArrayList<>();
+
+    @OneToMany(mappedBy = "reportedClubReview", cascade = CascadeType.REMOVE)
+    private List<ClubReviewReport> clubReviewReports = new ArrayList<>();
 
     public ClubReview(String title, String body, Club club, Member member) {
         this.title = title;

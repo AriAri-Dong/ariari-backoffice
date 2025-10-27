@@ -13,6 +13,7 @@ import com.ariari.ariari.domain.club.activity.ClubActivityRepository;
 import com.ariari.ariari.domain.club.activity.comment.ClubActivityCommentRepository;
 import com.ariari.ariari.domain.club.activity.comment.like.ClubActivityCommentLikeRepository;
 import com.ariari.ariari.domain.club.activity.comment.report.ClubActivityCommentReportRepository;
+import com.ariari.ariari.domain.club.activity.image.ClubActivityImageRepository;
 import com.ariari.ariari.domain.club.activity.like.ClubActivityLikeRepository;
 import com.ariari.ariari.domain.club.activity.report.ClubActivityReportRepository;
 import com.ariari.ariari.domain.club.alarm.ClubAlarmRepository;
@@ -60,7 +61,9 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -86,6 +89,7 @@ public class DataDeleteService {
     private final ClubReportRepository clubReportRepository;
     private final ClubActivityLikeRepository clubActivityLikeRepository;
     private final ClubActivityCommentLikeRepository clubActivityCommentLikeRepository;
+    private final ClubActivityImageRepository clubActivityImageRepository;
     private final ImageRepository imageRepository;
     private final ClubActivityReportRepository clubActivityReportRepository;
     private final ClubActivityCommentReportRepository clubActivityCommentReportRepository;
@@ -206,7 +210,9 @@ public class DataDeleteService {
         Long reqClubId = Long.parseLong(id);
         Club club = clubRepository.findById(reqClubId).orElseThrow(NotFoundEntityException::new);
 
-        // TODO : 로직 작성 필요
+        // club이 지워지면 data를 보존할 이유가 없어서 전부 삭제처리
+
+        clubRepository.delete(club);
 
         return DeleteDataopsRes.success("Club", id);
     }
@@ -215,7 +221,29 @@ public class DataDeleteService {
         Long reqClubMemberId = Long.parseLong(id);
         ClubMember clubMember = clubMemberRepository.findById(reqClubMemberId).orElseThrow(NotFoundEntityException::new);
 
-        // TODO : 로직 작성 필요
+        Member reqMember = clubMember.getMember();
+
+        // handle ADMIN club
+        entrustClubAdmin(reqMember);
+
+        // member_id -> null
+        // persistence context clear after update query
+        passReviewRepository.updateMemberNull(reqMember);
+        clubReviewRepository.updateMemberNull(reqMember);
+        reportRepository.updateMemberNull(reqMember);
+        clubNoticeRepository.updateMemberNull(reqMember);
+        clubQuestionRepository.updateMemberNull(reqMember);
+        clubActivityRepository.updateMemberNull(reqMember);
+        clubActivityCommentRepository.updateMemberNull(reqMember);
+
+        // clubMember는 굳이 null처리가 필요 없다고 느껴짐
+//        clubMemberRepository.updateMemberNull(reqMember);
+
+        // flush and clear for sync between memory and DB
+        em.flush();
+        em.clear();
+
+        clubMemberRepository.delete(clubMember);
 
         return DeleteDataopsRes.success("ClubMember", id);
     }
@@ -251,7 +279,7 @@ public class DataDeleteService {
         Long reqClubActivityId = Long.parseLong(id);
         ClubActivity clubActivity = clubActivityRepository.findById(reqClubActivityId).orElseThrow(NotFoundEntityException::new);
 
-        // TODO : 로직 작성 필요
+        clubActivityRepository.delete(clubActivity);
 
         return DeleteDataopsRes.success("ClubActivity", id);
     }
@@ -260,7 +288,7 @@ public class DataDeleteService {
         Long reqClubActivityCommentId = Long.parseLong(id);
         ClubActivityComment clubActivityComment = clubActivityCommentRepository.findById(reqClubActivityCommentId).orElseThrow(NotFoundEntityException::new);
 
-        // TODO : 로직 작성 필요
+        clubActivityCommentRepository.delete(clubActivityComment);
 
         return DeleteDataopsRes.success("ClubActivityComment", id);
     }
@@ -314,7 +342,8 @@ public class DataDeleteService {
         Long reqClubReviewId = Long.parseLong(id);
         ClubReview clubReview = clubReviewRepository.findById(reqClubReviewId).orElseThrow(NotFoundEntityException::new);
 
-        // TODO : 로직 작성 필요
+        // ClubReview 삭제 시 CascadeType.REMOVE에 의해 자동으로 하위 엔티티들이 논리삭제됨:
+        clubReviewRepository.delete(clubReview);
 
         return DeleteDataopsRes.success("ClubReview", id);
     }
@@ -341,7 +370,7 @@ public class DataDeleteService {
         Long reqClubQuestionId = Long.parseLong(id);
         ClubQuestion clubQuestion = clubQuestionRepository.findById(reqClubQuestionId).orElseThrow(NotFoundEntityException::new);
 
-        // TODO : 로직 작성 필요
+        clubQuestionRepository.delete(clubQuestion);
 
         return DeleteDataopsRes.success("ClubQuestion", id);
     }
@@ -350,7 +379,7 @@ public class DataDeleteService {
         Long reqClubAnswerId = Long.parseLong(id);
         ClubAnswer clubAnswer = clubAnswerRepository.findById(reqClubAnswerId).orElseThrow(NotFoundEntityException::new);
 
-        // TODO : 로직 작성 필요
+        clubAnswerRepository.delete(clubAnswer);
 
         return DeleteDataopsRes.success("ClubAnswer", id);
     }
@@ -368,7 +397,7 @@ public class DataDeleteService {
         Long reqPassReviewId = Long.parseLong(id);
         PassReview passReview = passReviewRepository.findById(reqPassReviewId).orElseThrow(NotFoundEntityException::new);
 
-        // TODO : 로직 작성 필요
+        passReviewRepository.delete(passReview);
 
         return DeleteDataopsRes.success("PassReview", id);
     }
@@ -395,7 +424,7 @@ public class DataDeleteService {
         Long reqClubEventId = Long.parseLong(id);
         ClubEvent clubEvent = clubEventRepository.findById(reqClubEventId).orElseThrow(NotFoundEntityException::new);
 
-        // TODO : 로직 작성 필요
+        clubEventRepository.delete(clubEvent);
 
         return DeleteDataopsRes.success("ClubEvent", id);
     }
@@ -413,7 +442,7 @@ public class DataDeleteService {
         Long reqClubNoticeId = Long.parseLong(id);
         ClubNotice clubNotice = clubNoticeRepository.findById(reqClubNoticeId).orElseThrow(NotFoundEntityException::new);
 
-        // TODO : 로직 작성 필요
+        clubNoticeRepository.delete(clubNotice);
 
         return DeleteDataopsRes.success("ClubNotice", id);
     }
@@ -440,7 +469,7 @@ public class DataDeleteService {
         Long reqRecruitmentId = Long.parseLong(id);
         Recruitment recruitment = recruitmentRepository.findById(reqRecruitmentId).orElseThrow(NotFoundEntityException::new);
 
-        // TODO : 로직 작성 필요
+        recruitmentRepository.delete(recruitment);
 
         return DeleteDataopsRes.success("Recruitment", id);
     }
@@ -476,7 +505,12 @@ public class DataDeleteService {
         Long reqApplyId = Long.parseLong(id);
         Apply apply = applyRepository.findById(reqApplyId).orElseThrow(NotFoundEntityException::new);
 
-        // TODO : 로직 작성 필요
+        // 같은 Member + Recruitment의 ApplyTemp(임시 지원서) 삭제
+        Optional<ApplyTemp> applyTemp = applyTempRepository.findFirstByMemberAndRecruitmentOrderByCreatedDateTimeDesc(
+                apply.getMember(), apply.getRecruitment());
+        applyTemp.ifPresent(applyTempRepository::delete);
+
+        applyRepository.delete(apply);
 
         return DeleteDataopsRes.success("Apply", id);
     }
@@ -494,7 +528,7 @@ public class DataDeleteService {
         Long reqApplyTempId = Long.parseLong(id);
         ApplyTemp applyTemp = applyTempRepository.findById(reqApplyTempId).orElseThrow(NotFoundEntityException::new);
 
-        // TODO : 로직 작성 필요
+        applyTempRepository.delete(applyTemp);
 
         return DeleteDataopsRes.success("ApplyTemp", id);
     }
@@ -521,7 +555,14 @@ public class DataDeleteService {
         Long reqApplyFormId = Long.parseLong(id);
         ApplyForm applyForm = applyFormRepository.findById(reqApplyFormId).orElseThrow(NotFoundEntityException::new);
 
-        // TODO : 로직 작성 필요
+        Club club = applyForm.getClub();
+        long applyFormCount = applyFormRepository.countByClub(club);
+
+        if (applyFormCount <= 1) {
+            DeleteDataopsRes.refused("ApplyForm은 최소 1개가 남아있어야 하므로 삭제가 불가능합니다.");
+        }
+
+        applyFormRepository.delete(applyForm);
 
         return DeleteDataopsRes.success("ApplyForm", id);
     }
@@ -530,7 +571,7 @@ public class DataDeleteService {
         Long reqApplyQuestionId = Long.parseLong(id);
         ApplyQuestion applyQuestion = applyQuestionRepository.findById(reqApplyQuestionId).orElseThrow(NotFoundEntityException::new);
 
-        // TODO : 로직 작성 필요
+        applyQuestionRepository.delete(applyQuestion);
 
         return DeleteDataopsRes.success("ApplyQuestion", id);
     }

@@ -51,6 +51,9 @@ public class Apply extends LogicalDeleteEntity {
     @OneToMany(mappedBy = "apply", cascade = CascadeType.ALL)
     private List<ApplyAnswer> applyAnswers = new ArrayList<>();
 
+    @OneToMany(mappedBy = "reportedApply", cascade = CascadeType.REMOVE)
+    private List<ApplyReport> applyReports = new ArrayList<>();
+
     public Apply(String name, String portfolioUrl, Member member, Recruitment recruitment, List<ApplyAnswer> applyAnswers) {
         this.name = name;
         this.portfolioUrl = portfolioUrl;
