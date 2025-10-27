@@ -21,4 +21,8 @@ public class DeleteDataopsRes {
     public static DeleteDataopsRes refused(String tableName, String id) {
         return new DeleteDataopsRes("refused", tableName + "은 삭제가 불가능한 테이블입니다.");
     }
+
+    public static DeleteDataopsRes refused(String message) {
+        return new DeleteDataopsRes("refused", message);
+    }
 }

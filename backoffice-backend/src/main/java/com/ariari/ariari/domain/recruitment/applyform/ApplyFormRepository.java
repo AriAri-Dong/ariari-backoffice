@@ -9,6 +9,8 @@ import java.util.Optional;
 
 public interface ApplyFormRepository extends JpaRepository<ApplyForm, Long> {
 
+    long countByClub(Club club);
+
 
 
 
