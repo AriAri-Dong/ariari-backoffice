@@ -88,12 +88,10 @@ export default function ClubCreateDeleteChart() {
     setCurrentDate(nextDate);
   };
 
-  // ✅ 데이터 패칭
   const fetchData = useCallback(async () => {
     setLoading(true);
     setErrorMsg(null);
 
-    // 👇 타입 보존 + 서버 요구 형식(소문자) 변환
     const params: GetClubStatisticsParams = {
       date: formatDateApi(currentDate),
       category: category,
