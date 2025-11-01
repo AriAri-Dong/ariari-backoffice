@@ -45,14 +45,6 @@ public class SystemTermService {
         return ApiResponse.success(SystemTermDetailRes.fromEntity(systemTerm));
     }
 
-    @Transactional(readOnly = true)
-    public SystemTermDetailRes getSystemTermByTermType(Long adminMemberId, TermType termType) {
-        AdminMember reqMember = adminMemberRepository.findById(adminMemberId).orElseThrow(NotFoundEntityException::new);
-
-        SystemTerm systemTerm = systemTermRepository.findByTermType(termType).orElseThrow(NotFoundEntityException::new);
-        return SystemTermDetailRes.fromEntity(systemTerm);
-    }
-
 
     @Transactional
     public void saveSystemTerm(Long adminMemberId, SystemTermSaveReq systemTermSaveReq) {

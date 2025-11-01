@@ -34,10 +34,9 @@ public class SystemNoticeController {
     @Operation(summary = "서비스 공지사항 목록 조회", description = "운영 관리자만이 조회할 수 있습니다.")
     @GetMapping
     public PageResponse<SystemNoticeListRes> findSystemNotices(@AuthenticationPrincipal CustomUserDetails userDetails,
-                                                               SystemNoticeSearchReq req,
-                                                               Pageable pageable) {
+                                                               @ModelAttribute SystemNoticeSearchReq req) {
         Long adminMemberId = CustomUserDetails.getMemberId(userDetails, false);
-        return systemNoticeService.findSystemNotices(adminMemberId, req, pageable);
+        return systemNoticeService.findSystemNotices(adminMemberId, req);
     }
 
     @Operation(summary = "서비스 공지사항 상세 조회", description = " 모든 회원이 조회할 수 있습니다.")

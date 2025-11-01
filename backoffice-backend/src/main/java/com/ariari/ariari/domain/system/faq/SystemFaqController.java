@@ -4,8 +4,10 @@ import com.ariari.ariari.commons.auth.springsecurity.CustomUserDetails;
 import com.ariari.ariari.commons.constant.ApiHelper;
 import com.ariari.ariari.commons.repsonse.ApiResponse;
 import com.ariari.ariari.commons.repsonse.PageResponse;
+import com.ariari.ariari.domain.system.enums.SystemFaqStatusType;
 import com.ariari.ariari.domain.system.faq.dto.req.SystemFaqModifyReq;
 import com.ariari.ariari.domain.system.faq.dto.req.SystemFaqSaveReq;
+import com.ariari.ariari.domain.system.faq.dto.req.SystemFaqSearchReq;
 import com.ariari.ariari.domain.system.faq.dto.res.SystemFaqDetailRes;
 import com.ariari.ariari.domain.system.faq.dto.res.SystemFaqListRes;
 import com.ariari.ariari.domain.system.faq.dto.res.SystemFaqModifyRes;
@@ -14,7 +16,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,10 +32,11 @@ public class SystemFaqController {
     @GetMapping
     public PageResponse<SystemFaqListRes> findSystemFaqs(
             @AuthenticationPrincipal CustomUserDetails userDetails,
-            @RequestPart(required = false) String category,
-            Pageable pageable) {
+            @RequestParam(required = false) SystemFaqStatusType category,
+            @RequestParam(defaultValue = "1") Integer page,
+            @RequestParam(defaultValue = "10") Integer pageSize ){
         Long adminMemberId = CustomUserDetails.getMemberId(userDetails, false);
-        return systemFaqService.findSystemFaqs(adminMemberId, category, pageable);
+        return systemFaqService.findSystemFaqs(adminMemberId, category, page, pageSize);
     }
 
     @Operation(summary = "서비스 FAQ 상세 조회", description = "운영 관리자만이 조회할 수 있습니다.")
@@ -64,7 +67,7 @@ public class SystemFaqController {
 
 
     @Operation(summary = "서비스 FAQ 삭제", description = "운영 관리자만이 삭제할 수 있습니다.")
-    @DeleteMapping(value = "/{id}")
+    @DeleteMapping("/{id}")
     public ApiResponse<Void> removeSystemFaq(@AuthenticationPrincipal CustomUserDetails userDetails,
                               @PathVariable Long id ){
         Long reqMemberId = CustomUserDetails.getMemberId(userDetails, true);

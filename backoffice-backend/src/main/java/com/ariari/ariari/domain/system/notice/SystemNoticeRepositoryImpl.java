@@ -13,7 +13,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -37,6 +39,16 @@ public class SystemNoticeRepositoryImpl implements SystemNoticeRepositoryCustom{
         QSystemNotice qSystemNotice = QSystemNotice.systemNotice;
 
         // fetchcount deprecated 대안
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        LocalDateTime startDateTime = null;
+        LocalDateTime endDateTime = null;
+        if (req.getStartDate() != null && !req.getStartDate().isEmpty()) {
+            startDateTime = LocalDate.parse(req.getStartDate(), formatter).atStartOfDay();
+        }
+        if (req.getEndDate() != null && !req.getEndDate().isEmpty()) {
+            endDateTime = LocalDate.parse(req.getEndDate(), formatter).atTime(23, 59, 59);
+        }
 
         //  조회 쿼리
         List<SystemNotice> result = jpaQueryFactory
@@ -45,8 +57,8 @@ public class SystemNoticeRepositoryImpl implements SystemNoticeRepositoryCustom{
                 .where(
                         titleOrAuthor(req.getSearch(), req.getFilter()),
                         statusEq(req.getStatus()),
-                        createdAfter(req.getStartDate().atStartOfDay()),
-                        createdBefore(req.getEndDate().atTime(23, 59, 59))
+                        createdAfter(startDateTime),
+                        createdBefore(endDateTime)
                 )
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -60,8 +72,8 @@ public class SystemNoticeRepositoryImpl implements SystemNoticeRepositoryCustom{
                 .where(
                         titleOrAuthor(req.getSearch(), req.getFilter()),
                         statusEq(req.getStatus()),
-                        createdAfter(req.getStartDate().atStartOfDay()),
-                        createdBefore(req.getEndDate().atTime(23, 59, 59))
+                        createdAfter(startDateTime),
+                        createdBefore(endDateTime)
                 )
                 .fetchOne();
 

@@ -16,7 +16,7 @@ public class SystemFaqModifyReq {
     private String body;
     @Schema(description = "서비스 FAQ 색상", example = "blue")
     private String color;
-    @Schema(description = "서비스 FAQ 타입", example = "일정")
+    @Schema(description = "서비스 FAQ 타입", example = "SECURITY, ACTIVE")
     private SystemFaqStatusType systemFaqStatusType;
 
     public void modifyEntity(SystemFaq systemFaq, AdminMember updatedBy) {

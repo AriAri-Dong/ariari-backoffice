@@ -5,6 +5,7 @@ import com.ariari.ariari.commons.entity.AdminMember;
 import com.ariari.ariari.commons.entity.SystemNoticeImage;
 import com.ariari.ariari.commons.exception.exceptions.NotFoundEntityException;
 import com.ariari.ariari.commons.manager.MemberAlarmManger;
+import com.ariari.ariari.commons.manager.PageableFactoryManger;
 import com.ariari.ariari.commons.manager.S3Manager;
 import com.ariari.ariari.commons.manager.file.FileManager;
 import com.ariari.ariari.commons.repsonse.ApiResponse;
@@ -25,7 +26,9 @@ import com.ariari.ariari.domain.system.notice.dto.res.SystemNoticeSaveRes;
 import com.ariari.ariari.domain.system.term.dto.res.SystemTermListRes;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -45,7 +48,8 @@ public class SystemNoticeService {
 
     // 공지사항 목록 조회
     @Transactional(readOnly = true)
-    public PageResponse<SystemNoticeListRes> findSystemNotices(Long adminMemberId, SystemNoticeSearchReq req, Pageable pageable) {
+    public PageResponse<SystemNoticeListRes> findSystemNotices(Long adminMemberId, SystemNoticeSearchReq req) {
+        Pageable pageable = PageableFactoryManger.of(req.getPage(), req.getPageSize(), "createdDateTime", true);
         Page<SystemNotice> systemNoticesPage = systemNoticeRepository.searchSystemNotices(req, pageable);
         Page<SystemNoticeListRes> dtoPage = systemNoticesPage.map(SystemNoticeListRes::fromEntity);
         return PageResponse.of(dtoPage);
@@ -69,7 +73,8 @@ public class SystemNoticeService {
 
         SystemNotice systemNotice = saveReq.toEntity(reqMember);
 
-        systemNoticeRepository.save(systemNotice);
+
+        systemNoticeRepository.saveAndFlush(systemNotice);
         // systemNoticeImages를 매핑할 때 FK(system_notice_id) 값이 필요하기 때문에 ID를 미리 확보
 
 
@@ -89,6 +94,9 @@ public class SystemNoticeService {
                 systemNotice.getSystemNoticeImages().add(new SystemNoticeImage(filePath, systemNotice));
             }
         }
+
+        System.out.println("create " + systemNotice.getCreatedDateTime());
+
 
         return ApiResponse.success(SystemNoticeSaveRes.fromEntity(systemNotice));
     }
