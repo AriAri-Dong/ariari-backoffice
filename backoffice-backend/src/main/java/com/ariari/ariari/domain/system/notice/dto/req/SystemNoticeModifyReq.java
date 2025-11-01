@@ -3,7 +3,6 @@ package com.ariari.ariari.domain.system.notice.dto.req;
 
 import com.ariari.ariari.commons.entity.AdminMember;
 import com.ariari.ariari.commons.entity.SystemNotice;
-import com.ariari.ariari.commons.entity.SystemNoticeImage;
 import com.ariari.ariari.commons.manager.SystemManager;
 import com.ariari.ariari.domain.system.notice.enums.PopStatusType;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -15,7 +14,6 @@ import lombok.Getter;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 

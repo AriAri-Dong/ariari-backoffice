@@ -48,14 +48,6 @@ public class SystemTermController {
         systemTermService.saveSystemTerm(adminMemberId, systemTermSaveReq);
     }
 
-    @Operation(summary = "약관 유형으로 약관 조회", description = "PRIVACY_POLICY : 개인정보 처리방침 , CLUB_RULES : 동아리 이용수칙, PLATFORM_RULES : 플랫폼 이용수칙")
-    @GetMapping("/{termType}")
-    public SystemTermDetailRes findSystemNoticeDetail(@AuthenticationPrincipal CustomUserDetails userDetails,
-                                                      @PathVariable(value = "termType") TermType termType) {
-        Long adminMemberId = CustomUserDetails.getMemberId(userDetails, false);
-        return systemTermService.getSystemTermByTermType(adminMemberId, termType);
-    }
-
     @Operation(summary = "약관 수정", description = "")
     @PutMapping("/{id}")
     public ApiResponse<SystemTermDetailRes> modifySystemTerm(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestBody SystemTermModifyReq systemTermModifyReq, @PathVariable Long id) {

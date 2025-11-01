@@ -16,7 +16,8 @@ import java.util.List;
 @Entity
 @NoArgsConstructor
 @Getter
-@SQLDelete(sql = "UPDATE system_notice SET deleted_date_time= CURRENT_TIMESTAMP WHERE system_notice_id= ?")
+@Setter
+@SQLDelete(sql = "UPDATE system_notice SET deleted_date_time= CURRENT_TIMESTAMP WHERE system_notice_id= ? AND version=?")
 @SQLRestriction("deleted_date_time is null")
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
