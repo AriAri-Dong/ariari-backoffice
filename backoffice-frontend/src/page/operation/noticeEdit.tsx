@@ -36,7 +36,7 @@ function convertDetailToModalData(detail: NoticeDetailResponse['data']): Announc
       detail.popupEndDate ? new Date(detail.popupEndDate) : null,
     ],
     description: detail.body ?? '',
-    images: [],
+    images: detail.images ?? [],
     postStatus: detail.status === 'POSTED' ? 'POSTED' : 'UNPOSTED',
   };
 }
