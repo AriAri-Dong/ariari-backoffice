@@ -8,7 +8,7 @@ const RedDeleteBtn = ({ onClick }: RedDeleteBtnProps) => {
   return (
     <button
       onClick={onClick}
-      className='bg-token_1_bg flex h-[30px] cursor-pointer items-center gap-0.5 rounded-4xl px-2.5 text-center whitespace-nowrap'
+      className='bg-token_1_bg flex h-[30px] min-w-[60px] cursor-pointer items-center gap-0.5 rounded-4xl px-2.5 text-center whitespace-nowrap'
     >
       <p className='text-noti text-body2_sb'>삭제</p>
       <img

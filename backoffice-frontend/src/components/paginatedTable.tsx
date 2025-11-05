@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import Pagination from './pagination';
 import Table from './table';
 import type { Column } from '../types/table';
@@ -6,27 +6,44 @@ import type { Column } from '../types/table';
 type PaginatedTableProps<T> = {
   columns: Column<T>[];
   data: T[];
+  /** 현재 페이지 (외부 제어) */
+  page?: number;
+  /** 한 페이지당 개수 */
   pageSize?: number;
+  /** 전체 개수 (서버페이징용) */
+  total?: number;
+  /** row key 지정 */
   rowKey?: keyof T | ((row: T) => string | number);
   className?: string;
+  /** row 클릭 핸들러 */
   onRowClick?: (row: T) => void;
+  /** 페이지 변경 시 콜백 (서버페이징용) */
+  onPageChange?: (page: number) => void;
+  /** 페이지 크기 변경 시 콜백 */
+  onPageSizeChange?: (pageSize: number) => void;
 };
 
 export default function PaginatedTable<T>({
   columns,
   data,
+  page = 1,
   pageSize = 10,
+  total,
   rowKey,
   className = '',
   onRowClick,
+  onPageChange,
 }: PaginatedTableProps<T>) {
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const totalPages = Math.ceil(data.length / pageSize);
+  // total이 주어지면 서버페이징으로, 없으면 로컬 data.length 기준
+  const totalCount = total ?? data.length;
+  const totalPages = Math.ceil(totalCount / pageSize);
 
+  // total이 있으면 서버페이징으로 data 그대로 사용, 없으면 slice
   const pagedData = useMemo(() => {
-    const start = (currentPage - 1) * pageSize;
+    if (total) return data; // 서버페이징
+    const start = (page - 1) * pageSize;
     return data.slice(start, start + pageSize);
-  }, [data, currentPage, pageSize]);
+  }, [data, page, pageSize, total]);
 
   return (
     <div className={`w-full ${className}`}>
@@ -41,9 +58,9 @@ export default function PaginatedTable<T>({
 
       {totalPages > 1 && (
         <Pagination
-          currentPage={currentPage}
+          currentPage={page}
           totalPages={totalPages}
-          onPageChange={setCurrentPage}
+          onPageChange={(newPage: number) => onPageChange?.(newPage)}
         />
       )}
     </div>
