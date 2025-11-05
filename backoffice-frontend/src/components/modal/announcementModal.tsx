@@ -18,7 +18,7 @@ export type AnnouncementModalData = {
   popupOption: boolean;
   dateRange: [Date | null, Date | null];
   description: string;
-  images: File[];
+  images: (string | File)[];
   postStatus: 'POSTED' | 'UNPOSTED';
 };
 
@@ -30,6 +30,26 @@ type AnnouncementModalProps = {
   noticeId?: string;
   onSubmitSuccess?: () => void;
 };
+
+// 중복 제거 유틸: 같은 URL 또는 동일 파일(이름/크기/수정시간 기준)을 하나로
+function dedupeImages(arr: (string | File)[]) {
+  const seenUrl = new Set<string>();
+  const seenFile = new Set<string>();
+  const out: (string | File)[] = [];
+  for (const x of arr) {
+    if (typeof x === 'string') {
+      if (seenUrl.has(x)) continue;
+      seenUrl.add(x);
+      out.push(x);
+    } else {
+      const key = [x.name, x.size, (x as any).lastModified ?? 0].join('|');
+      if (seenFile.has(key)) continue;
+      seenFile.add(key);
+      out.push(x);
+    }
+  }
+  return out;
+}
 
 const AnnouncementModal = ({
   visible,
@@ -43,7 +63,6 @@ const AnnouncementModal = ({
 
   const isEditMode = mode === 'edit';
 
-  // 폼 상태
   const [title, setTitle] = useState(initialData?.title ?? '');
   const [popupEnabled, setPopupEnabled] = useState(initialData?.popupEnabled ?? false);
   const [popupOption, setPopupOption] = useState(initialData?.popupOption ?? false);
@@ -51,23 +70,56 @@ const AnnouncementModal = ({
     initialData?.dateRange ?? [today, sevenDaysAfter],
   );
   const [description, setDescription] = useState(initialData?.description ?? '');
-  const [images, setImages] = useState<File[]>(initialData?.images ?? []);
+  const [images, setImages] = useState<(string | File)[]>(initialData?.images ?? []);
   const [postStatus, setPostStatus] = useState<'POSTED' | 'UNPOSTED'>(
     initialData?.postStatus ?? 'POSTED',
   );
 
+  const [originalUrls, setOriginalUrls] = useState<string[]>([]);
+
   const [alertMessage, setAlertMessage] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState<boolean>(false);
+
+  // 모달이 열릴 때마다 props로 폼을 완전히 덮어써서 이전 세션 state 누적 방지
+  useEffect(() => {
+    if (!visible) return;
+    const init = initialData ?? {
+      title: '',
+      popupEnabled: false,
+      popupOption: false,
+      dateRange: [today, sevenDaysAfter] as [Date | null, Date | null],
+      description: '',
+      images: [],
+      postStatus: 'POSTED' as const,
+    };
+
+    setTitle(init.title ?? '');
+    setPopupEnabled(init.popupEnabled ?? false);
+    setPopupOption(init.popupOption ?? false);
+    setDateRange(init.dateRange ?? [today, sevenDaysAfter]);
+    setDescription(init.description ?? '');
+    setImages(dedupeImages(init.images ?? []));
+    setPostStatus(init.postStatus ?? 'POSTED');
+
+    setOriginalUrls((init.images ?? []).filter((x): x is string => typeof x === 'string'));
+  }, [visible, initialData]);
 
   // 이미지 추가
   const handleImageAdd = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
     const validFiles = files.filter((file) => /\.(jpg|jpeg|png|gif)$/i.test(file.name));
-    if (validFiles.length + images.length > 10) {
+    const next = dedupeImages([...images, ...validFiles]);
+    if (next.length > 10) {
       alert('최대 10장까지만 업로드 가능합니다.');
-      return;
+      // 초과하지 않는 선까지만 추가
+      const canAdd = Math.max(0, 10 - images.length);
+      const sliced = validFiles.slice(0, canAdd);
+      setImages(dedupeImages([...images, ...sliced]));
+    } else {
+      setImages(next);
     }
-    setImages((prev) => [...prev, ...validFiles]);
+    // 같은 파일 재선택 가능하게 input 초기화
+    e.currentTarget.value = '';
   };
 
   // 이미지 삭제
@@ -98,6 +150,15 @@ const AnnouncementModal = ({
     setSubmitting(true);
 
     try {
+      // 업로드할 대상: 현재 images 중 File만
+      const filesToUpload = images.filter((x): x is File => x instanceof File);
+
+      // 남아있는 URL: 현재 images 중 string
+      const keptUrlSet = new Set(images.filter((x): x is string => typeof x === 'string'));
+
+      // 제거할 URL: 초기 URL 중 현재 배열에 없는 것
+      const removedUrls = originalUrls.filter((url) => !keptUrlSet.has(url));
+
       if (isEditMode && noticeId) {
         const payload: UpdateNoticePayload = {
           title,
@@ -110,10 +171,9 @@ const AnnouncementModal = ({
             ? formatDateToHyphen(dateRange[1])
             : formatDateToHyphen(sevenDaysAfter),
           status: postStatus,
-          removeImages: [],
-          files: images,
+          files: filesToUpload,
+          removeImages: removedUrls,
         };
-
         await updateNotice(noticeId, payload);
       } else {
         const payload: CreateNoticePayload = {
@@ -127,9 +187,8 @@ const AnnouncementModal = ({
             ? formatDateToHyphen(dateRange[1])
             : formatDateToHyphen(sevenDaysAfter),
           status: postStatus,
-          files: images,
+          files: filesToUpload, // 생성은 새 파일만 업로드
         };
-        console.log(payload);
         await createNotice(payload);
       }
 
@@ -144,10 +203,9 @@ const AnnouncementModal = ({
   };
 
   useEffect(() => {
-    if (alertMessage) {
-      const timeout = setTimeout(() => setAlertMessage(null), 1000);
-      return () => clearTimeout(timeout);
-    }
+    if (!alertMessage) return;
+    const timeout = setTimeout(() => setAlertMessage(null), 1000);
+    return () => clearTimeout(timeout);
   }, [alertMessage]);
 
   return (
@@ -224,7 +282,7 @@ const AnnouncementModal = ({
                   className='relative h-[120px] w-[120px] overflow-hidden rounded-lg'
                 >
                   <img
-                    src={URL.createObjectURL(img)}
+                    src={typeof img === 'string' ? img : URL.createObjectURL(img)}
                     alt={`첨부 이미지 ${idx + 1}`}
                     className='h-full w-full rounded-lg object-cover'
                   />
@@ -256,7 +314,7 @@ const AnnouncementModal = ({
           </div>
 
           {/* 상세 내용 */}
-          <div className='mt-6 flex flex-col gap-[18px]'>
+          <div className='gap_[18px] mt-6 flex flex-col'>
             <h3 className='text-text1 text-h3'>
               공지사항 상세 <span className='text-h3 text-noti'>*</span>
             </h3>
