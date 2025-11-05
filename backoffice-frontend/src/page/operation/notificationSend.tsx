@@ -4,10 +4,11 @@ import PaginatedTable from '../../components/paginatedTable';
 import type { Column } from '../../types/table';
 import PenBtn from '../../components/button/iconBtn/penBtn';
 import AlertModal from '../../components/modal/alertModal';
+import type { FaqCategory } from '../../types/api/faq';
 
 type RowType = {
   id: string;
-  category: string;
+  category: FaqCategory;
   title: string;
   views: string;
   target: string;
@@ -23,7 +24,7 @@ const columns: Column<RowType>[] = [
 
 const data: RowType[] = Array.from({ length: 25 }).map((_, i) => ({
   id: String(i + 1).padStart(4, '0'),
-  category: '000',
+  category: 'ACCOUNT',
   title: '공지사항 제목',
   views: 'nnn',
   target: '동아리 관리자',
