@@ -9,8 +9,20 @@ import CustomInput from '../input/customInput';
 import CustomTextArea from '../textArea/customTextArea';
 import Alert from '../alert/alert';
 import { updateNotice, createNotice } from '../../apis/operate/noticeApi';
-import type { UpdateNoticePayload, CreateNoticePayload } from '../../types/api/notice';
 import { sevenDaysAfter, today, formatDateToHyphen } from '../../utils/formatDate';
+import type { UpdateNoticePayload, CreateNoticePayload } from '../../types/api/notice';
+
+function dedupeFiles(arr: File[]) {
+  const seenFile = new Set<string>();
+  const out: File[] = [];
+  for (const file of arr) {
+    const key = [file.name, file.size, file.lastModified].join('|');
+    if (seenFile.has(key)) continue;
+    seenFile.add(key);
+    out.push(file);
+  }
+  return out;
+}
 
 export type AnnouncementModalData = {
   title: string;
@@ -18,7 +30,7 @@ export type AnnouncementModalData = {
   popupOption: boolean;
   dateRange: [Date | null, Date | null];
   description: string;
-  images: (string | File)[];
+  images: string[]; // 기존 URL만 관리
   postStatus: 'POSTED' | 'UNPOSTED';
 };
 
@@ -30,26 +42,6 @@ type AnnouncementModalProps = {
   noticeId?: string;
   onSubmitSuccess?: () => void;
 };
-
-// 중복 제거 유틸: 같은 URL 또는 동일 파일(이름/크기/수정시간 기준)을 하나로
-function dedupeImages(arr: (string | File)[]) {
-  const seenUrl = new Set<string>();
-  const seenFile = new Set<string>();
-  const out: (string | File)[] = [];
-  for (const x of arr) {
-    if (typeof x === 'string') {
-      if (seenUrl.has(x)) continue;
-      seenUrl.add(x);
-      out.push(x);
-    } else {
-      const key = [x.name, x.size, (x as any).lastModified ?? 0].join('|');
-      if (seenFile.has(key)) continue;
-      seenFile.add(key);
-      out.push(x);
-    }
-  }
-  return out;
-}
 
 const AnnouncementModal = ({
   visible,
@@ -63,6 +55,7 @@ const AnnouncementModal = ({
 
   const isEditMode = mode === 'edit';
 
+  // 폼 상태
   const [title, setTitle] = useState(initialData?.title ?? '');
   const [popupEnabled, setPopupEnabled] = useState(initialData?.popupEnabled ?? false);
   const [popupOption, setPopupOption] = useState(initialData?.popupOption ?? false);
@@ -70,61 +63,56 @@ const AnnouncementModal = ({
     initialData?.dateRange ?? [today, sevenDaysAfter],
   );
   const [description, setDescription] = useState(initialData?.description ?? '');
-  const [images, setImages] = useState<(string | File)[]>(initialData?.images ?? []);
+  const [images, setImages] = useState<File[]>([]); // 새로운 파일만 관리 (File[] 타입)
   const [postStatus, setPostStatus] = useState<'POSTED' | 'UNPOSTED'>(
     initialData?.postStatus ?? 'POSTED',
   );
-
-  const [originalUrls, setOriginalUrls] = useState<string[]>([]);
+  const [originalUrls, setOriginalUrls] = useState<string[]>([]); // 기존 이미지 URL만 관리
 
   const [alertMessage, setAlertMessage] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState<boolean>(false);
 
-  // 모달이 열릴 때마다 props로 폼을 완전히 덮어써서 이전 세션 state 누적 방지
+  // 모달 열릴 때 데이터 초기화
   useEffect(() => {
-    if (!visible) return;
-    const init = initialData ?? {
-      title: '',
-      popupEnabled: false,
-      popupOption: false,
-      dateRange: [today, sevenDaysAfter] as [Date | null, Date | null],
-      description: '',
-      images: [],
-      postStatus: 'POSTED' as const,
-    };
+    if (!visible || !initialData) return;
 
-    setTitle(init.title ?? '');
-    setPopupEnabled(init.popupEnabled ?? false);
-    setPopupOption(init.popupOption ?? false);
-    setDateRange(init.dateRange ?? [today, sevenDaysAfter]);
-    setDescription(init.description ?? '');
-    setImages(dedupeImages(init.images ?? []));
-    setPostStatus(init.postStatus ?? 'POSTED');
+    setTitle(initialData.title ?? '');
+    setPopupEnabled(initialData.popupEnabled ?? false);
+    setPopupOption(initialData.popupOption ?? false);
+    setDateRange(initialData.dateRange ?? [today, sevenDaysAfter]);
+    setDescription(initialData.description ?? '');
+    setPostStatus(initialData.postStatus ?? 'POSTED');
 
-    setOriginalUrls((init.images ?? []).filter((x): x is string => typeof x === 'string'));
+    // 기존 이미지 URL만 설정
+    setOriginalUrls(initialData.images ?? []);
   }, [visible, initialData]);
 
   // 이미지 추가
   const handleImageAdd = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
     const validFiles = files.filter((file) => /\.(jpg|jpeg|png|gif)$/i.test(file.name));
-    const next = dedupeImages([...images, ...validFiles]);
+
+    const next = dedupeFiles([...images, ...validFiles]);
     if (next.length > 10) {
       alert('최대 10장까지만 업로드 가능합니다.');
-      // 초과하지 않는 선까지만 추가
       const canAdd = Math.max(0, 10 - images.length);
       const sliced = validFiles.slice(0, canAdd);
-      setImages(dedupeImages([...images, ...sliced]));
+      setImages(dedupeFiles([...images, ...sliced]));
     } else {
       setImages(next);
     }
-    // 같은 파일 재선택 가능하게 input 초기화
-    e.currentTarget.value = '';
+    e.currentTarget.value = ''; // 파일 선택 후 input value 초기화
   };
 
   // 이미지 삭제
-  const handleImageRemove = (index: number) => {
-    setImages((prev) => prev.filter((_, i) => i !== index));
+  const handleImageRemove = (index: number, imageUrl: string) => {
+    // images 배열에서 삭제
+    const newImages = images.filter((_, i) => i !== index);
+    setImages(newImages);
+
+    // originalUrls 배열에서 삭제
+    const newOriginalUrls = originalUrls.filter((url) => url !== imageUrl);
+    setOriginalUrls(newOriginalUrls);
   };
 
   // 유효성 검사
@@ -150,33 +138,31 @@ const AnnouncementModal = ({
     setSubmitting(true);
 
     try {
-      // 업로드할 대상: 현재 images 중 File만
-      const filesToUpload = images.filter((x): x is File => x instanceof File);
+      // 업로드할 대상: 현재 images 중 File인 것들만
+      const filesToUpload = images;
 
-      // 남아있는 URL: 현재 images 중 string
-      const keptUrlSet = new Set(images.filter((x): x is string => typeof x === 'string'));
+      // 기존 이미지 삭제 처리: removeImages에 삭제된 URL 추가
+      const removedUrls = originalUrls.filter(
+        (url) => !images.some((img) => img instanceof File && img.name === url),
+      );
 
-      // 제거할 URL: 초기 URL 중 현재 배열에 없는 것
-      const removedUrls = originalUrls.filter((url) => !keptUrlSet.has(url));
+      const payload: UpdateNoticePayload = {
+        title,
+        body: description,
+        popupEnabled,
+        popupStartDate: popupEnabled ? formatDateToHyphen(dateRange[0]) : formatDateToHyphen(today),
+        popupEndDate: popupEnabled
+          ? formatDateToHyphen(dateRange[1])
+          : formatDateToHyphen(sevenDaysAfter),
+        status: postStatus,
+        removeImages: removedUrls, // 삭제된 이미지 URL 전달
+        files: filesToUpload, // 업로드된 새로운 파일만 전달
+      };
 
       if (isEditMode && noticeId) {
-        const payload: UpdateNoticePayload = {
-          title,
-          body: description,
-          popupEnabled,
-          popupStartDate: popupEnabled
-            ? formatDateToHyphen(dateRange[0])
-            : formatDateToHyphen(today),
-          popupEndDate: popupEnabled
-            ? formatDateToHyphen(dateRange[1])
-            : formatDateToHyphen(sevenDaysAfter),
-          status: postStatus,
-          files: filesToUpload,
-          removeImages: removedUrls,
-        };
         await updateNotice(noticeId, payload);
       } else {
-        const payload: CreateNoticePayload = {
+        const createPayload: CreateNoticePayload = {
           title,
           body: description,
           popupEnabled,
@@ -187,9 +173,9 @@ const AnnouncementModal = ({
             ? formatDateToHyphen(dateRange[1])
             : formatDateToHyphen(sevenDaysAfter),
           status: postStatus,
-          files: filesToUpload, // 생성은 새 파일만 업로드
+          files: filesToUpload, // 새 파일만 업로드
         };
-        await createNotice(payload);
+        await createNotice(createPayload);
       }
 
       onSubmitSuccess?.();
@@ -203,9 +189,10 @@ const AnnouncementModal = ({
   };
 
   useEffect(() => {
-    if (!alertMessage) return;
-    const timeout = setTimeout(() => setAlertMessage(null), 1000);
-    return () => clearTimeout(timeout);
+    if (alertMessage) {
+      const timeout = setTimeout(() => setAlertMessage(null), 1000);
+      return () => clearTimeout(timeout);
+    }
   }, [alertMessage]);
 
   return (
@@ -276,13 +263,13 @@ const AnnouncementModal = ({
               이미지는 최대 10장까지 첨부할 수 있어요. (JPEG / PNG / GIF)
             </p>
             <div className='flex flex-wrap gap-3'>
-              {images.map((img, idx) => (
+              {originalUrls.map((img, idx) => (
                 <div
                   key={idx}
                   className='relative h-[120px] w-[120px] overflow-hidden rounded-lg'
                 >
                   <img
-                    src={typeof img === 'string' ? img : URL.createObjectURL(img)}
+                    src={img}
                     alt={`첨부 이미지 ${idx + 1}`}
                     className='h-full w-full rounded-lg object-cover'
                   />
@@ -290,7 +277,7 @@ const AnnouncementModal = ({
                     src={deleteIcon}
                     alt='삭제'
                     className='absolute top-1 right-1 h-5 w-5 cursor-pointer'
-                    onClick={() => handleImageRemove(idx)}
+                    onClick={() => handleImageRemove(idx, img)} // `img`가 URL이므로 삭제 시 해당 URL도 삭제
                   />
                 </div>
               ))}
@@ -314,7 +301,7 @@ const AnnouncementModal = ({
           </div>
 
           {/* 상세 내용 */}
-          <div className='gap_[18px] mt-6 flex flex-col'>
+          <div className='mt-6 flex flex-col gap-[18px]'>
             <h3 className='text-text1 text-h3'>
               공지사항 상세 <span className='text-h3 text-noti'>*</span>
             </h3>
