@@ -1,6 +1,16 @@
 package com.ariari.ariari.domain.system.enums;
 
 public enum SystemFaqStatusType {
+    ACCOUNT,
+    CLUB,
+    DATA,
+    GENERAL,
+    LOGIN,
+    MAINTENANCE,
+    POLICY,
     SECURITY,
-    ACTIVE
+    SERVICE,
+    TECHNICAL,
+    UPDATE,
+    ACTIVE;
 }

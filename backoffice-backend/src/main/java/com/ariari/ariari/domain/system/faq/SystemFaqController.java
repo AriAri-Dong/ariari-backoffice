@@ -7,7 +7,6 @@ import com.ariari.ariari.commons.repsonse.PageResponse;
 import com.ariari.ariari.domain.system.enums.SystemFaqStatusType;
 import com.ariari.ariari.domain.system.faq.dto.req.SystemFaqModifyReq;
 import com.ariari.ariari.domain.system.faq.dto.req.SystemFaqSaveReq;
-import com.ariari.ariari.domain.system.faq.dto.req.SystemFaqSearchReq;
 import com.ariari.ariari.domain.system.faq.dto.res.SystemFaqDetailRes;
 import com.ariari.ariari.domain.system.faq.dto.res.SystemFaqListRes;
 import com.ariari.ariari.domain.system.faq.dto.res.SystemFaqModifyRes;
@@ -16,7 +15,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
