@@ -60,12 +60,12 @@ export default function NoticeEdit() {
   const [total, setTotal] = useState<number>(0);
 
   // 모달 상태
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState<boolean>(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState<boolean>(false);
   const [editNoticeId, setEditNoticeId] = useState<string | null>(null);
   const [editInitialData, setEditInitialData] = useState<AnnouncementModalData | undefined>();
-  const [isDeleteAlertOpen, setIsDeleteAlertOpen] = useState(false); // State for delete alert visibility
-  const [deleteNoticeId, setDeleteNoticeId] = useState<string | null>(null); // Store the notice ID for deletion
+  const [isDeleteAlertOpen, setIsDeleteAlertOpen] = useState<boolean>(false);
+  const [deleteNoticeId, setDeleteNoticeId] = useState<string | null>(null);
 
   // 기본 조회기간: 최근 7일
   useEffect(() => {
