@@ -11,9 +11,11 @@ import type { Column } from '../../types/table';
 import AnnouncementModal, {
   type AnnouncementModalData,
 } from '../../components/modal/announcementModal';
-import { getNoticeList, getNoticeDetail } from '../../apis/operate/noticeApi';
+import { getNoticeList, getNoticeDetail, deleteNotice } from '../../apis/operate/noticeApi';
 import type { NoticeDetailResponse } from '../../types/api/notice';
 import { formatDateToHyphen } from '../../utils/formatDate';
+import RedDeleteBtn from '../../components/button/iconBtn/redDeleteBtn';
+import AlertWithMessage from '../../components/alert/alertWithMessage';
 
 // 테이블 행 타입
 type RowType = {
@@ -62,6 +64,8 @@ export default function NoticeEdit() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editNoticeId, setEditNoticeId] = useState<string | null>(null);
   const [editInitialData, setEditInitialData] = useState<AnnouncementModalData | undefined>();
+  const [isDeleteAlertOpen, setIsDeleteAlertOpen] = useState(false); // State for delete alert visibility
+  const [deleteNoticeId, setDeleteNoticeId] = useState<string | null>(null); // Store the notice ID for deletion
 
   // 기본 조회기간: 최근 7일
   useEffect(() => {
@@ -138,6 +142,31 @@ export default function NoticeEdit() {
     }
   };
 
+  // 삭제 버튼 클릭 → 확인용 알림 띄우기
+  const handleDeleteClick = (row: RowType) => {
+    setDeleteNoticeId(row.id);
+    setIsDeleteAlertOpen(true);
+  };
+
+  // 삭제 확인 처리
+  const handleDeleteConfirm = async () => {
+    if (deleteNoticeId) {
+      try {
+        await deleteNotice(deleteNoticeId);
+        fetchList();
+        setIsDeleteAlertOpen(false);
+      } catch (error) {
+        console.error('삭제 실패:', error);
+      }
+    }
+  };
+
+  // 삭제 취소
+  const handleDeleteCancel = () => {
+    setIsDeleteAlertOpen(false);
+    setDeleteNoticeId(null);
+  };
+
   // 필터 리셋
   const handleRefresh = () => {
     const today = new Date();
@@ -171,7 +200,12 @@ export default function NoticeEdit() {
       title: '',
       width: '10%',
       align: 'center',
-      render: (_, row) => <BluePenBtn onClick={() => handleEditClick(row)} />,
+      render: (_, row) => (
+        <div className='flex flex-row gap-3'>
+          <BluePenBtn onClick={() => handleEditClick(row)} />
+          <RedDeleteBtn onClick={() => handleDeleteClick(row)} />
+        </div>
+      ),
     },
   ];
 
@@ -240,6 +274,17 @@ export default function NoticeEdit() {
       <div className='fixed right-40 bottom-16 z-40 lg:right-60 lg:bottom-28'>
         <PenBtn onClick={() => setIsCreateModalOpen(true)} />
       </div>
+
+      {isDeleteAlertOpen && (
+        <AlertWithMessage
+          text='정말 삭제하시겠습니까?'
+          description='삭제된 공지는 복구할 수 없습니다.'
+          leftBtnText='취소'
+          rightBtnText='삭제'
+          onLeftBtnClick={handleDeleteCancel}
+          onRightBtnClick={handleDeleteConfirm}
+        />
+      )}
 
       {/* 등록 모달 */}
       <AnnouncementModal
