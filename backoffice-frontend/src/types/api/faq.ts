@@ -1,10 +1,24 @@
+export type FaqCategory =
+  | 'ACCOUNT'
+  | 'CLUB'
+  | 'DATA'
+  | 'GENERAL'
+  | 'LOGIN'
+  | 'MAINTENANCE'
+  | 'POLICY'
+  | 'SECURITY'
+  | 'SERVICE'
+  | 'TECHNICAL'
+  | 'UPDATE';
+
+export type TokenColor = 'RED' | 'YELLOW' | 'GREEN' | 'SKYBLUE' | 'BLUE' | 'PRUPLE' | 'PINK';
 /**
  * FAQ 목록 조회 파라미터
  */
 export interface GetFaqListParams {
-  category?: string;
-  page?: number;
-  pageSize?: number;
+  category: FaqCategory | '';
+  page: number;
+  pageSize: number;
 }
 
 /**
@@ -12,9 +26,9 @@ export interface GetFaqListParams {
  */
 export interface FaqListItem {
   id: string;
-  category: string;
+  category: FaqCategory;
   title: string;
-  tokenColor: string;
+  tokenColor: TokenColor;
   description: string;
 }
 
@@ -36,9 +50,9 @@ export interface FaqListResponse {
  */
 export interface FaqDetail {
   id: string;
-  category: string;
+  category: FaqCategory;
   title: string;
-  tokenColor: string;
+  tokenColor: TokenColor;
   description: string;
   createdAt: string;
   updatedAt: string;
@@ -58,8 +72,8 @@ export interface FaqDetailResponse {
  */
 export interface UpsertFaqPayload {
   title: string; // FAQ 제목
-  category: string; // FAQ 분류 (최대 5자)
-  tokenColor: string; // 태그 컬러 (RED ~ PINK 등)
+  category: FaqCategory; // FAQ 분류 (최대 5자)
+  tokenColor: TokenColor; // 태그 컬러 (RED ~ PINK 등)
   description: string; // FAQ 상세 (최대 3000자)
 }
 
