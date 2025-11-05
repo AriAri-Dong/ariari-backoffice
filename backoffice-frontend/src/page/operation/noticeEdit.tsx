@@ -37,7 +37,7 @@ function convertDetailToModalData(detail: NoticeDetailResponse['data']): Announc
     ],
     description: detail.body ?? '',
     images: [],
-    postStatus: detail.postStatus === 'POSTED' ? 'POSTED' : 'UNPOSTED',
+    postStatus: detail.status === 'POSTED' ? 'POSTED' : 'UNPOSTED',
   };
 }
 
