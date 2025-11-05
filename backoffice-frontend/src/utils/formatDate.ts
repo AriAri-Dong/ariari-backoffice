@@ -1,3 +1,9 @@
+export const today = new Date();
+export const sevenDaysAgo = new Date();
+sevenDaysAgo.setDate(today.getDate() - 7);
+export const sevenDaysAfter = new Date();
+sevenDaysAfter.setDate(today.getDate() + 7);
+
 function formatDateToDot(
   dateString?: string,
   withSpace: boolean = true,
@@ -16,3 +22,11 @@ function formatDateToDot(
 }
 
 export default formatDateToDot;
+
+export const formatDateToHyphen = (d: Date | null) => {
+  if (!d) return '';
+  const y = d.getFullYear();
+  const m = `${d.getMonth() + 1}`.padStart(2, '0');
+  const day = `${d.getDate()}`.padStart(2, '0');
+  return `${y}-${m}-${day}`;
+};

@@ -8,9 +8,9 @@ import NotificationSend from './notificationSend';
 
 // 탭 목록
 const TABS = [
-  { label: '약관수정', key: 'terms' },
-  { label: '공지수정', key: 'notice' },
-  { label: 'FAQ수정', key: 'faq' },
+  { label: '이용약관', key: 'terms' },
+  { label: '공지사항', key: 'notice' },
+  { label: 'FAQ', key: 'faq' },
   { label: '알림전송', key: 'notification' },
 ] as const;
 
