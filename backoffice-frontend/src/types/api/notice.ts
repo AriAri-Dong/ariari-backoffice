@@ -45,7 +45,7 @@ export interface NoticeDetail {
   popupEndDate?: string; // YYYY-MM-DD
   body: string;
   images: string[];
-  postStatus: 'POSTED' | 'UNPOSTED';
+  status: 'POSTED' | 'UNPOSTED';
   author: string;
   views: number;
   createdAt: string;
@@ -70,7 +70,7 @@ export interface CreateNoticePayload {
   popupStartDate?: string;
   popupEndDate?: string;
   status: 'POSTED' | 'UNPOSTED';
-  files?: File[];
+  files?: File[] | string[];
 }
 
 /**
@@ -98,7 +98,7 @@ export interface UpdateNoticePayload {
   popupStartDate?: string;
   popupEndDate?: string;
   removeImages?: string[];
-  files?: File[];
+  files?: File[] | string[];
 }
 
 /**
