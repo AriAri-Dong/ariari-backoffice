@@ -5,35 +5,46 @@ import SmallBtn from '../button/basicBtn/smallBtn';
 import CustomInput from '../input/customInput';
 import CustomTextArea from '../textArea/customTextArea';
 import Alert from '../alert/alert';
-import TextInputWithCounter from '../input/textInputWithCounter';
+import Dropdown from '../dropdown/dropdown';
+import type { FaqCategory, FaqListItem, TokenColor } from '../../types/api/faq';
+import { createFaq, updateFaq } from '../../apis/operate/faqApi';
 
-type TokenColor = 'RED' | 'YELLOW' | 'GREEN' | 'SKYBLUE' | 'BLUE' | 'PRUPLE' | 'PINK';
+// Define the available categories
+const categoryOptions = [
+  { label: 'ACCOUNT', value: 'ACCOUNT' },
+  { label: 'CLUB', value: 'CLUB' },
+  { label: 'DATA', value: 'DATA' },
+  { label: 'GENERAL', value: 'GENERAL' },
+  { label: 'LOGIN', value: 'LOGIN' },
+  { label: 'MAINTENANCE', value: 'MAINTENANCE' },
+  { label: 'POLICY', value: 'POLICY' },
+  { label: 'SECURITY', value: 'SECURITY' },
+  { label: 'SERVICE', value: 'SERVICE' },
+  { label: 'TECHNICAL', value: 'TECHNICAL' },
+  { label: 'UPDATE', value: 'UPDATE' },
+];
 
 type FaqModalProps = {
   visible: boolean;
   onClose: () => void;
   mode?: 'create' | 'edit';
-  initialData?: {
-    title: string;
-    category: string;
-    tokenColor: TokenColor;
-    description: string;
-  };
+  initialData?: FaqListItem;
 };
 
 const FaqModal = ({ visible, onClose, mode = 'create', initialData }: FaqModalProps) => {
   if (!visible) return null;
 
-  const [title, setTitle] = useState('');
-  const [category, setCategory] = useState('');
+  const [title, setTitle] = useState<string>('');
+  const [category, setCategory] = useState<FaqCategory | null>(null); // Change to FaqCategory | null
   const [tokenColor, setTokenColor] = useState<TokenColor>('RED');
-  const [description, setDescription] = useState('');
+  const [description, setDescription] = useState<string>('');
   const [alertMessage, setAlertMessage] = useState<string | null>(null);
 
+  // Initialize the form with existing data if the mode is 'edit'
   useEffect(() => {
     if (mode === 'edit' && initialData) {
       setTitle(initialData.title);
-      setCategory(initialData.category);
+      setCategory(initialData.category); // Set category
       setTokenColor(initialData.tokenColor);
       setDescription(initialData.description);
     }
@@ -43,13 +54,13 @@ const FaqModal = ({ visible, onClose, mode = 'create', initialData }: FaqModalPr
     setTokenColor(color);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!title.trim()) {
       setAlertMessage('제목을 입력해주세요.');
       return;
     }
     if (!category) {
-      setAlertMessage('분류를 입력해주세요.');
+      setAlertMessage('분류를 선택해주세요.');
       return;
     }
     if (!description.trim()) {
@@ -64,22 +75,36 @@ const FaqModal = ({ visible, onClose, mode = 'create', initialData }: FaqModalPr
       description,
     };
 
-    if (mode === 'edit') {
-      console.log('수정 요청', payload);
-      // 수정 API 호출
-    } else {
-      console.log('등록 요청', payload);
-      // 등록 API 호출
+    try {
+      if (mode === 'edit' && initialData?.id) {
+        // Call the update FAQ API
+        const response = await updateFaq(initialData.id, payload);
+        if (response.status === 'success') {
+          setAlertMessage('FAQ가 성공적으로 수정되었습니다.');
+        } else {
+          setAlertMessage('수정 실패! 다시 시도해주세요.');
+        }
+      } else {
+        // Call the create FAQ API
+        const response = await createFaq(payload);
+        if (response.status === 'success') {
+          setAlertMessage('FAQ가 성공적으로 등록되었습니다.');
+        } else {
+          setAlertMessage('등록 실패! 다시 시도해주세요.');
+        }
+      }
+      onClose(); // Close the modal after successful API call
+    } catch (error) {
+      console.error(error);
+      setAlertMessage('에러가 발생했습니다. 다시 시도해주세요.');
     }
-
-    onClose();
   };
 
   useEffect(() => {
     if (alertMessage) {
       const timeout = setTimeout(() => {
         setAlertMessage(null);
-      }, 1000);
+      }, 2000);
       return () => clearTimeout(timeout);
     }
   }, [alertMessage]);
@@ -94,7 +119,7 @@ const FaqModal = ({ visible, onClose, mode = 'create', initialData }: FaqModalPr
           transform: 'translateX(-50%)',
         }}
       >
-        {/* 헤더 */}
+        {/* Header */}
         <div className='border-menuborder mb-5 flex items-center justify-between border-b pb-5'>
           <h1 className='text-text1 text-h1_contents_title'>
             {mode === 'edit' ? 'FAQ 수정하기' : 'FAQ 작성하기'}
@@ -107,10 +132,10 @@ const FaqModal = ({ visible, onClose, mode = 'create', initialData }: FaqModalPr
           />
         </div>
 
-        {/* 본문 */}
+        {/* Body */}
         <div className='flex-grow overflow-y-auto pr-1'>
           <div className='flex flex-col gap-7'>
-            {/* 제목 */}
+            {/* Title */}
             <div className='flex flex-col gap-[18px]'>
               <h3 className='text-text1 text-h3'>
                 FAQ 제목 <span className='text-h3 text-noti'>*</span>
@@ -122,17 +147,17 @@ const FaqModal = ({ visible, onClose, mode = 'create', initialData }: FaqModalPr
               />
             </div>
 
-            {/* 분류 */}
+            {/* Category */}
+
             <div className='flex flex-col gap-[18px]'>
               <h3 className='text-text1 text-h3'>
                 FAQ 분류 <span className='text-h3 text-noti'>*</span>
               </h3>
               <div className='flex gap-5'>
-                <TextInputWithCounter
-                  value={category}
-                  placeholder='FAQ의 분류를 입력하세요. (예 : 일정)'
-                  onChange={(e) => setCategory(e.target.value.slice(0, 5))}
-                  maxLength={5}
+                <Dropdown
+                  options={categoryOptions}
+                  value={category ? category : ''} // Set dropdown value to category, empty string if null
+                  onChange={(option) => setCategory(option.value as FaqCategory)} // Update category state with FaqCategory
                 />
                 <div className='border-menuborder flex gap-2.5 rounded-full border px-5 py-3'>
                   <p className='text-subtext1 text-body2_m whitespace-nowrap'>컬러</p>
@@ -167,7 +192,7 @@ const FaqModal = ({ visible, onClose, mode = 'create', initialData }: FaqModalPr
               </div>
             </div>
 
-            {/* 내용 */}
+            {/* Description */}
             <div className='flex flex-col gap-[18px]'>
               <h3 className='text-text1 text-h3'>
                 FAQ 상세 <span className='text-h3 text-noti'>*</span>
@@ -183,7 +208,7 @@ const FaqModal = ({ visible, onClose, mode = 'create', initialData }: FaqModalPr
           </div>
         </div>
 
-        {/* 하단 버튼 */}
+        {/* Bottom Buttons */}
         <div className='flex justify-end pt-6 pb-1'>
           <div className='flex items-center gap-8'>
             <p className='text-unselected text-h4'>{description.length}/3000</p>
@@ -195,7 +220,7 @@ const FaqModal = ({ visible, onClose, mode = 'create', initialData }: FaqModalPr
         </div>
       </div>
 
-      {/* 알림 메시지 */}
+      {/* Alert Message */}
       {alertMessage && <Alert text={alertMessage} />}
     </div>
   );

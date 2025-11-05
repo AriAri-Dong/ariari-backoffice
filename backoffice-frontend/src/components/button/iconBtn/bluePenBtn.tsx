@@ -8,7 +8,7 @@ const BluePenBtn = ({ onClick }: BluePenBtnProps) => {
   return (
     <button
       onClick={onClick}
-      className='bg-selectedoption_default flex h-[30px] cursor-pointer items-center gap-0.5 rounded-4xl px-2.5 text-center whitespace-nowrap'
+      className='bg-selectedoption_default flex h-[30px] min-w-[60px] cursor-pointer items-center gap-0.5 rounded-4xl px-2.5 text-center whitespace-nowrap'
     >
       <p className='text-primary text-body2_sb'>수정</p>
       <img
