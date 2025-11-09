@@ -1,8 +1,7 @@
 package com.ariari.ariari.domain.system.notice;
 
 import com.ariari.ariari.commons.commonentity.image.ImageRepository;
-import com.ariari.ariari.commons.entity.AdminMember;
-import com.ariari.ariari.commons.entity.SystemNoticeImage;
+import com.ariari.ariari.commons.entity.*;
 import com.ariari.ariari.commons.exception.exceptions.NotFoundEntityException;
 import com.ariari.ariari.commons.manager.MemberAlarmManger;
 import com.ariari.ariari.commons.manager.PageableFactoryManger;
@@ -12,9 +11,7 @@ import com.ariari.ariari.commons.repsonse.ApiResponse;
 import com.ariari.ariari.commons.repsonse.PageResponse;
 import com.ariari.ariari.domain.admin.AdminMemberRepository;
 import com.ariari.ariari.domain.club.notice.image.exception.NotBelongInClubNoticeException;
-import com.ariari.ariari.commons.entity.Member;
 import com.ariari.ariari.domain.member.member.MemberRepository;
-import com.ariari.ariari.commons.entity.SystemNotice;
 import com.ariari.ariari.domain.system.image.SystemNoticeImageRepository;
 import com.ariari.ariari.domain.system.notice.dto.req.SystemNoticeModifyReq;
 import com.ariari.ariari.domain.system.notice.dto.req.SystemNoticeSaveReq;
@@ -95,8 +92,6 @@ public class SystemNoticeService {
             }
         }
 
-        System.out.println("create " + systemNotice.getCreatedDateTime());
-
 
         return ApiResponse.success(SystemNoticeSaveRes.fromEntity(systemNotice));
     }
@@ -144,6 +139,10 @@ public class SystemNoticeService {
         SystemNotice systemNotice = systemNoticeRepository.findById(systemNoticeId).orElseThrow(NotFoundEntityException::new);
 
         // 검증 로직 추가
+
+        for (SystemNoticeImage image : systemNotice.getSystemNoticeImages()) {
+            s3Manager.deleteFile(image.getImageUri());
+        }
 
         systemNoticeRepository.delete(systemNotice);
         return ApiResponse.successMessage("공지사항이 삭제되었습니다.");

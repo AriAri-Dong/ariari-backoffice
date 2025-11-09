@@ -32,10 +32,9 @@ public class SystemFaqService {
     @Transactional(readOnly = true)
     public PageResponse<SystemFaqListRes> findSystemFaqs(Long adminMemberId, SystemFaqStatusType category, Integer page, Integer pageSize) {
         Pageable pageable = PageableFactoryManger.of(page, pageSize, "createdDateTime", true);
-        System.out.println("reqCategory: " + category);
+
         Page<SystemFaq> systemFaqList;
         if (category != null) {
-            System.out.println("reqCategory: " + category);
             systemFaqList = systemFaqRepository.findAllByCategory(category, pageable);
         } else {
             systemFaqList = systemFaqRepository.findAllByOrderByCreatedDateTimeDesc(pageable);
