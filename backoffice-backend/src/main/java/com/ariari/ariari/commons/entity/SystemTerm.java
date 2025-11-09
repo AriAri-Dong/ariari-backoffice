@@ -21,7 +21,7 @@ public class SystemTerm extends LogicalDeleteEntity {
     private Long id;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "term_type", unique = true)
+    @Column(name = "term_type")
     private TermType termType;
 
     @Lob

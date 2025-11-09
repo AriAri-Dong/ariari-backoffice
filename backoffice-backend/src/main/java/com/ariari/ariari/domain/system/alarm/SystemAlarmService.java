@@ -67,7 +67,7 @@ public class SystemAlarmService {
     @Transactional
     public ApiResponse<SystemAlarmSaveRes> saveSystemAlarm(Long adminMemberId, SystemAlarmSaveReq systemAlarmSaveReq, List<MultipartFile> files) {
         SystemAlarm systemAlarm = systemAlarmSaveReq.toEntity();
-        systemAlarmRepository.save(systemAlarm);
+        systemAlarmRepository.saveAndFlush(systemAlarm);
 
         // 이미지 처리
         if (files != null) {
@@ -97,13 +97,16 @@ public class SystemAlarmService {
         memberAlarmManger.sendSystemNotification(targetMembers, systemAlarm.getTitle());
 
         return ApiResponse.success(SystemAlarmSaveRes.fromEntity(systemAlarm));
-
     }
 
     @Transactional
     public ApiResponse<Void> removeSystemAlarm(Long adminMemberId, Long systemAlarmId) {
         SystemAlarm systemAlarm = systemAlarmRepository.findById(systemAlarmId).orElseThrow(NotFoundEntityException::new);
         systemAlarmRepository.delete(systemAlarm);
+
+        for (SystemAlarmImage image : systemAlarm.getSystemAlarmImages()) {
+            s3Manager.deleteFile(image.getImageUri());
+        }
 
         return ApiResponse.successMessage("알림이 삭제되었습니다.");
     }

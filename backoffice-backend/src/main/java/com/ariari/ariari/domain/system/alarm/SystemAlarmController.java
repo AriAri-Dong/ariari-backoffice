@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -38,7 +39,7 @@ public class SystemAlarmController {
                                                              @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
 
         Long adminMemberId = CustomUserDetails.getMemberId(userDetails, false);
-        Pageable pageable = PageRequest.of(page - 1, pageSize, Sort.by(Sort.Direction.DESC, "createdAt"));
+        Pageable pageable = PageRequest.of(page - 1, pageSize, Sort.by(Sort.Direction.DESC, "createdDateTime"));
 
         return systemAlarmService.findSystemAlarms(adminMemberId, pageable, search, filter);
     }
@@ -53,7 +54,7 @@ public class SystemAlarmController {
 
 
     @Operation(summary = "서비스 알림 등록", description = "운영 관리자만이 등록할 수 있습니다.")
-    @PostMapping
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponse<SystemAlarmSaveRes> saveSystemAlarm(@AuthenticationPrincipal CustomUserDetails userDetails,
                                                            @Valid @RequestPart SystemAlarmSaveReq saveReq,
                                                            @RequestPart(required = false) List<MultipartFile> files){
