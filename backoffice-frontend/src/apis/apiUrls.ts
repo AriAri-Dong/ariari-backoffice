@@ -10,3 +10,7 @@ export const DASHBOARD_RANKING = '/api/v1/dashboard/club/ranking';
 export const NOTICE = '/api/v1/notices';
 // FAQ
 export const FAQ = '/api/v1/faqs';
+
+//DATA-OPS
+export const DATAOPS = '/api/v1/dataops';
+export const DATAOPS_DETAIL = '/api/v1/dataops/detail';
