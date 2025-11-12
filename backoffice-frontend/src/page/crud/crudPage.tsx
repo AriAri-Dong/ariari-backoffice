@@ -28,10 +28,9 @@ export default function CrudPage() {
   const [filter, setFilter] = useState('');
   const [table, setTable] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
-  const [modalData, setModalData] = useState<{ field: string; value: string }[]>([]);
   const [dataList, setDataList] = useState<RowType[] | null>(null);
   const [data, setData] = useState<FieldData[]>([]);
-  const [page, setPage] = useState<number>(1);
+  const [page] = useState<number>(1);
   const [selectedId, setSelectedId] = useState<string>('');
   const [alertText, setAlertText] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
