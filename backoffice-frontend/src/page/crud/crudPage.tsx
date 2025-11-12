@@ -105,6 +105,12 @@ export default function CrudPage() {
     }
   }, [table]);
 
+  useEffect(() => {
+    if (filter && search) {
+      fetchData();
+    }
+  }, [filter]);
+
   const columns: Column<RowType>[] = [
     {
       key: 'id',
@@ -161,7 +167,11 @@ export default function CrudPage() {
         <Searchbar
           value={search}
           onChange={setSearch}
-          placeholder='검색어 입력'
+          placeholder={filter ? '검색어 입력' : '검색 필터를 먼저 선택해주세요.'}
+          disabled={!filter}
+          onSearch={() => {
+            fetchData();
+          }}
         />
         <SmallBtn
           round
