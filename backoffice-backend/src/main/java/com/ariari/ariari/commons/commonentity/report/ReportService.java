@@ -6,9 +6,11 @@ import com.ariari.ariari.commons.commonentity.report.dto.req.SearchReq;
 import com.ariari.ariari.commons.commonentity.report.dto.res.PendingReportListRes;
 import com.ariari.ariari.commons.commonentity.report.dto.res.ResolvedReportListRes;
 import com.ariari.ariari.commons.commonentity.report.enums.ReportStatusType;
+import com.ariari.ariari.commons.entity.AdminMember;
 import com.ariari.ariari.commons.exception.exceptions.NotFoundEntityException;
 import com.ariari.ariari.commons.manager.MemberAlarmManger;
 import com.ariari.ariari.commons.entity.Member;
+import com.ariari.ariari.domain.admin.AdminMemberRepository;
 import com.ariari.ariari.domain.member.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -26,19 +28,21 @@ public class ReportService {
     private final ReportRepository reportRepository;
     private final MemberRepository memberRepository;
     private final MemberAlarmManger memberAlarmManger;
+    private final AdminMemberRepository adminMemberRepository;
 
     @Transactional(readOnly = true)
     public PendingReportListRes getAllReports(Long memberId, Pageable pageable) {
-        Member reqMember = getMemberOrThrow(memberId);
+        AdminMember reqMember = getMemberOrThrow(memberId);
         //검증 로직 추가해야함
-        Page<Report> reportPage = reportRepository.findAllByReportStatusType(ReportStatusType.PENDING, pageable);
 
-        return PendingReportListRes.fromPage(reportPage);
+        Page<Report> reports = reportRepository.findAll(pageable);
+
+        return PendingReportListRes.fromPage(reports);
     }
 
     @Transactional(readOnly = true)
     public ResolvedReportListRes getAllResolvedReports(Long memberId, Pageable pageable) {
-        Member reqMember = getMemberOrThrow(memberId);
+        AdminMember reqMember = getMemberOrThrow(memberId);
         //검증 로직 추가해야함
         Page<Report> reportPage = reportRepository.findAllByReportStatusType(ReportStatusType.RESOLVED, pageable);
 
@@ -47,7 +51,7 @@ public class ReportService {
 
     @Transactional(readOnly = true)
     public ResolvedReportListRes searchReports(SearchReq searchReq, Long memberId, Pageable pageable) {
-        Member reqMember = getMemberOrThrow(memberId);
+        AdminMember reqMember = getMemberOrThrow(memberId);
         //검증 로직 추가해야함
         Page<Report> reportPage = reportRepository.searchReports(searchReq, pageable);
 
@@ -56,7 +60,7 @@ public class ReportService {
 
     @Transactional
     public void saveResolvedReport(ResolveSaveReq resolveSaveReq, Long memberId) {
-        Member reqMember = getMemberOrThrow(memberId);
+        AdminMember reqMember = getMemberOrThrow(memberId);
         //검증 로직 추가해야함
         Report report = reportRepository.findById(resolveSaveReq.getReportId()).orElseThrow(NotFoundEntityException::new);
         report.resolve(resolveSaveReq.getResolveBody(), LocalDateTime.now(ZoneId.of("Asia/Seoul")));
@@ -65,7 +69,7 @@ public class ReportService {
 
     @Transactional
     public void deleteReport(DeleteReportReq deleteReportReq, Long memberId) {
-        Member reqMember = memberRepository.findById(memberId).orElseThrow(NotFoundEntityException::new);
+        AdminMember reqMember = adminMemberRepository.findById(memberId).orElseThrow(NotFoundEntityException::new);
         //검증 로직 추가해야함
         Report report = reportRepository.findWithReporterById(deleteReportReq.getReportId()).orElseThrow(NotFoundEntityException::new);
 
@@ -74,8 +78,8 @@ public class ReportService {
     }
 
 
-    private Member getMemberOrThrow(Long memberId) {
-        return memberRepository.findById(memberId).orElseThrow(NotFoundEntityException::new);
+    private AdminMember getMemberOrThrow(Long adminMemberId) {
+        return adminMemberRepository.findById(adminMemberId).orElseThrow(NotFoundEntityException::new);
     }
 
 

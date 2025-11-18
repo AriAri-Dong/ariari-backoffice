@@ -15,6 +15,8 @@ import java.util.Optional;
 @Repository
 public interface ReportRepository extends JpaRepository<Report, Long>, ReportRepositoryCustom {
 
+
+
     @Query("SELECT r FROM Report as r WHERE r.reportStatusType = :reportStatusType")
     Page<Report> findAllByReportStatusType(@Param("reportStatusType") ReportStatusType reportStatusType, Pageable pageable);
 
