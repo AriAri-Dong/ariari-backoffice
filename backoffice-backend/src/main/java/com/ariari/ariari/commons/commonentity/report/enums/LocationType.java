@@ -8,5 +8,6 @@ public enum LocationType {
     COMMENT,        // 댓글
     QNA,            // Q&A
     PASS_REVIEW,    // 합격후기
-    ACTIVITY_REVIEW // 활동후기
+    ACTIVITY_REVIEW, // 활동후기
+    RECRUIT
 }
