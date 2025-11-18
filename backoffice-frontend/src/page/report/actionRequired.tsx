@@ -3,30 +3,50 @@ import RefreshBtn from '../../components/button/iconBtn/refreshBtn';
 import Dropdown from '../../components/dropdown/dropdown';
 import PaginatedTable from '../../components/paginatedTable';
 import type { Column } from '../../types/table';
-import { data } from './actionCompelete';
+import { useQuery } from '@tanstack/react-query';
+import { getReportPendingList } from '../../apis/report/api';
+import { isApiError } from '../../utils/typeGuard';
+import type { ReportPendingListItem, ReportPendingListResponse } from '../../types/api/report';
+import { REPORT_REASONS } from '../../components/modal/report/commonModal';
 
-export type RowType = {
-  id: string;
-  date: string;
-  title: string;
-  position: string;
-  user: string;
-};
-
-const columns: Column<RowType>[] = [
-  { key: 'id', title: '번호', width: '10%', align: 'center' },
-  { key: 'date', title: '분류', width: '10%', align: 'center' },
-  { key: 'title', title: '제목', width: '60%', align: 'left', className: 'text-black' },
-  { key: 'position', title: '신고위치', width: '10%', align: 'center' },
-  { key: 'user', title: '신고자', width: '10%', align: 'center' },
+const columns: Column<ReportPendingListItem>[] = [
+  { key: 'number', title: '번호', width: '10%', align: 'center' },
+  { key: 'reportDate', title: '신고날짜', width: '10%', align: 'center' },
+  {
+    key: 'title',
+    title: '제목',
+    width: '50%',
+    align: 'left',
+    className: 'text-black',
+    render: (value) => {
+      return <p>{REPORT_REASONS.find((reason) => reason.value === value)?.label}</p>;
+    },
+  },
+  { key: 'location', title: '신고위치', width: '15%', align: 'center' },
+  { key: 'reporter', title: '신고자', width: '15%', align: 'center' },
 ];
 
 export default function ActionRequired({
   setSelectedRow,
+  initialData,
 }: {
-  setSelectedRow: (row: RowType | null) => void;
+  setSelectedRow: (row: ReportPendingListItem | null) => void;
+  initialData?: ReportPendingListResponse;
 }) {
   const [category, setCategory] = useState<string>('');
+  const [page, setPage] = useState<number>(1);
+
+  const { data } = useQuery({
+    queryKey: ['reportPendingList', { page: page - 1, size: 10 }],
+    queryFn: async () => {
+      const res = await getReportPendingList({ page: page - 1, size: 10 });
+      if (isApiError(res)) {
+        throw new Error(res.message);
+      }
+      return res;
+    },
+    initialData: page === 1 ? initialData : undefined,
+  });
 
   const handleRefresh = () => {
     setCategory('');
@@ -58,7 +78,9 @@ export default function ActionRequired({
       {/* 테이블 */}
       <PaginatedTable
         columns={columns}
-        data={data}
+        data={data?.reportDataList || []}
+        page={page}
+        onPageChange={(page) => setPage(page)}
         pageSize={10}
         rowKey='id'
         onRowClick={(row) => setSelectedRow(row)}

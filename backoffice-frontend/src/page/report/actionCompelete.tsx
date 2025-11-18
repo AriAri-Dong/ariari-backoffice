@@ -6,21 +6,27 @@ import Dropdown from '../../components/dropdown/dropdown';
 import PaginatedTable from '../../components/paginatedTable';
 import Searchbar from '../../components/searchbar';
 import type { Column } from '../../types/table';
+import type { ReportResolvedListItem, ReportResolvedListResponse } from '../../types/api/report';
+import { useQuery } from '@tanstack/react-query';
+import { getReportResolvedList } from '../../apis/report/api';
+import { isApiError } from '../../utils/typeGuard';
+import { REPORT_REASONS } from '../../components/modal/report/commonModal';
 
-type RowType = {
-  id: string;
-  date: string;
-  title: string;
-  position: string;
-  user: string;
-};
-
-const columns: Column<RowType>[] = [
-  { key: 'id', title: '번호', width: '10%', align: 'center' },
-  { key: 'date', title: '분류', width: '10%', align: 'center' },
-  { key: 'title', title: '제목', width: '50%', align: 'left', className: 'text-black' },
-  { key: 'position', title: '신고위치', width: '10%', align: 'center' },
-  { key: 'user', title: '신고자', width: '10%', align: 'center' },
+const columns: Column<ReportResolvedListItem>[] = [
+  { key: 'number', title: '번호', width: '10%', align: 'center' },
+  { key: 'reportDate', title: '신고날짜', width: '10%', align: 'center' },
+  {
+    key: 'title',
+    title: '제목',
+    width: '50%',
+    align: 'left',
+    className: 'text-black',
+    render: (value) => {
+      return <p>{REPORT_REASONS.find((reason) => reason.value === value)?.label}</p>;
+    },
+  },
+  { key: 'location', title: '신고위치', width: '10%', align: 'center' },
+  { key: 'reporter', title: '신고자', width: '10%', align: 'center' },
   {
     key: 'treatment',
     title: '처리',
@@ -38,25 +44,31 @@ const columns: Column<RowType>[] = [
   },
 ];
 
-const types = ['ACCEPTANCE_REVIEW', 'QNA', 'CLUB', 'CLUB_REVIEW', 'POST', 'RECRUITMENT'];
-export const data: RowType[] = Array.from({ length: 45 }).map((_, idx) => ({
-  id: (idx + 1).toString().padStart(4, '0'),
-  date: '2025.10.21',
-  title: '제목',
-  position: types[idx % types.length],
-  user: 'user',
-}));
-
 export default function ActionCompelete({
   setSelectedRow,
+  initialData,
 }: {
-  setSelectedRow: (row: RowType | null) => void;
+  setSelectedRow: (row: ReportResolvedListItem | null) => void;
+  initialData?: ReportResolvedListResponse;
 }) {
+  const [page, setPage] = useState<number>(1);
   const [search, setSearch] = useState<string>('');
   const [searchFilter, setSearchFilter] = useState<string>('');
   const [postStatus, setPostStatus] = useState<string>('');
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
+
+  const { data } = useQuery({
+    queryKey: ['reportResolvedList', { page: page - 1, size: 10 }],
+    queryFn: async () => {
+      const res = await getReportResolvedList({ page: page - 1, size: 10 });
+      if (isApiError(res)) {
+        throw new Error(res.message);
+      }
+      return res;
+    },
+    initialData: page === 1 && initialData ? initialData : undefined,
+  });
 
   const handleRefresh = () => {
     setSearch('');
@@ -122,7 +134,9 @@ export default function ActionCompelete({
       {/* 테이블 */}
       <PaginatedTable
         columns={columns}
-        data={data}
+        data={data?.resolvedReportData || []}
+        page={page}
+        onPageChange={(page) => setPage(page)}
         pageSize={10}
         rowKey='id'
         onRowClick={(row) => setSelectedRow(row)}
