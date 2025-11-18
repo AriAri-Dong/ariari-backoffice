@@ -26,7 +26,6 @@ import java.time.ZoneId;
 public class ReportService {
 
     private final ReportRepository reportRepository;
-    private final MemberRepository memberRepository;
     private final MemberAlarmManger memberAlarmManger;
     private final AdminMemberRepository adminMemberRepository;
 
