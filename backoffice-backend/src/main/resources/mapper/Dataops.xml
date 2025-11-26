@@ -14,6 +14,18 @@
         LIMIT #{size} OFFSET #{offset}
     </select>
 
+    <select id="findIdsForTargetTableWithoutSoftDelete" resultType="map">
+        SELECT ${id}
+        FROM ${table}
+        <where>
+            <if test="filter != null and keyword != null">
+                ${filter} LIKE CONCAT('%', #{keyword}, '%')
+            </if>
+        </where>
+        ORDER BY ${id} DESC
+        LIMIT #{size} OFFSET #{offset}
+    </select>
+
     <select id="countTotalForTargetTable" resultType="int">
         SELECT COUNT(*)
         FROM ${table}
