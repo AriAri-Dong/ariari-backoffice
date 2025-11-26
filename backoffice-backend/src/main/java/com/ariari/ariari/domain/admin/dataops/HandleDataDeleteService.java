@@ -13,7 +13,10 @@ public class HandleDataDeleteService {
 
     @Transactional
     public DeleteDataopsRes handleDeleteData(String table, String id) {
-        switch (table) {
+        // 스네이크 케이스를 파스칼 케이스로 변환 (프론트엔드 호환)
+        String normalizedTable = convertToPascalCase(table);
+
+        switch (normalizedTable) {
             // ========== Member 도메인 ==========
             case "Member":
                 return dataDeleteService.deleteMember(id);
@@ -73,7 +76,7 @@ public class HandleDataDeleteService {
                 return dataDeleteService.deleteClubReviewReport(id);
 
             case "Tag":
-                return DeleteDataopsRes.refused(table, id);
+                return DeleteDataopsRes.refused(normalizedTable, id);
 
             case "ClubQuestion":
                 return dataDeleteService.deleteClubQuestion(id);
@@ -166,13 +169,45 @@ public class HandleDataDeleteService {
                 return dataDeleteService.deleteSecurityAccessLog(id);
 
             case "School":
-                return DeleteDataopsRes.refused(table, id);
+                return DeleteDataopsRes.refused(normalizedTable, id);
 
             case "AdminMember":
-                return DeleteDataopsRes.refused(table, id);
+                return DeleteDataopsRes.refused(normalizedTable, id);
 
             default:
-                return DeleteDataopsRes.refused(table, id);
+                return DeleteDataopsRes.refused(normalizedTable, id);
         }
+    }
+
+    /**
+     * 스네이크 케이스를 파스칼 케이스로 변환
+     * 예: member_alarm -> MemberAlarm, club_activity_comment -> ClubActivityComment
+     * 이미 파스칼 케이스인 경우 그대로 반환
+     */
+    private String convertToPascalCase(String input) {
+        if (input == null || input.isEmpty()) {
+            return input;
+        }
+
+        // 이미 파스칼 케이스인 경우 (언더스코어 없고 첫 글자가 대문자)
+        if (!input.contains("_") && Character.isUpperCase(input.charAt(0))) {
+            return input;
+        }
+
+        // 스네이크 케이스인 경우 변환
+        StringBuilder result = new StringBuilder();
+        String[] parts = input.split("_");
+
+        for (String part : parts) {
+            if (part.isEmpty()) continue;
+
+            // 첫 글자를 대문자로, 나머지는 소문자로
+            result.append(Character.toUpperCase(part.charAt(0)));
+            if (part.length() > 1) {
+                result.append(part.substring(1).toLowerCase());
+            }
+        }
+
+        return result.toString();
     }
 }
