@@ -17,17 +17,17 @@ type RowType = {
 
 export default function TermsEdit() {
   const [rows, setRows] = useState<RowType[]>([]);
-  const [page, setPage] = useState(1);
-  const [pageSize] = useState(10);
-  const [total, setTotal] = useState(0);
+  const [page, setPage] = useState<number>(1);
+  const [pageSize] = useState<number>(10);
+  const [total, setTotal] = useState<number>(0);
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [selectedId, setSelectedId] = useState<number | null>(null);
-  const [selectedTitle, setSelectedTitle] = useState('');
-  const [selectedBody, setSelectedBody] = useState('');
+  const [selectedTitle, setSelectedTitle] = useState<string>('');
+  const [selectedBody, setSelectedBody] = useState<string>('');
 
   const [deleteId, setDeleteId] = useState<number | null>(null);
-  const [isDeleteAlertOpen, setIsDeleteAlertOpen] = useState(false);
+  const [isDeleteAlertOpen, setIsDeleteAlertOpen] = useState<boolean>(false);
 
   // 목록 조회
   const fetchTermsList = useCallback(async () => {
@@ -124,9 +124,7 @@ export default function TermsEdit() {
     setDeleteId(null);
   };
 
-  // -----------------------------------------------------
-  // 📌 컬럼
-  // -----------------------------------------------------
+  // 컬럼
   const columns: Column<RowType>[] = [
     { key: 'id', title: '번호', width: '10%', align: 'center' },
     { key: 'date', title: '수정일', width: '20%', align: 'left' },

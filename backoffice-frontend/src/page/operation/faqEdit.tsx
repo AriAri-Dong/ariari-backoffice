@@ -19,8 +19,9 @@ export default function FaqEdit() {
   const [selectedRowData, setSelectedRowData] = useState<FaqListItem | null>(null);
   const [isDeleteAlertOpen, setIsDeleteAlertOpen] = useState<boolean>(false);
   const [deleteFaqId, setDeleteFaqId] = useState<string | null>(null);
-  const [page, setPage] = useState<number>(0);
-  const [pageSize, setPageSize] = useState<number>(10);
+  const [page, setPage] = useState<number>(1);
+  const [pageSize] = useState<number>(10);
+  const [total, setTotal] = useState<number>(0);
 
   const columns: Column<FaqListItem>[] = [
     { key: 'id', title: '번호', width: '10%', align: 'center' },
@@ -59,6 +60,7 @@ export default function FaqEdit() {
           description: faq.description,
         }));
 
+        setTotal(res.total);
         setFaqList(list);
       } else {
         console.error('FAQ API status is not success:', res.status);
@@ -75,7 +77,6 @@ export default function FaqEdit() {
   const handleRefresh = () => {
     setCategory('');
     setPage(0);
-    setPageSize(10);
     fetchFaqList();
   };
 
@@ -130,8 +131,11 @@ export default function FaqEdit() {
       <PaginatedTable
         columns={columns}
         data={faqList}
-        pageSize={10}
+        page={page}
+        pageSize={pageSize}
+        total={total}
         rowKey='id'
+        onPageChange={(newPage) => setPage(newPage)}
       />
 
       {/* Add FAQ Button */}
