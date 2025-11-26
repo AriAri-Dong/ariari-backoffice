@@ -14,3 +14,7 @@ export const NOTICE = '/api/v1/notices';
 export const FAQ = '/api/v1/faqs';
 // 알림전송 (시스템 알림)
 export const SYSTEM_ALARM = '/api/v1/notifications';
+
+//DATA-OPS
+export const DATAOPS = '/api/v1/dataops';
+export const DATAOPS_DETAIL = '/api/v1/dataops/detail';
