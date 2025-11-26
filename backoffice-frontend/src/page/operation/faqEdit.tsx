@@ -19,7 +19,6 @@ export default function FaqEdit() {
   const [selectedRowData, setSelectedRowData] = useState<FaqListItem | null>(null);
   const [isDeleteAlertOpen, setIsDeleteAlertOpen] = useState<boolean>(false);
   const [deleteFaqId, setDeleteFaqId] = useState<string | null>(null);
-
   const [page, setPage] = useState<number>(0);
   const [pageSize, setPageSize] = useState<number>(10);
 
@@ -49,15 +48,20 @@ export default function FaqEdit() {
   const fetchFaqList = useCallback(async () => {
     try {
       const res = await getFaqList({ category, page, pageSize });
+
       if (res.status === 'success') {
-        const list = res.data.faqs.map((faq: FaqListItem) => ({
+        // 바로 items 사용 가능
+        const list = res.items.map((faq) => ({
           id: faq.id,
           category: faq.category,
           title: faq.title,
           tokenColor: faq.tokenColor,
           description: faq.description,
         }));
+
         setFaqList(list);
+      } else {
+        console.error('FAQ API status is not success:', res.status);
       }
     } catch (error) {
       console.error('Error fetching FAQ list:', error);
