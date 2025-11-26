@@ -64,12 +64,14 @@ public class FindDataopsData {
                     String id = row.get(idColumn).toString();
                     LocalDateTime deletedDateTime = null;
 
-                    // deleted_date_time 컬럼 값 추출 (테이블에 없으면 null)
-                    Object deletedValue = row.get("deleted_date_time");
-                    if (deletedValue instanceof LocalDateTime) {
-                        deletedDateTime = (LocalDateTime) deletedValue;
-                    } else if (deletedValue instanceof java.sql.Timestamp) {
-                        deletedDateTime = ((java.sql.Timestamp) deletedValue).toLocalDateTime();
+                    // deleted_date_time 컬럼 값 추출 (테이블에 없거나 null이면 null)
+                    if (row.containsKey("deleted_date_time")) {
+                        Object deletedValue = row.get("deleted_date_time");
+                        if (deletedValue instanceof LocalDateTime) {
+                            deletedDateTime = (LocalDateTime) deletedValue;
+                        } else if (deletedValue instanceof java.sql.Timestamp) {
+                            deletedDateTime = ((java.sql.Timestamp) deletedValue).toLocalDateTime();
+                        }
                     }
 
                     return new DataItem(id, deletedDateTime);
