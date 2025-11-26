@@ -16,7 +16,10 @@ import { FAQ } from '../apiUrls';
  * GET /api/v1/faqs
  */
 export const getFaqList = async (params: GetFaqListParams): Promise<ApiResult<FaqListResponse>> => {
-  return safeRequest<FaqListResponse>(() => api.get(FAQ, { params }));
+  const { category, ...rest } = params;
+  const queryParams = category ? { ...rest, category } : { ...rest };
+
+  return safeRequest<FaqListResponse>(() => api.get(FAQ, { params: queryParams }));
 };
 
 /**
