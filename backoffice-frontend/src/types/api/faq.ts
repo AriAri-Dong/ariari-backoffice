@@ -37,12 +37,10 @@ export interface FaqListItem {
  */
 export interface FaqListResponse {
   status: 'success';
-  data: {
-    total: number;
-    page: number;
-    pageSize: number;
-    faqs: FaqListItem[];
-  };
+  total: number;
+  page: number;
+  pageSize: number;
+  items: FaqListItem[];
 }
 
 /**
