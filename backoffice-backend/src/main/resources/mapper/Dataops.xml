@@ -3,7 +3,7 @@
 
 <mapper namespace="com.ariari.ariari.domain.admin.dataops.DataopsMapper">
     <select id="findIdsForTargetTable" resultType="map">
-        SELECT ${id}
+        SELECT ${id}, deleted_date_time
         FROM ${table}
         <where>
             <if test="filter != null and keyword != null">

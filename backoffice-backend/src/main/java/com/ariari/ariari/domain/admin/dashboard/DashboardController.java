@@ -37,10 +37,10 @@ public class DashboardController {
     public GetClubStatisticsRes getClubStatistics(@RequestParam(required = true) String date,
                                                   @RequestParam(required = true) String category,
                                                   @RequestParam(required = true) String region){
-        if(!region.matches("^(All|CULTURE|VOLUNTEER|STUDY|STARTUP|EMPLOYMENT|SPORTS|AMITY|ETC)$")){
+        if(!category.matches("^(All|CULTURE|VOLUNTEER|STUDY|STARTUP|EMPLOYMENT|SPORTS|AMITY|ETC)$")){
             throw new IllegalRangeException();
         }
-        if(!category.matches("^(All|SEOUL_GYEONGGI|CHUNGCHEONG|GYEONGNAM|GYEONGBUK|JEONNAM|JEONBUK|GANGWON|JEJU|FOREIGN)$")){
+        if(!region.matches("^(All|SEOUL_GYEONGGI|CHUNGCHEONG|GYEONGNAM|GYEONGBUK|JEONNAM|JEONBUK|GANGWON|JEJU|FOREIGN)$")){
             throw new IllegalRangeException();
         }
         return dashboardService.getClubStatistics(date,category,region);
