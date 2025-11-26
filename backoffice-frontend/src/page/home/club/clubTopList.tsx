@@ -6,27 +6,44 @@ type ClubItem = {
 type ClubTopListProps = {
   title: string;
   list: ClubItem[];
+  loading: boolean;
+  errorMsg: string | null;
 };
 
-export default function ClubTopList({ title, list }: ClubTopListProps) {
+export default function ClubTopList({ title, list, loading, errorMsg }: ClubTopListProps) {
   return (
     <div>
       <h2 className='text-h4_sb text-text1 border-menuborder border-b pb-1'>{title}</h2>
+
       <div className='mt-5 flex flex-col gap-2'>
-        {list.map((club, i) => (
-          <div
-            key={i}
-            className='flex items-center justify-between'
-          >
-            <div className='flex items-center gap-[9px]'>
-              <span className='text-primary bg-selectedoption_hover text-body3_m flex h-6 w-6 items-center justify-center rounded-sm'>
-                {i + 1}
-              </span>
-              <span className='text-subtext1 text-body3_r'>{club.name}</span>
-            </div>
-            <span className='text-body3_sb text-text1'>{club.rate}%</span>
+        {loading ? (
+          <div className='text-body2_r text-subtext2 flex h-[120px] items-center justify-center'>
+            불러오는 중...
           </div>
-        ))}
+        ) : errorMsg ? (
+          <div className='text-body2_r flex h-[120px] items-center justify-center text-red-500'>
+            {errorMsg}
+          </div>
+        ) : list.length === 0 ? (
+          <div className='text-body2_r text-subtext2 flex h-[120px] items-center justify-center'>
+            데이터가 없습니다.
+          </div>
+        ) : (
+          list.map((club, i) => (
+            <div
+              key={`${club.name}-${i}`}
+              className='flex items-center justify-between'
+            >
+              <div className='flex items-center gap-[9px]'>
+                <span className='text-primary bg-selectedoption_hover text-body3_m flex h-6 w-6 items-center justify-center rounded-sm'>
+                  {i + 1}
+                </span>
+                <span className='text-subtext1 text-body3_r'>{club.name}</span>
+              </div>
+              <span className='text-body3_sb text-text1'>{club.rate}%</span>
+            </div>
+          ))
+        )}
       </div>
     </div>
   );

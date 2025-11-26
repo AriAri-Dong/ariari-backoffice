@@ -27,7 +27,7 @@ public class SystemFaqDetailRes {
     @Schema(description = "제목", example = "Faq입니다.")
     private final String title;
 
-    @Schema(description = "카테고리", example = "공지사항입니다.")
+    @Schema(description = "카테고리", example = "'ACCOUNT','CLUB','DATA','GENERAL','LOGIN','MAINTENANCE','POLICY','SECURITY','SERVICE','TECHNICAL','UPDATE'")
     private final SystemFaqStatusType category;
 
     @Schema(description = "색깔", example = "BLUE")

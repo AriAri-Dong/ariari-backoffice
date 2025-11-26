@@ -25,12 +25,15 @@ public class SystemNoticeSearchReq {
     private PopStatusType status;
 
     @Schema(description = "시작일 (YYYY-MM-DD)", example = "2024-03-01")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private LocalDate startDate;
+    private String  startDate;
 
     @Schema(description = "종료일 (YYYY-MM-DD)", example = "2024-03-01")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private LocalDate endDate;
+    private String endDate;
 
+    @Builder.Default
+    private Integer page = 1;
+
+    @Builder.Default
+    private Integer pageSize = 10;
 
 }

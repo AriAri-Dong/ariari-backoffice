@@ -15,7 +15,7 @@ public class SystemAlarmImage extends Image {
 
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "system_notice_id")
+    @JoinColumn(name = "system_alarm_id")
     private SystemAlarm systemAlarm;
 
     public SystemAlarmImage(String imageUri, SystemAlarm systemAlarm) {

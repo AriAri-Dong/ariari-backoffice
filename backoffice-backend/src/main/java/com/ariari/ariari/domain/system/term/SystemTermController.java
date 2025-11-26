@@ -12,7 +12,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -29,8 +31,11 @@ public class SystemTermController {
 
     @Operation(summary = "약관 목록 조회", description = "PRIVACY_POLICY : 개인정보 처리방침 , CLUB_RULES : 동아리 이용수칙, PLATFORM_RULES : 플랫폼 이용수칙")
     @GetMapping
-    public PageResponse<SystemTermListRes> findSystemTerms(@AuthenticationPrincipal CustomUserDetails userDetails, Pageable pageable) {
+    public PageResponse<SystemTermListRes> findSystemTerms(@AuthenticationPrincipal CustomUserDetails userDetails,
+                                                           @RequestParam(name = "page", required = false, defaultValue = "1") int page,
+                                                           @RequestParam(name = "pageSize", required = false, defaultValue = "10") int pageSize){
         Long adminMemberId = CustomUserDetails.getMemberId(userDetails, false);
+        Pageable pageable = PageRequest.of(page - 1, pageSize);
         return systemTermService.findSystemTerms(adminMemberId, pageable);
     }
 
@@ -43,17 +48,9 @@ public class SystemTermController {
 
     @Operation(summary = "약관 등록", description = "")
     @PostMapping("/create")
-    public void saveSystemTerm(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestBody SystemTermSaveReq systemTermSaveReq) {
+    public ApiResponse<SystemTermDetailRes> saveSystemTerm(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestBody SystemTermSaveReq systemTermSaveReq) {
         Long adminMemberId = CustomUserDetails.getMemberId(userDetails, false);
-        systemTermService.saveSystemTerm(adminMemberId, systemTermSaveReq);
-    }
-
-    @Operation(summary = "약관 유형으로 약관 조회", description = "PRIVACY_POLICY : 개인정보 처리방침 , CLUB_RULES : 동아리 이용수칙, PLATFORM_RULES : 플랫폼 이용수칙")
-    @GetMapping("/{termType}")
-    public SystemTermDetailRes findSystemNoticeDetail(@AuthenticationPrincipal CustomUserDetails userDetails,
-                                                      @PathVariable(value = "termType") TermType termType) {
-        Long adminMemberId = CustomUserDetails.getMemberId(userDetails, false);
-        return systemTermService.getSystemTermByTermType(adminMemberId, termType);
+        return  systemTermService.saveSystemTerm(adminMemberId, systemTermSaveReq);
     }
 
     @Operation(summary = "약관 수정", description = "")

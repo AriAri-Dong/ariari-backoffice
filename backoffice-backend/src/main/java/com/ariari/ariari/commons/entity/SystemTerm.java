@@ -12,7 +12,7 @@ import org.hibernate.annotations.SQLRestriction;
 @Entity
 @NoArgsConstructor
 @Getter
-@SQLDelete(sql = "UPDATE system_term SET deleted_date_time= CURRENT_TIMESTAMP WHERE system_term_id= ?")
+@SQLDelete(sql = "UPDATE system_term SET deleted_date_time= CURRENT_TIMESTAMP WHERE system_term_id= ? AND version=?")
 @SQLRestriction("deleted_date_time is null")
 public class SystemTerm extends LogicalDeleteEntity {
     @Id
@@ -21,7 +21,7 @@ public class SystemTerm extends LogicalDeleteEntity {
     private Long id;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "term_type", unique = true)
+    @Column(name = "term_type")
     private TermType termType;
 
     @Lob

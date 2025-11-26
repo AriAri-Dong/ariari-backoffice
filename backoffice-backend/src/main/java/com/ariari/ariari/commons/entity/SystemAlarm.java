@@ -16,7 +16,7 @@ import java.util.List;
 @Entity
 @NoArgsConstructor
 @Getter
-@SQLDelete(sql = "UPDATE system_Alarm SET deleted_date_time= CURRENT_TIMESTAMP WHERE system_alarm_id= ?")
+@SQLDelete(sql = "UPDATE system_alarm SET deleted_date_time= CURRENT_TIMESTAMP WHERE system_alarm_id= ?")
 @SQLRestriction("deleted_date_time is null")
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -40,6 +40,7 @@ public class SystemAlarm extends LogicalDeleteEntity {
 
     @Setter
     @OneToMany(mappedBy = "systemAlarm", cascade = CascadeType.ALL)
+    @Builder.Default
     private List<SystemAlarmImage> systemAlarmImages = new ArrayList<>();
 
 
@@ -51,7 +52,6 @@ public class SystemAlarm extends LogicalDeleteEntity {
                 .views(0)
                 .build();
     }
-
 
 
     public void count(){

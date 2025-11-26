@@ -2,14 +2,15 @@ package com.ariari.ariari.domain.system.faq;
 
 import com.ariari.ariari.commons.entity.AdminMember;
 import com.ariari.ariari.commons.exception.exceptions.NotFoundEntityException;
-import com.ariari.ariari.commons.entity.Member;
+import com.ariari.ariari.commons.manager.PageableFactoryManger;
 import com.ariari.ariari.commons.repsonse.ApiResponse;
 import com.ariari.ariari.commons.repsonse.PageResponse;
 import com.ariari.ariari.domain.admin.AdminMemberRepository;
-import com.ariari.ariari.domain.member.member.MemberRepository;
 import com.ariari.ariari.commons.entity.SystemFaq;
+import com.ariari.ariari.domain.system.enums.SystemFaqStatusType;
 import com.ariari.ariari.domain.system.faq.dto.req.SystemFaqModifyReq;
 import com.ariari.ariari.domain.system.faq.dto.req.SystemFaqSaveReq;
+import com.ariari.ariari.domain.system.faq.dto.req.SystemFaqSearchReq;
 import com.ariari.ariari.domain.system.faq.dto.res.SystemFaqDetailRes;
 import com.ariari.ariari.domain.system.faq.dto.res.SystemFaqListRes;
 import com.ariari.ariari.domain.system.faq.dto.res.SystemFaqModifyRes;
@@ -29,9 +30,15 @@ public class SystemFaqService {
 
 
     @Transactional(readOnly = true)
-    public PageResponse<SystemFaqListRes> findSystemFaqs(Long adminMemberId, String category, Pageable pageable) {
-        Page<SystemFaq> systemFaqList = systemFaqRepository.findAllByOrderByCreatedDateTimeDesc(pageable);
-        Page<SystemFaqListRes> systemFaqListResPage = systemFaqList.map(SystemFaqListRes::fromEntity);
+    public PageResponse<SystemFaqListRes> findSystemFaqs(Long adminMemberId, SystemFaqStatusType category, Integer page, Integer pageSize) {
+        Pageable pageable = PageableFactoryManger.of(page, pageSize, "createdDateTime", true);
+
+        Page<SystemFaq> systemFaqList;
+        if (category != null) {
+            systemFaqList = systemFaqRepository.findAllByCategory(category, pageable);
+        } else {
+            systemFaqList = systemFaqRepository.findAllByOrderByCreatedDateTimeDesc(pageable);
+        }
         Page<SystemFaqListRes> dtoPage = systemFaqList.map(SystemFaqListRes::fromEntity);
         return PageResponse.of(dtoPage);
     }

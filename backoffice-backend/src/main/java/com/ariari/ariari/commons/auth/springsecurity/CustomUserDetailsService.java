@@ -27,10 +27,6 @@ public class CustomUserDetailsService implements UserDetailsService {
         AdminMember admin = adminMemberRepository.findById(Long.valueOf(adminId))
                 .orElseThrow(NotFoundEntityException::new);
 
-        System.out.println(" 로드 유저 호출");
-
-        boolean stillLocked = admin.isLocked();
-
         Set<GrantedAuthority> authorities = Set.of(
                 new SimpleGrantedAuthority(admin.getAdminRoleType().name())
         );

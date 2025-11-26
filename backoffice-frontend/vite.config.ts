@@ -8,7 +8,7 @@ export default defineConfig({
   server: {
     port: 3000,
     proxy: {
-      '^/(auth)|(reissue)': {
+      '^/(auth)|(reissue)|(api/v1)': {
         target: 'https://admin.ariari.kr/',
         changeOrigin: true,
         secure: false,

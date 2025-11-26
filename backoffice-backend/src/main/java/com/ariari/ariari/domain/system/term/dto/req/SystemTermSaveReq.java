@@ -12,10 +12,10 @@ import lombok.Getter;
 @Getter
 public class SystemTermSaveReq {
 
-    @Schema(description = "", example = "")
+    @Schema(description = "약관 타입", example = "PRIVACY_POLICY, CLUB_RULES, PLATFORM_RULES")
     private TermType termType;
 
-    @Schema(description = "", example = "")
+    @Schema(description = "약관 내용", example = "")
     private String body;
 
 

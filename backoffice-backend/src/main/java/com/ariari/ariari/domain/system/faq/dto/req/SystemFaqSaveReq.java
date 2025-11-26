@@ -26,8 +26,7 @@ public class SystemFaqSaveReq {
     @NotBlank
     private String tokenColor;
 
-    @Schema(description = "서비스 FAQ 타입", example = "일정")
-    @NotBlank
+    @Schema(description = "서비스 FAQ 타입", example = "ACCOUNT','CLUB','DATA','GENERAL','LOGIN','MAINTENANCE','POLICY','SECURITY','SERVICE','TECHNICAL','UPDATE'")
     private SystemFaqStatusType category;
 
 

@@ -15,7 +15,7 @@ import org.hibernate.annotations.SQLRestriction;
 @NoArgsConstructor
 @Getter
 @Setter
-@SQLDelete(sql = "UPDATE system_faq SET deleted_date_time= CURRENT_TIMESTAMP WHERE system_faq_id= ?")
+@SQLDelete(sql = "UPDATE system_faq SET deleted_date_time= CURRENT_TIMESTAMP WHERE system_faq_id= ? AND version=?")
 @SQLRestriction("deleted_date_time is null")
 public class SystemFaq extends LogicalDeleteEntity {
 

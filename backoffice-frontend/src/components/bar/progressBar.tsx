@@ -1,5 +1,3 @@
-import React, { useState, useEffect } from 'react';
-
 interface ProgressBarProp {
   disabled?: boolean;
   align?: 'horizontal' | 'vertical';

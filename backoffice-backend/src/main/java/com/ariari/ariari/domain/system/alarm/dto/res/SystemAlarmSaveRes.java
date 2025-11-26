@@ -59,6 +59,7 @@ public class SystemAlarmSaveRes {
                 .id(systemAlarm.getId())
                 .title(systemAlarm.getTitle())
                 .description(systemAlarm.getBody())
+                .target(systemAlarm.getTargetType())
                 .createdAt(systemAlarm.getCreatedDateTime().toLocalDate())
                 .images(systemAlarm.getSystemAlarmImages().stream().map(SystemAlarmImage::getImageUri).toList())
                 .build();

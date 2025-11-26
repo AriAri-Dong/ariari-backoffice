@@ -2,16 +2,17 @@ import { useEffect, useState } from 'react';
 import closeIcon from '../../assets/icons/close.svg';
 import PlusIcon from '../../assets/icons/plus_round.svg';
 import deleteIcon from '../../assets/icons/close_round.svg';
-
 import SmallBtn from '../button/basicBtn/smallBtn';
 import RadioBtn from '../button/radioBtn';
 import CustomInput from '../input/customInput';
 import CustomTextArea from '../textArea/customTextArea';
 import Alert from '../alert/alert';
+import { createSystemAlarm } from '../../apis/operate/systemAlarmApi';
 
 type AlertModalProps = {
   visible: boolean;
   onClose: () => void;
+  onSuccess?: () => void;
 };
 
 const AlertModal = ({ visible, onClose }: AlertModalProps) => {
@@ -26,10 +27,6 @@ const AlertModal = ({ visible, onClose }: AlertModalProps) => {
   const handleImageAdd = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
     const validFiles = files.filter((file) => /\.(jpg|jpeg|png|gif)$/i.test(file.name));
-    // if (validFiles.length + images.length > 10) {
-    //   alert('최대 10장까지만 업로드 가능합니다.');
-    //   return;
-    // }
     setImages((prev) => [...prev, ...validFiles]);
   };
 
@@ -37,7 +34,8 @@ const AlertModal = ({ visible, onClose }: AlertModalProps) => {
     setImages((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const handleSubmit = () => {
+  // 등록 API
+  const handleSubmit = async () => {
     if (!title.trim()) {
       setAlertMessage('제목을 입력해주세요.');
       return;
@@ -51,14 +49,36 @@ const AlertModal = ({ visible, onClose }: AlertModalProps) => {
       return;
     }
 
-    console.log({
-      title,
-      target,
-      description,
-      images,
-    });
+    try {
+      const formData = new FormData();
 
-    onClose();
+      const saveReq = {
+        title,
+        description,
+        target: target === 'all' ? 'ALL' : 'CLUB_ADMIN',
+      };
+
+      formData.append('saveReq', new Blob([JSON.stringify(saveReq)], { type: 'application/json' }));
+
+      images.forEach((file) => formData.append('files', file));
+
+      const res = await createSystemAlarm(formData);
+
+      if (res.status === 'success') {
+        onClose();
+        setTitle('');
+        setDescription('');
+        setImages([]);
+
+        return;
+      }
+
+      // 실패 처리
+      setAlertMessage(res.message || '등록에 실패했습니다.');
+    } catch (err) {
+      console.error('알림 등록 실패:', err);
+      setAlertMessage('서버 요청 중 오류가 발생했습니다.');
+    }
   };
 
   useEffect(() => {
@@ -99,16 +119,14 @@ const AlertModal = ({ visible, onClose }: AlertModalProps) => {
               <h3 className='text-text1 text-h3'>
                 제목 <span className='text-h3 text-noti'>*</span>
               </h3>
-              <div className='flex flex-col gap-2'>
-                <CustomInput
-                  value={title}
-                  placeholder='알림 제목을 입력하세요.'
-                  onChange={(e) => setTitle(e.target.value)}
-                />
-              </div>
+              <CustomInput
+                value={title}
+                placeholder='알림 제목을 입력하세요.'
+                onChange={(e) => setTitle(e.target.value)}
+              />
             </div>
 
-            {/* 알림 대상 */}
+            {/* 타겟 */}
             <div className='flex flex-col gap-[18px]'>
               <h3 className='text-text1 text-h3'>
                 알림 대상 <span className='text-h3 text-noti'>*</span>
@@ -127,46 +145,45 @@ const AlertModal = ({ visible, onClose }: AlertModalProps) => {
               </div>
             </div>
 
-            {/* 이미지 첨부 */}
+            {/* 이미지 */}
             <div className='flex flex-col gap-[18px]'>
-              <div className='flex flex-col gap-2.5'>
-                <h3 className='text-text1 text-h3'>이미지 첨부</h3>
-                <div className='flex flex-wrap gap-3'>
-                  {images.map((img, idx) => (
-                    <div
-                      key={idx}
-                      className='relative h-[120px] w-[120px] overflow-hidden rounded-lg'
-                    >
-                      <img
-                        src={URL.createObjectURL(img)}
-                        alt={`첨부 이미지 ${idx + 1}`}
-                        className='h-full w-full rounded-lg object-cover'
-                      />
-                      <img
-                        src={deleteIcon}
-                        alt='삭제'
-                        className='absolute top-1 right-1 h-5 w-5 cursor-pointer'
-                        onClick={() => handleImageRemove(idx)}
-                      />
-                    </div>
-                  ))}
-                  {images.length < 10 && (
-                    <label className='flex h-[120px] w-[120px] cursor-pointer items-center justify-center'>
-                      <input
-                        type='file'
-                        accept='.jpg,.jpeg,.png,.gif'
-                        multiple
-                        onChange={handleImageAdd}
-                        className='hidden'
-                      />
-                      <img
-                        src={PlusIcon}
-                        alt='추가'
-                        className='h-[60px] w-[60px]'
-                      />
-                    </label>
-                  )}
-                </div>
+              <h3 className='text-text1 text-h3'>이미지 첨부</h3>
+              <div className='flex flex-wrap gap-3'>
+                {images.map((img, idx) => (
+                  <div
+                    key={idx}
+                    className='relative h-[120px] w-[120px] overflow-hidden rounded-lg'
+                  >
+                    <img
+                      src={URL.createObjectURL(img)}
+                      alt=''
+                      className='h-full w-full rounded-lg object-cover'
+                    />
+                    <img
+                      src={deleteIcon}
+                      alt='삭제'
+                      className='absolute top-1 right-1 h-5 w-5 cursor-pointer'
+                      onClick={() => handleImageRemove(idx)}
+                    />
+                  </div>
+                ))}
+
+                {images.length < 10 && (
+                  <label className='flex h-[120px] w-[120px] cursor-pointer items-center justify-center'>
+                    <input
+                      type='file'
+                      accept='.jpg,.jpeg,.png,.gif'
+                      multiple
+                      onChange={handleImageAdd}
+                      className='hidden'
+                    />
+                    <img
+                      src={PlusIcon}
+                      alt='추가'
+                      className='h-[60px] w-[60px]'
+                    />
+                  </label>
+                )}
               </div>
             </div>
 
@@ -197,7 +214,6 @@ const AlertModal = ({ visible, onClose }: AlertModalProps) => {
         </div>
       </div>
 
-      {/* 알림 메시지 */}
       {alertMessage && <Alert text={alertMessage} />}
     </div>
   );

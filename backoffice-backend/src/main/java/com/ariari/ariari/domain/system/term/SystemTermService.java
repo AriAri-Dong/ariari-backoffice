@@ -1,6 +1,7 @@
 package com.ariari.ariari.domain.system.term;
 
 import com.ariari.ariari.commons.entity.AdminMember;
+import com.ariari.ariari.commons.exception.exceptions.BusinessException;
 import com.ariari.ariari.commons.exception.exceptions.NotFoundEntityException;
 import com.ariari.ariari.commons.entity.SystemTerm;
 import com.ariari.ariari.commons.repsonse.ApiResponse;
@@ -45,26 +46,28 @@ public class SystemTermService {
         return ApiResponse.success(SystemTermDetailRes.fromEntity(systemTerm));
     }
 
-    @Transactional(readOnly = true)
-    public SystemTermDetailRes getSystemTermByTermType(Long adminMemberId, TermType termType) {
-        AdminMember reqMember = adminMemberRepository.findById(adminMemberId).orElseThrow(NotFoundEntityException::new);
-
-        SystemTerm systemTerm = systemTermRepository.findByTermType(termType).orElseThrow(NotFoundEntityException::new);
-        return SystemTermDetailRes.fromEntity(systemTerm);
-    }
-
 
     @Transactional
-    public void saveSystemTerm(Long adminMemberId, SystemTermSaveReq systemTermSaveReq) {
+    public ApiResponse<SystemTermDetailRes> saveSystemTerm(Long adminMemberId, SystemTermSaveReq systemTermSaveReq) {
         AdminMember reqMember = adminMemberRepository.findById(adminMemberId).orElseThrow(NotFoundEntityException::new);
 
+        if (systemTermRepository.existsByTermTypeAndDeletedDateTimeIsNull(systemTermSaveReq.getTermType())) {
+            throw new BusinessException();
+        }
+
         SystemTerm systemTerm = systemTermSaveReq.toEntity(reqMember);
-        systemTermRepository.save(systemTerm);
+        systemTermRepository.saveAndFlush(systemTerm);
+
+        return ApiResponse.success(SystemTermDetailRes.fromEntity(systemTerm));
     }
 
     @Transactional
     public ApiResponse<SystemTermDetailRes>  modifySystemTerm(Long adminMemberId, SystemTermModifyReq systemTermModifyReq, Long systemTermId) {
         AdminMember reqMember = adminMemberRepository.findById(adminMemberId).orElseThrow(NotFoundEntityException::new);
+
+        if (systemTermRepository.existsByTermTypeAndDeletedDateTimeIsNull(systemTermModifyReq.getTitle())) {
+            throw new BusinessException();
+        }
 
         SystemTerm systemTerm = systemTermRepository.findById(systemTermId).orElseThrow(NotFoundEntityException::new);
         systemTermModifyReq.modifyEntity(systemTerm,  reqMember);
