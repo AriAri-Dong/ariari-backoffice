@@ -18,6 +18,15 @@ public interface DataopsMapper {
             @Param("offset") int offset
     );
 
+    List<Map<String, Object>> findIdsForTargetTableWithoutSoftDelete(
+            @Param("table") String table,
+            @Param("id") String id,
+            @Param("filter") String filter,
+            @Param("keyword") String keyword,
+            @Param("size") int size,
+            @Param("offset") int offset
+    );
+
     int countTotalForTargetTable(
             @Param("table") String table,
             @Param("filter") String filter,

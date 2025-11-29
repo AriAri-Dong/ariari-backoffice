@@ -3,6 +3,18 @@
 
 <mapper namespace="com.ariari.ariari.domain.admin.dataops.DataopsMapper">
     <select id="findIdsForTargetTable" resultType="map">
+        SELECT ${id}, deleted_date_time
+        FROM ${table}
+        <where>
+            <if test="filter != null and keyword != null">
+                ${filter} LIKE CONCAT('%', #{keyword}, '%')
+            </if>
+        </where>
+        ORDER BY ${id} DESC
+        LIMIT #{size} OFFSET #{offset}
+    </select>
+
+    <select id="findIdsForTargetTableWithoutSoftDelete" resultType="map">
         SELECT ${id}
         FROM ${table}
         <where>

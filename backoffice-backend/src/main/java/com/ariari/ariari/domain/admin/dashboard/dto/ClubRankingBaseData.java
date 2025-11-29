@@ -35,6 +35,11 @@ public class ClubRankingBaseData {
     }
 
     public static void regularizeData(List<ClubRankingBaseData> clubRankingBaseDataList){
+        // 빈 리스트면 바로 리턴
+        if(clubRankingBaseDataList.isEmpty()){
+            return;
+        }
+
         int minScore = 99999999;
         int maxScore = 0;
 
@@ -47,8 +52,21 @@ public class ClubRankingBaseData {
             }
         }
 
+        // ZeroDivision 방지: 모든 점수가 같거나 동아리가 1개인 경우
+        int scoreDifference = maxScore - minScore;
+        if(scoreDifference == 0){
+            // 모든 동아리에 동일한 점수 부여
+            for(ClubRankingBaseData clubRankingBaseData : clubRankingBaseDataList){
+                clubRankingBaseData.setRegularizedScore(100.0);
+            }
+            return;
+        }
+
         for(ClubRankingBaseData clubRankingBaseData : clubRankingBaseDataList){
-            clubRankingBaseData.setRegularizedScore((double) ((clubRankingBaseData.getTotalScore() - minScore) / (maxScore - minScore)));
+            double rawScore = (double) (clubRankingBaseData.getTotalScore() - minScore) / (double) scoreDifference;
+            // 100을 곱하고 소수점 1자리까지 반올림 (0~100 범위)
+            double roundedScore = Math.round(rawScore * 1000.0) / 10.0;
+            clubRankingBaseData.setRegularizedScore(roundedScore);
         }
     }
 }
