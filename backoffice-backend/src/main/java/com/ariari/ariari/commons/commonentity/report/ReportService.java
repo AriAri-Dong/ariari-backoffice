@@ -34,7 +34,7 @@ public class ReportService {
         AdminMember reqMember = getMemberOrThrow(memberId);
         //검증 로직 추가해야함
 
-        Page<Report> reports = reportRepository.findAll(pageable);
+        Page<Report> reports = reportRepository.findAllByReportStatusType(ReportStatusType.PENDING, pageable);
 
         return PendingReportListRes.fromPage(reports);
     }
