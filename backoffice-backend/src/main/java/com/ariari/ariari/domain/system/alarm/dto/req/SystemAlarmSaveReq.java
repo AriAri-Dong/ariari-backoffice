@@ -22,7 +22,7 @@ public class SystemAlarmSaveReq {
     @Size(max = 3000)
     private String description;
 
-    @Schema(description = "서비스 알림 대상", example = "ALL, ADMIN")
+    @Schema(description = "서비스 알림 대상", example = "ALL, CLUB_ADMIN")
     @NotNull
     private AlarmTargetType target;
 

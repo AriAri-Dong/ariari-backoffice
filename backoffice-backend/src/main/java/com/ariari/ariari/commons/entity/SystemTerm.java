@@ -6,12 +6,14 @@ import com.ariari.ariari.domain.system.enums.TermType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
 @Entity
 @NoArgsConstructor
 @Getter
+@Setter
 @SQLDelete(sql = "UPDATE system_term SET deleted_date_time= CURRENT_TIMESTAMP WHERE system_term_id= ? AND version=?")
 @SQLRestriction("deleted_date_time is null")
 public class SystemTerm extends LogicalDeleteEntity {
