@@ -263,11 +263,7 @@ export default function NoticeEdit() {
         pageSize={pageSize}
         total={total}
         rowKey='id'
-        onPageChange={(newPage: number) => setPage(newPage)}
-        onPageSizeChange={(newSize: number) => {
-          setPageSize(newSize);
-          setPage(0);
-        }}
+        onPageChange={(newPage) => setPage(newPage)}
       />
 
       {/* 작성 버튼 */}
