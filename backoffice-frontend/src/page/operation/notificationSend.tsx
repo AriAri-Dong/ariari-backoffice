@@ -24,9 +24,9 @@ const columns: Column<RowType>[] = [
 export default function NotificationSend() {
   // 리스트 데이터
   const [rows, setRows] = useState<RowType[]>([]);
-  const [page, setPage] = useState(1);
-  const [pageSize] = useState(10);
-  const [total, setTotal] = useState(0);
+  const [page, setPage] = useState<number>(1);
+  const [pageSize] = useState<number>(10);
+  const [total, setTotal] = useState<number>(0);
 
   // 등록 모달
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
