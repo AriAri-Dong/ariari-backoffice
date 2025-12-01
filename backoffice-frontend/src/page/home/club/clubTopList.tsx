@@ -38,28 +38,9 @@ export default function ClubTopList({ title, list, loading, errorMsg }: ClubTopL
                 <span className='text-primary bg-selectedoption_hover text-body3_m flex h-6 w-6 items-center justify-center rounded-sm'>
                   {i + 1}
                 </span>
-                <span className='group relative'>
-                  {/* 요약 표시 */}
-                  <span className='text-subtext1 text-body3_r'>
-                    {club.name.length > 5 ? `${club.name.slice(0, 4)}…` : club.name}
-                  </span>
-
-                  {/* hover 시 나타나는 전체 이름 */}
-                  <span className='pointer-events-none absolute top-full left-1/2 z-10 mt-1 -translate-x-1/2 rounded-md bg-black px-2 py-1 text-xs whitespace-nowrap text-white opacity-0 transition-opacity group-hover:opacity-100'>
-                    {club.name}
-                  </span>
-                </span>
+                <span className='text-subtext1 text-body3_r'>{club.name}</span>
               </div>
-              <span className='text-body3_sb text-text1'>
-                {club.rate
-                  ? Number(
-                      Number(club.rate)
-                        .toFixed(2) // 반올림
-                        .replace(/\.?0+$/, ''), // .00, .0, 0 제거
-                    )
-                  : '0'}
-                %
-              </span>
+              <span className='text-body3_sb text-text1'>{club.rate}%</span>
             </div>
           ))
         )}
