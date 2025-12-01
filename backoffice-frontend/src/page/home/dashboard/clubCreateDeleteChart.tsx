@@ -59,7 +59,6 @@ export default function ClubCreateDeleteChart() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [category, setCategory] = useState<ClubCategory>('All');
   const [region, setRegion] = useState<ClubRegion>('All');
-  const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
 
   const [labels, setLabels] = useState<string[]>([]);
   const [created, setCreated] = useState<number[]>([]);
@@ -186,8 +185,7 @@ export default function ClubCreateDeleteChart() {
   return (
     <div className='relative flex h-full w-full flex-col justify-between'>
       {/* 날짜 */}
-      <div className='text-text1 relative flex items-center justify-between'>
-        {/* 이전 날짜 버튼 */}
+      <div className='text-text1 flex items-center justify-between'>
         <button onClick={() => handleDateChange('prev')}>
           <img
             src={vector_left}
@@ -195,16 +193,7 @@ export default function ClubCreateDeleteChart() {
             className='h-6 w-6 cursor-pointer'
           />
         </button>
-
-        {/* 날짜 클릭 시 DatePicker 열림 */}
-        <span
-          className='text-primary text-h3 cursor-pointer'
-          onClick={() => setShowDatePicker((prev) => !prev)}
-        >
-          {formatDateDisplay(currentDate)}
-        </span>
-
-        {/* 다음 날짜 버튼 */}
+        <span className='text-primary text-h3'>{formatDateDisplay(currentDate)}</span>
         <button
           onClick={() => handleDateChange('next')}
           disabled={isToday}
@@ -216,23 +205,6 @@ export default function ClubCreateDeleteChart() {
             className='h-6 w-6 rotate-180'
           />
         </button>
-
-        {/* DatePicker (input date) */}
-        {showDatePicker && (
-          <div className='absolute top-10 left-1/2 z-20 -translate-x-1/2'>
-            <input
-              type='date'
-              value={formatDateApi(currentDate)}
-              className='rounded-md border border-gray-300 bg-white px-3 py-1 shadow'
-              max={formatDateApi(today)}
-              onChange={(e) => {
-                const newDate = new Date(e.target.value);
-                setCurrentDate(newDate);
-                setShowDatePicker(false);
-              }}
-            />
-          </div>
-        )}
       </div>
 
       {/* 필터 영역 */}
