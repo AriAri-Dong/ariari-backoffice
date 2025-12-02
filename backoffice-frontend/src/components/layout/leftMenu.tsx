@@ -10,7 +10,6 @@ import operate from '../../assets/icons/layout/operate.svg';
 import operateActive from '../../assets/icons/layout/operate_active.svg';
 import report from '../../assets/icons/layout/report.svg';
 import data from '../../assets/icons/layout/data.svg';
-import crud from '../../assets/icons/layout/crud.svg';
 import logout from '../../assets/icons/logout.svg';
 import admin from '../../assets/icons/profile_default.svg';
 import { useLogout } from '../../hooks/auth/useLogout';
