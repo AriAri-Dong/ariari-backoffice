@@ -11,9 +11,11 @@ import Alert from '../../components/alert/alert';
 import { CRUD_TABLE, CRUD_TABLE_COLUMN_MAP } from '../../constants/crud';
 import { deleteData, getDataDetail, getDataList } from '../../apis/crud/api';
 import { isApiError } from '../../utils/typeGuard';
+import type { CrudItem } from '../../types/api/crud';
 
 type RowType = {
   id: string;
+  deletedDateTime?: string | null;
 };
 
 type FieldData = {
@@ -21,7 +23,7 @@ type FieldData = {
   value: string;
 };
 
-const PAGE_SIZE = 10000;
+const PAGE_SIZE = 10;
 
 export default function CrudPage() {
   const [search, setSearch] = useState('');
@@ -30,13 +32,17 @@ export default function CrudPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [dataList, setDataList] = useState<RowType[] | null>(null);
   const [data, setData] = useState<FieldData[]>([]);
-  const [page] = useState<number>(1);
+  const [page, setPage] = useState<number>(1);
+  const [total, setTotal] = useState<number | undefined>(undefined);
   const [selectedId, setSelectedId] = useState<string>('');
   const [alertText, setAlertText] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const mapIdsToObjects = (ids: string[]) => {
-    return ids.map((id) => ({ id }));
+  const mapIdsToObjects = (items: CrudItem[]): RowType[] => {
+    return items.map((item) => ({
+      id: item.id,
+      deletedDateTime: item.deletedDateTime ?? null,
+    }));
   };
 
   const convertFieldsToArray = (fields: Record<string, any>): FieldData[] => {
@@ -47,11 +53,14 @@ export default function CrudPage() {
   };
 
   // 데이터 리스트 조회 API 호출
-  const fetchData = async () => {
+  const fetchData = async (targetPage: number = 1) => {
+    if (!table) return;
+
     setIsLoading(true);
+
     const params = {
       table,
-      page,
+      page: targetPage,
       pageSize: PAGE_SIZE,
       ...(filter?.trim() && { filter: filter.trim() }),
       ...(search?.trim() && { keyword: search.trim() }),
@@ -62,11 +71,15 @@ export default function CrudPage() {
     // API 에러 형태인지 확인
     if (isApiError(res)) {
       setDataList(null);
+      setTotal(undefined);
       setIsLoading(false);
       return;
     }
-    const _data = mapIdsToObjects(res?.data.ids || []);
+
+    const _data = mapIdsToObjects(res.data.items || []);
     setDataList(_data);
+    setTotal(res.data.total);
+    setPage(targetPage);
     setIsLoading(false);
   };
 
@@ -81,7 +94,6 @@ export default function CrudPage() {
     }
 
     const fields = res.data.fields;
-
     const formatted = convertFieldsToArray(fields);
 
     setData(formatted);
@@ -90,24 +102,27 @@ export default function CrudPage() {
   //데이터 상세 조회 API 호출
   const handleDelete = async (id: string) => {
     const res = await deleteData(table, id);
-    console.log(id);
     setAlertText(res.message);
     setModalOpen(false);
 
     if (res.status === 'success') {
-      fetchData();
+      fetchData(page);
     }
   };
 
   useEffect(() => {
     if (table) {
-      fetchData();
+      fetchData(1);
+    } else {
+      setDataList(null);
+      setTotal(undefined);
+      setPage(1);
     }
   }, [table]);
 
   useEffect(() => {
-    if (filter && search) {
-      fetchData();
+    if (table && filter && search) {
+      fetchData(1);
     }
   }, [filter]);
 
@@ -134,13 +149,18 @@ export default function CrudPage() {
       key: 'edit',
       title: '',
       align: 'right',
-      render: (_value, row) => (
-        <RedDeleteBtn
-          onClick={() => {
-            handleDelete(row.id);
-          }}
-        />
-      ),
+      render: (_value, row) =>
+        row.deletedDateTime ? (
+          <div className='flex h-[30px] min-w-[60px] cursor-pointer items-center gap-0.5 rounded-4xl px-2.5 text-center whitespace-nowrap'>
+            <p className='text-noti text-body2_sb'>삭제됨</p>
+          </div>
+        ) : (
+          <RedDeleteBtn
+            onClick={() => {
+              handleDelete(row.id);
+            }}
+          />
+        ),
     },
   ];
 
@@ -207,11 +227,16 @@ export default function CrudPage() {
           <p className='text-text1 text-h1_contents_title'>검색결과가 없습니다.</p>
         </div>
       ) : (
-        <PaginatedTable
+        <PaginatedTable<RowType>
           columns={columns}
           data={dataList || []}
-          pageSize={10}
+          page={page}
+          pageSize={PAGE_SIZE}
+          total={total}
           rowKey='id'
+          onPageChange={(newPage) => {
+            fetchData(newPage);
+          }}
         />
       )}
 

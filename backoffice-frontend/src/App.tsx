@@ -38,46 +38,42 @@ function App() {
             </AuthGuard>
           }
         >
-            <Route
-              path='/login'
-              element={<LoginPage />}
-            />
-            <Route
-              path='/'
-              element={
-                <div className='mx-auto max-w-[1440px]'>
-                  <HomePage />
-                </div>
-              }
-            />
-            <Route
-              path='/operate'
-              element={
-                <div className='mx-auto max-w-[1200px]'>
-                  <OperationPage />
-                </div>
-              }
-            />
-            <Route
-              path='/report'
-              element={
-                <div className='mx-auto max-w-[1200px]'>
-                  <ReportPage />
-                </div>
-              }
-            />
-            <Route
-              path='/data'
-              element={<div className='mx-auto max-w-[1200px]'>데이터 조회/삭제</div>}
-            />
-            <Route
-              path='/crud'
-              element={
-                <div className='mx-auto max-w-[1200px]'>
-                  <CrudPage />
-                </div>
-              }
-            />
+          <Route
+            path='/login'
+            element={<LoginPage />}
+          />
+          <Route
+            path='/'
+            element={
+              <div className='mx-auto max-w-[1440px]'>
+                <HomePage />
+              </div>
+            }
+          />
+          <Route
+            path='/operate'
+            element={
+              <div className='mx-auto max-w-[1200px]'>
+                <OperationPage />
+              </div>
+            }
+          />
+          <Route
+            path='/report'
+            element={
+              <div className='mx-auto max-w-[1200px]'>
+                <ReportPage />
+              </div>
+            }
+          />
+          <Route
+            path='/data'
+            element={
+              <div className='mx-auto max-w-[1200px]'>
+                <CrudPage />
+              </div>
+            }
+          />
         </Route>
       </Routes>
     </BrowserRouter>
