@@ -20,7 +20,6 @@ const menuItems = [
   { path: '/operate', label: '운영', icon: operate, activeIcon: operateActive },
   { path: '/report', label: '신고', icon: report },
   { path: '/data', label: '데이터 조회/삭제', icon: data },
-  { path: '/crud', label: 'CRUD', icon: crud },
 ];
 
 const LeftMenu = () => {
