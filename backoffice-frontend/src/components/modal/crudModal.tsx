@@ -19,7 +19,10 @@ const CurdModal = ({ visible, title, subtitle, data, onClose, onReset }: CurdMod
   if (!visible) return null;
 
   return (
-    <div className='bg-black_50 fixed inset-0 z-40 flex items-center transition-opacity duration-500'>
+    <div
+      className='bg-black_50 fixed inset-0 z-40 flex items-center transition-opacity duration-500'
+      onClick={onClose}
+    >
       <div
         className='flex w-[760px] flex-col gap-3'
         style={{
