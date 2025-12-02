@@ -1,3 +1,8 @@
+export interface CrudItem {
+  id: string;
+  deletedDateTime: string | null;
+}
+
 export interface CrudDataListRes {
   status: string;
   data: {
@@ -5,7 +10,7 @@ export interface CrudDataListRes {
     page: number;
     pageSize: number;
     tableName: string;
-    ids: string[];
+    items: CrudItem[];
   };
 }
 export interface CrudDataDetailRes {
