@@ -29,10 +29,7 @@ const ClubModal = ({ visible, onClose }: ModalProps) => {
       >
         {/* Title */}
         <div className='bg-background flex items-center justify-between rounded-full px-5 py-3'>
-          <h1 className='text-primary text-h3'>
-            {'동아리 이름'}
-            <span className='text-subtext2 text-body2_r ml-2'>{'Q&A'}</span>
-          </h1>
+          <h1 className='text-primary text-h3'>{'동아리 이름'}</h1>
           <img
             src={closeIcon}
             alt='닫기'
