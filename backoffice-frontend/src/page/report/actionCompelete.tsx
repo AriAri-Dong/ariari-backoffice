@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import RefreshBtn from '../../components/button/iconBtn/refreshBtn';
 import Calendar from '../../components/calendar';
@@ -7,25 +7,41 @@ import PaginatedTable from '../../components/paginatedTable';
 import Searchbar from '../../components/searchbar';
 import type { Column } from '../../types/table';
 import type { ReportResolvedListItem, ReportResolvedListResponse } from '../../types/api/report';
-import { useQuery } from '@tanstack/react-query';
-import { getReportResolvedList } from '../../apis/report/api';
-import { isApiError } from '../../utils/typeGuard';
 import { REPORT_REASONS } from '../../components/modal/report/commonModal';
+import { REPORT_LOC } from '../../constants/report';
+import { useReportResolvedList } from '../../hooks/report/useReportResolved';
+import formatDateToDot, { formatDateToHyphen } from '../../utils/formatDate';
 
 const columns: Column<ReportResolvedListItem>[] = [
   { key: 'number', title: '번호', width: '10%', align: 'center' },
-  { key: 'reportDate', title: '신고날짜', width: '10%', align: 'center' },
+  {
+    key: 'reportDate',
+    title: '신고날짜',
+    width: '15%',
+    align: 'center',
+    render: (value) => {
+      return <p>{formatDateToDot(value)}</p>;
+    },
+  },
   {
     key: 'title',
     title: '제목',
-    width: '50%',
+    width: '45%',
     align: 'left',
     className: 'text-black',
     render: (value) => {
-      return <p>{REPORT_REASONS.find((reason) => reason.value === value)?.label}</p>;
+      return <p>{REPORT_REASONS.find((reason) => reason.value === value)?.label ?? value}</p>;
     },
   },
-  { key: 'location', title: '신고위치', width: '10%', align: 'center' },
+  {
+    key: 'location',
+    title: '신고위치',
+    width: '10%',
+    align: 'center',
+    render: (value) => {
+      return <p>{REPORT_LOC.find((loc) => loc.value === value)?.label}</p>;
+    },
+  },
   { key: 'reporter', title: '신고자', width: '10%', align: 'center' },
   {
     key: 'treatment',
@@ -53,27 +69,37 @@ export default function ActionCompelete({
 }) {
   const [page, setPage] = useState<number>(1);
   const [search, setSearch] = useState<string>('');
-  const [searchFilter, setSearchFilter] = useState<string>('');
-  const [postStatus, setPostStatus] = useState<string>('');
+  const [debouncedSearch, setDebouncedSearch] = useState<string>('');
+  const [filterType, setFilterType] = useState<string>('');
+  const [locationType, setLocationType] = useState<string>('');
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
 
-  const { data } = useQuery({
-    queryKey: ['reportResolvedList', { page: page - 1, size: 10 }],
-    queryFn: async () => {
-      const res = await getReportResolvedList({ page: page - 1, size: 10 });
-      if (isApiError(res)) {
-        throw new Error(res.message);
-      }
-      return res;
-    },
-    initialData: page === 1 && initialData ? initialData : undefined,
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(search);
+    }, 500);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [search]);
+
+  const { data } = useReportResolvedList({
+    page: page - 1,
+    size: 10,
+    keyword: debouncedSearch,
+    filterType,
+    locationType,
+    startDate: formatDateToHyphen(startDate),
+    endDate: formatDateToHyphen(endDate),
+    initialData,
   });
 
   const handleRefresh = () => {
     setSearch('');
-    setSearchFilter('');
-    setPostStatus('');
+    setFilterType('');
+    setLocationType('');
     setStartDate(null);
     setEndDate(null);
     console.log('설정 초기화됨');
@@ -87,17 +113,15 @@ export default function ActionCompelete({
           <Dropdown
             placeholder='검색 필터'
             options={[
-              { label: '전체', value: 'all' },
-              { label: '활동후기', value: 'review' },
-              { label: '모집공고', value: 'recruitment' },
+              { label: '제목', value: 'title' },
+              { label: '신고자', value: 'reporter' },
             ]}
-            value={searchFilter}
+            value={filterType}
             onChange={(option) => {
-              setSearchFilter(option.value);
+              setFilterType(option.value);
               console.log('검색 필터:', option.value);
             }}
           />
-
           <Searchbar
             value={search}
             onChange={setSearch}
@@ -113,19 +137,14 @@ export default function ActionCompelete({
             onChange={([start, end]) => {
               setStartDate(start);
               setEndDate(end);
-              console.log('선택된 기간:', start, end);
             }}
           />
           <Dropdown
             placeholder='신고위치'
-            options={[
-              { label: '전체', value: 'all' },
-              { label: '활동후기', value: 'review' },
-              { label: '활동내역', value: 'history' },
-            ]}
-            value={postStatus}
+            options={REPORT_LOC}
+            value={locationType}
             onChange={(option) => {
-              setPostStatus(option.value);
+              setLocationType(option.value);
             }}
           />
         </div>

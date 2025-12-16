@@ -19,5 +19,5 @@ export const DATAOPS_DETAIL = '/api/v1/dataops/detail';
 export const REPORT_PENDING = '/api/v1/pending';
 export const REPORT_RESOLVED = '/api/v1/resolved';
 export const REPORT_SEARCH = '/api/v1/search' 
-export const REPORT_DELETE = '/api/v1/delete'; 
+export const REPORT_DELETE = '/api/v1/delete/'; 
 export const REPORT_RESOLVE = '/api/v1/resolve'; 

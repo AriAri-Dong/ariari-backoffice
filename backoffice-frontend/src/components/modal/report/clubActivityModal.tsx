@@ -1,9 +1,8 @@
-import { useEffect, useState } from 'react';
 import closeIcon from '../../../assets/icons/close.svg';
-
-import { CLUB_REVIEW_DATA } from '../../../data/report';
-import type { ClubReviewDetail } from '../../../types/report';
 import ReviewBadgeContainer from '../../badge/reviewBadgeComtainer';
+import { useEffect, useState } from 'react';
+import type { ClubReviewDetail } from '../../../types/report';
+import { CLUB_REVIEW_DATA } from '../../../data/report';
 
 type ModalProps = {
   visible: boolean;
@@ -13,11 +12,14 @@ type ModalProps = {
 const ClubReviewModal = ({ visible, onClose }: ModalProps) => {
   if (!visible) return null;
 
-  const [data, setData] = useState<ClubReviewDetail>();
+  // const { data } = useGetReportTarget(url);
 
-  useEffect(() => {
-    setData(CLUB_REVIEW_DATA);
-  }, [CLUB_REVIEW_DATA]);
+    const [data, setData] = useState<ClubReviewDetail>();
+
+    useEffect(() => {
+      setData(CLUB_REVIEW_DATA);
+    }, [CLUB_REVIEW_DATA]);
+
 
   return (
     <div className='bg-black_50 fixed inset-0 z-40 flex items-center transition-opacity duration-500'>
@@ -43,6 +45,7 @@ const ClubReviewModal = ({ visible, onClose }: ModalProps) => {
           />
         </div>
         {/* Body */}
+      
 
         <div className='flex w-full flex-col justify-between rounded-2xl bg-white p-5 md:flex-row md:gap-[56px]'>
           <div className='mt-8 flex w-full flex-col gap-5 md:mt-0 md:max-h-none'>

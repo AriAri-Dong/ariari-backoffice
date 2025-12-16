@@ -12,11 +12,11 @@ export interface GetReportResolvedListParams {
 
 // 조치완료 신고 리스트 - 검색 조회
 export interface GetReportSearchListParams {
-  filterType: string;
-  keyword: string;
-  locationType: string;
-  startDate: string;
-  endDate: string;
+  filterType?: string;
+  keyword?: string;
+  locationType?: string;
+  startDate?: string;
+  endDate?: string;
   page: number;
   size: number;
 }
@@ -39,7 +39,7 @@ export interface BaseReportPageInfo {
   isLast: boolean;
 }
 
-export interface ReportPendingListItem extends BaseReportListItem{}
+export interface ReportPendingListItem extends BaseReportListItem {}
 export interface ReportResolvedListItem extends BaseReportListItem {
   resolveBody: string;
   resolvedDate: string;
@@ -55,4 +55,16 @@ export interface ReportPendingListResponse {
 export interface ReportResolvedListResponse {
   resolvedReportData: ReportResolvedListItem[];
   reportPageInfo: BaseReportPageInfo;
+}
+
+// 조치 완료 처리 요청 payload
+export interface ReportResolvePayload {
+  reportId: string;
+  resolveBody: string;
+}
+
+// 신고 내역 삭제 요청 payload
+export interface ReportDeletePayload {
+  reportId: string;
+  deleteBody: string;
 }

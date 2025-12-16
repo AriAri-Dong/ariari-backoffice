@@ -8,21 +8,39 @@ import { getReportPendingList } from '../../apis/report/api';
 import { isApiError } from '../../utils/typeGuard';
 import type { ReportPendingListItem, ReportPendingListResponse } from '../../types/api/report';
 import { REPORT_REASONS } from '../../components/modal/report/commonModal';
+import { REPORT_LOC } from '../../constants/report';
+import formatDateToDot from '../../utils/formatDate';
 
 const columns: Column<ReportPendingListItem>[] = [
   { key: 'number', title: '번호', width: '10%', align: 'center' },
-  { key: 'reportDate', title: '신고날짜', width: '10%', align: 'center' },
+  {
+    key: 'reportDate',
+    title: '신고날짜',
+    width: '15%',
+    align: 'center',
+    render: (value) => {
+      return <p>{formatDateToDot(value)}</p>;
+    },
+  },
   {
     key: 'title',
     title: '제목',
-    width: '50%',
+    width: '45%',
     align: 'left',
     className: 'text-black',
     render: (value) => {
-      return <p>{REPORT_REASONS.find((reason) => reason.value === value)?.label}</p>;
+      return <p>{REPORT_REASONS.find((reason) => reason.value === value)?.label ?? value}</p>;
     },
   },
-  { key: 'location', title: '신고위치', width: '15%', align: 'center' },
+  {
+    key: 'location',
+    title: '신고위치',
+    width: '15%',
+    align: 'center',
+    render: (value) => {
+      return <p>{REPORT_LOC.find((loc) => loc.value === value)?.label}</p>;
+    },
+  },
   { key: 'reporter', title: '신고자', width: '15%', align: 'center' },
 ];
 
