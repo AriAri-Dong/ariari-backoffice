@@ -24,8 +24,8 @@ public class DataopsService {
 
     // 논리삭제(deleted_date_time) 컬럼이 없는 테이블 목록
     private static final Set<String> TABLES_WITHOUT_SOFT_DELETE = new HashSet<>(Arrays.asList(
-            "Block", "ClubBookmark", "RecruitmentBookmark",
-            "ClubActivityLike", "ClubActivityCommentLike", "SecurityAccessLog"
+            "block", "club_bookmark", "recruitment_bookmark",
+            "club_activity_like", "club_activity_comment_like", "security_access_log"
     ));
 
     public FindDataopsRes findDataops(String table, String filter, String keyword, int page, int pageSize) {
