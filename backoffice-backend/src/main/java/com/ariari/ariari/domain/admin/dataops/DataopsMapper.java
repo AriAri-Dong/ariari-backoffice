@@ -33,6 +33,12 @@ public interface DataopsMapper {
             @Param("keyword") String keyword
     );
 
+    int countTotalForTargetTableWithoutSoftDelete(
+            @Param("table") String table,
+            @Param("filter") String filter,
+            @Param("keyword") String keyword
+    );
+
     Map<String, Object> getDetailDataById(
             @Param("table") String table,
             @Param("idColumn") String idColumn,

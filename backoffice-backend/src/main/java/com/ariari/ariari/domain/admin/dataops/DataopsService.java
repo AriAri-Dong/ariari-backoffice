@@ -32,15 +32,16 @@ public class DataopsService {
         String idColumn = extractPrimaryKeyColumnOfTable(table);
         int offset = (page - 1) * pageSize;
 
-        int total = dataopsMapper.countTotalForTargetTable(table, filter, keyword);
-
         // 논리삭제가 없는 테이블은 deleted_date_time 없이 조회
+        int total;
         List<Map<String, Object>> idResults;
         if (TABLES_WITHOUT_SOFT_DELETE.contains(table)) {
+            total = dataopsMapper.countTotalForTargetTableWithoutSoftDelete(table, filter, keyword);
             idResults = dataopsMapper.findIdsForTargetTableWithoutSoftDelete(
                 table, idColumn, filter, keyword, pageSize, offset
             );
         } else {
+            total = dataopsMapper.countTotalForTargetTable(table, filter, keyword);
             idResults = dataopsMapper.findIdsForTargetTable(
                 table, idColumn, filter, keyword, pageSize, offset
             );

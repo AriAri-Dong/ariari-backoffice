@@ -6,8 +6,9 @@
         SELECT ${id}, deleted_date_time
         FROM ${table}
         <where>
+            deleted_date_time IS NULL
             <if test="filter != null and keyword != null">
-                ${filter} LIKE CONCAT('%', #{keyword}, '%')
+                AND ${filter} LIKE CONCAT('%', #{keyword}, '%')
             </if>
         </where>
         ORDER BY ${id} DESC
@@ -27,6 +28,17 @@
     </select>
 
     <select id="countTotalForTargetTable" resultType="int">
+        SELECT COUNT(*)
+        FROM ${table}
+        <where>
+            deleted_date_time IS NULL
+            <if test="filter != null and keyword != null">
+                AND ${filter} LIKE CONCAT('%', #{keyword}, '%')
+            </if>
+        </where>
+    </select>
+
+    <select id="countTotalForTargetTableWithoutSoftDelete" resultType="int">
         SELECT COUNT(*)
         FROM ${table}
         <where>
