@@ -60,6 +60,9 @@ const SignupBarChart = () => {
   const [signupData, setSignupData] = useState<number[]>([]);
   const [currentDate, setCurrentDate] = useState<Date>(new Date());
 
+  // DatePicker UI 상태
+  const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
+
   // 로딩 / 에러 관리(필요하면 UI에 뿌릴 수 있게)
   const [loading, setLoading] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -174,7 +177,7 @@ const SignupBarChart = () => {
         {/* ===== 오른쪽 차트 영역 ===== */}
         <div className='flex flex-1 flex-col gap-[30px]'>
           {/* 날짜 + 좌우 이동 */}
-          <div className='text-text1 flex items-center gap-2'>
+          <div className='text-text1 relative flex items-center gap-2'>
             <button onClick={() => handleDateChange('prev')}>
               <img
                 src={arrow}
@@ -183,7 +186,13 @@ const SignupBarChart = () => {
               />
             </button>
 
-            <span className='text-subtext1 text-h4'>{formatDateForDisplay(currentDate)}</span>
+            {/* 날짜 클릭 시 DatePicker 열림 */}
+            <span
+              className='text-subtext1 text-h4 cursor-pointer'
+              onClick={() => setShowDatePicker((prev) => !prev)}
+            >
+              {formatDateForDisplay(currentDate)}
+            </span>
 
             <button
               onClick={() => handleDateChange('next')}
@@ -196,6 +205,26 @@ const SignupBarChart = () => {
                 className='h-7 w-7'
               />
             </button>
+
+            {/* DatePicker (input date) */}
+            {showDatePicker && (
+              <div className='absolute top-10 left-1/2 z-20 -translate-x-1/2'>
+                <input
+                  type='date'
+                  value={formatDateForApi(currentDate)}
+                  className='rounded-md border border-gray-300 bg-white px-3 py-1 shadow'
+                  max={formatDateForApi(today)}
+                  onChange={(e) => {
+                    // 타임존 이슈 방지: 로컬 날짜로 생성
+                    const [y, m, d] = e.target.value.split('-').map(Number);
+                    const newDate = new Date(y, m - 1, d);
+                    newDate.setHours(0, 0, 0, 0);
+                    setCurrentDate(newDate);
+                    setShowDatePicker(false);
+                  }}
+                />
+              </div>
+            )}
           </div>
 
           {/* 차트 */}
