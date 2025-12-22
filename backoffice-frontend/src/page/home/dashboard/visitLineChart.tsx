@@ -51,6 +51,7 @@ const VisitLineChart = () => {
   // 날짜/필터 UI 상태
   const [currentDate, setCurrentDate] = useState<Date>(new Date());
   const [activeFilter, setActiveFilter] = useState<UiFilter>('오늘');
+  const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
 
   // 로딩/에러
   const [loading, setLoading] = useState<boolean>(false);
@@ -195,7 +196,7 @@ const VisitLineChart = () => {
       {/* 날짜 + 필터 영역 */}
       <div className='mb-2 flex items-center justify-between px-2'>
         {/* 날짜 컨트롤 */}
-        <div className='text-text1 flex items-center gap-2'>
+        <div className='text-text1 relative flex items-center gap-2'>
           <button onClick={() => handleDateChange('prev')}>
             <img
               src={arrow}
@@ -204,7 +205,13 @@ const VisitLineChart = () => {
             />
           </button>
 
-          <span className='text-subtext1 text-h4'>{formatDateDisplay(currentDate)}</span>
+          {/* 날짜 클릭 시 DatePicker 열림 */}
+          <span
+            className='text-subtext1 text-h4 cursor-pointer'
+            onClick={() => setShowDatePicker((prev) => !prev)}
+          >
+            {formatDateDisplay(currentDate)}
+          </span>
 
           <button
             onClick={() => handleDateChange('next')}
@@ -217,6 +224,25 @@ const VisitLineChart = () => {
               className='h-7 w-7'
             />
           </button>
+
+          {/* DatePicker (input date) */}
+          {showDatePicker && (
+            <div className='absolute top-10 left-1/2 z-20 -translate-x-1/2'>
+              <input
+                type='date'
+                value={formatDateApi(currentDate)}
+                className='rounded-md border border-gray-300 bg-white px-3 py-1 shadow'
+                max={formatDateApi(today)}
+                onChange={(e) => {
+                  const [y, m, d] = e.target.value.split('-').map(Number);
+                  const newDate = new Date(y, m - 1, d);
+                  newDate.setHours(0, 0, 0, 0);
+                  setCurrentDate(newDate);
+                  setShowDatePicker(false);
+                }}
+              />
+            </div>
+          )}
         </div>
 
         {/* 기간 필터 (오늘 / 어제 / 일주일 / 한 달) */}
