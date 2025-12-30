@@ -6,9 +6,8 @@
         SELECT ${id}, deleted_date_time
         FROM ${table}
         <where>
-            deleted_date_time IS NULL
             <if test="filter != null and keyword != null">
-                AND ${filter} LIKE CONCAT('%', #{keyword}, '%')
+                ${filter} LIKE CONCAT('%', #{keyword}, '%')
             </if>
         </where>
         ORDER BY ${id} DESC
@@ -31,9 +30,8 @@
         SELECT COUNT(*)
         FROM ${table}
         <where>
-            deleted_date_time IS NULL
             <if test="filter != null and keyword != null">
-                AND ${filter} LIKE CONCAT('%', #{keyword}, '%')
+                ${filter} LIKE CONCAT('%', #{keyword}, '%')
             </if>
         </where>
     </select>
