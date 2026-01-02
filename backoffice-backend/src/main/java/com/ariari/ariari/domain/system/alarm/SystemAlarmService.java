@@ -3,7 +3,7 @@ package com.ariari.ariari.domain.system.alarm;
 import com.ariari.ariari.commons.entity.*;
 import com.ariari.ariari.commons.exception.exceptions.NotFoundEntityException;
 import com.ariari.ariari.commons.manager.MemberAlarmManger;
-import com.ariari.ariari.commons.manager.S3Manager;
+import com.ariari.ariari.commons.manager.file.FileManager;
 import com.ariari.ariari.commons.repsonse.ApiResponse;
 import com.ariari.ariari.commons.repsonse.PageResponse;
 import com.ariari.ariari.domain.club.clubmember.ClubMemberRepository;
@@ -31,7 +31,7 @@ public class SystemAlarmService {
     private final MemberAlarmManger  memberAlarmManger;
     private final MemberRepository memberRepository;
     private final ClubMemberRepository clubMemberRepository;
-    private final S3Manager s3Manager;
+    private final FileManager fileManager;
 
 
     @Transactional(readOnly = true)
@@ -81,7 +81,7 @@ public class SystemAlarmService {
                     return ApiResponse.failMessage("이미지는 JPG, JPEG, PNG, GIF 형식만 업로드 가능합니다.");
                 }
 
-                String filePath = s3Manager.saveFile(file, "system_alarm_image");
+                String filePath = fileManager.saveFile(file, "system_alarm_image");
                 systemAlarm.getSystemAlarmImages()
                         .add(new SystemAlarmImage(filePath, systemAlarm));
             }
@@ -105,7 +105,7 @@ public class SystemAlarmService {
         systemAlarmRepository.delete(systemAlarm);
 
         for (SystemAlarmImage image : systemAlarm.getSystemAlarmImages()) {
-            s3Manager.deleteFile(image.getImageUri());
+            fileManager.deleteFile(image.getImageUri());
         }
 
         return ApiResponse.successMessage("알림이 삭제되었습니다.");

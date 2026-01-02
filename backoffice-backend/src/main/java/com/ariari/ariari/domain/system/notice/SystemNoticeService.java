@@ -5,7 +5,6 @@ import com.ariari.ariari.commons.entity.*;
 import com.ariari.ariari.commons.exception.exceptions.NotFoundEntityException;
 import com.ariari.ariari.commons.manager.MemberAlarmManger;
 import com.ariari.ariari.commons.manager.PageableFactoryManger;
-import com.ariari.ariari.commons.manager.S3Manager;
 import com.ariari.ariari.commons.manager.file.FileManager;
 import com.ariari.ariari.commons.repsonse.ApiResponse;
 import com.ariari.ariari.commons.repsonse.PageResponse;
@@ -38,7 +37,7 @@ import java.util.List;
 public class SystemNoticeService {
 
     private final SystemNoticeRepository systemNoticeRepository;
-    private final S3Manager s3Manager;
+    private final FileManager fileManager;
     private final SystemNoticeImageRepository systemNoticeImageRepository;
     private final AdminMemberRepository adminMemberRepository;
 
@@ -87,7 +86,7 @@ public class SystemNoticeService {
                     return ApiResponse.failMessage("이미지는 JPG, JPEG, PNG, GIF 형식만 업로드 가능합니다.");
                 }
 
-                String filePath = s3Manager.saveFile(file, "system_alarm_image");
+                String filePath = fileManager.saveFile(file, "system_alarm_image");
                 systemNotice.getSystemNoticeImages().add(new SystemNoticeImage(filePath, systemNotice));
             }
         }
@@ -116,14 +115,14 @@ public class SystemNoticeService {
                     throw new NotBelongInClubNoticeException();
                 }
                 systemNoticeImageRepository.delete(deletedImage);
-                s3Manager.deleteFile(deletedImage.getImageUri());
+                fileManager.deleteFile(deletedImage.getImageUri());
             }
         }
 
         // 새 이미지 추가
         if (files != null && !files.isEmpty()) {
             for (MultipartFile file : files) {
-                String filePath = s3Manager.saveFile(file, "system_notice_image");
+                String filePath = fileManager.saveFile(file, "system_notice_image");
                 systemNotice.getSystemNoticeImages().add(new SystemNoticeImage(filePath, systemNotice));
             }
         }
@@ -141,7 +140,7 @@ public class SystemNoticeService {
         // 검증 로직 추가
 
         for (SystemNoticeImage image : systemNotice.getSystemNoticeImages()) {
-            s3Manager.deleteFile(image.getImageUri());
+            fileManager.deleteFile(image.getImageUri());
         }
 
         systemNoticeRepository.delete(systemNotice);
